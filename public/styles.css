@@ -599,3 +599,51 @@
     .promo-hub,.vouchers{grid-template-columns:1fr;}
     .b2b-hero h1{font-size:24px;}
   }
+
+  /* ============ EBOOK ============ */
+  .eb-ribbon{position:absolute;top:8px;left:0;background:#c8362a;color:#fff;font-size:8px;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:0 4px 4px 0;z-index:2;}
+  .book-cover.ebook{position:relative;}
+  .hm-ebcover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;color:#fff;}
+  .hm-ebcover .eb-ribbon{top:12px;}
+  .hm-ebcover .ebt{font-family:'Lora',serif;font-weight:600;font-size:16px;line-height:1.3;text-shadow:0 1px 4px rgba(0,0,0,.4);}
+  .hm-ebcover .eba{font-size:12px;opacity:.85;margin-top:4px;}
+  .eb-specs{display:flex;gap:10px;margin:14px 0;}
+  .eb-specs .ebs{flex:1;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center;}
+  .eb-specs .ebs .k{display:block;font-size:11px;color:var(--text-soft);margin-bottom:3px;}
+  .eb-specs .ebs b{font-size:13.5px;color:var(--ink-deep);}
+  .eb-owned{margin-top:12px;font-size:13.5px;color:#1a7a4a;font-weight:500;}
+  .eb-owned a{color:var(--ink);font-weight:600;}
+
+  /* Reader */
+  .reader{max-width:780px;margin:0 auto;}
+  .reader-bar{position:sticky;top:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px;margin-bottom:18px;z-index:5;}
+  .reader-bar .rb{font-size:13px;color:var(--text);padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);}
+  .reader-bar .rb:hover{border-color:var(--ink);color:var(--ink);}
+  .reader-bar .rb-title{flex:1;font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .reader-bar .rb-tools{display:flex;align-items:center;gap:6px;}
+  .reader-bar select{font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--surface);color:var(--text);max-width:170px;}
+  .reader-page{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:38px 44px;line-height:1.85;color:#2c2620;min-height:50vh;}
+  .reader-page h2{font-family:'Lora',serif;font-weight:600;font-size:24px;margin:0 0 18px;}
+  .reader-page p{margin:0 0 16px;}
+  .reader.theme-sepia .reader-page{background:#f4ecd8;color:#43381f;border-color:#e3d6b8;}
+  .reader.theme-dark .reader-page{background:#1c1a17;color:#d8cfc2;border-color:#33302b;}
+  .reader.theme-dark .reader-page h2{color:#fff;}
+  .reader-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0 10px;}
+  .reader-nav span{font-size:13.5px;color:var(--text-soft);font-variant-numeric:tabular-nums;}
+  .paywall{margin-top:28px;text-align:center;background:var(--paper);border:1px dashed var(--coral);border-radius:14px;padding:26px;}
+  .paywall .pw-ic{font-size:34px;}
+  .paywall h3{font-family:'Lora',serif;font-size:19px;color:var(--ink-deep);margin:8px 0 6px;}
+  .paywall p{color:var(--text-soft);font-size:14px;margin:0;}
+
+  /* Library */
+  .lib-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  .lib-item{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;}
+  .lib-item .cover-sm{width:54px;height:74px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .lib-item .cover-sm .book-cover{width:48px;height:66px;}
+  .lib-item .li-info{flex:1;min-width:0;}
+  .lib-item .li-info .nm{font-weight:500;font-size:14px;}
+  .lib-item .li-info .au{font-size:12.5px;color:var(--text-soft);margin-top:2px;}
+  .lib-item .li-prog{font-size:12px;color:var(--ink);margin-top:5px;}
+  .lib-item .btn-primary{flex-shrink:0;padding:9px 14px;}
+
+  @media (max-width:880px){.lib-grid{grid-template-columns:1fr;}.reader-page{padding:24px 20px;}.eb-specs{flex-wrap:wrap;}.reader-bar{flex-wrap:wrap;}}

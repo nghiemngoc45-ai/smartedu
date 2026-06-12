@@ -1,7 +1,7 @@
 /* ---------------- Data ---------------- */
 const fmt = n => n.toLocaleString('vi-VN') + 'đ';
 const AUD = {tieuhoc:'Tiểu học',thcs:'THCS',thpt:'THPT',sinhvien:'Sinh viên',giaovien:'Giáo viên',school:'Trường học'};
-const CATLBL = {sach:'Sách',vpp:'Văn phòng phẩm',tbgd:'Thiết bị giáo dục'};
+const CATLBL = {sach:'Sách',vpp:'Văn phòng phẩm',tbgd:'Thiết bị giáo dục',ebook:'Ebook'};
 
 const P = [
   {id:1,name:'Bộ SGK lớp 6 - Kết nối tri thức',by:'NXB Giáo Dục Việt Nam',cat:'sach',aud:['thcs'],nxb:'Giáo Dục',price:187000,old:249000,rate:4.9,sold:1200,c:'#2f6ca5'},
@@ -17,8 +17,32 @@ const P = [
   {id:11,name:'Máy tính Casio fx-580VN X',by:'Casio',cat:'tbgd',aud:['thpt','sinhvien'],nxb:'Casio',price:490000,old:599000,rate:4.8,sold:3400,c:'#2b3a4a',icon:'calc'},
   {id:12,name:'Bộ dụng cụ thí nghiệm Vật lý 12',by:'Thiết bị GD',cat:'tbgd',aud:['thpt'],nxb:'Thiết bị GD',price:360000,old:450000,rate:4.6,sold:980,c:'#1f6e6e',icon:'flask'},
   {id:13,name:'Địa cầu phát sáng 25cm',by:'EduGlobe',cat:'tbgd',aud:['tieuhoc','thcs'],nxb:'EduGlobe',price:210000,old:280000,rate:4.9,sold:1600,c:'#2f6ca5',icon:'globe'},
-  {id:14,name:'Bộ dạy học giáo viên - bảng & phấn',by:'EduPro',cat:'tbgd',aud:['giaovien'],nxb:'EduPro',price:175000,old:230000,rate:4.7,sold:1100,c:'#7a4a8c',icon:'board'}
+  {id:14,name:'Bộ dạy học giáo viên - bảng & phấn',by:'EduPro',cat:'tbgd',aud:['giaovien'],nxb:'EduPro',price:175000,old:230000,rate:4.7,sold:1100,c:'#7a4a8c',icon:'board'},
+  {id:15,name:'Lập trình JavaScript từ con số 0',by:'Nguyễn Minh',cat:'ebook',aud:['sinhvien'],nxb:'EduMart Digital',price:79000,old:120000,rate:4.8,sold:2300,c:'#1f6e6e',ebook:true,format:'PDF · EPUB',pages:312,size:8.4},
+  {id:16,name:'Tiếng Anh giao tiếp cấp tốc',by:'Lê Hằng',cat:'ebook',aud:['sinhvien','thpt'],nxb:'EduMart Digital',price:59000,old:99000,rate:4.7,sold:4100,c:'#2f6ca5',ebook:true,format:'PDF · EPUB',pages:198,size:5.1},
+  {id:17,name:'Tư duy phản biện cho học sinh',by:'Trần Quốc',cat:'ebook',aud:['thpt'],nxb:'EduMart Digital',price:65000,old:90000,rate:4.9,sold:1800,c:'#7a4a8c',ebook:true,format:'PDF',pages:256,size:6.7},
+  {id:18,name:'Cẩm nang ôn thi THPT Quốc gia',by:'Tổ Giáo Dục',cat:'ebook',aud:['thpt'],nxb:'EduMart Digital',price:99000,old:150000,rate:4.6,sold:3600,c:'#c1572f',ebook:true,format:'PDF · EPUB',pages:420,size:12.3},
+  {id:19,name:'Toán tư duy cho học sinh tiểu học',by:'Phạm Lan',cat:'ebook',aud:['tieuhoc'],nxb:'EduMart Digital',price:49000,old:75000,rate:4.8,sold:2900,c:'#3a7a52',ebook:true,format:'PDF · EPUB',pages:164,size:4.2}
 ];
+
+/* ---------------- Ebook: nội dung, sở hữu, tiến độ đọc ---------------- */
+function ebookChapters(p){
+  const titles=['Lời mở đầu','Nền tảng cốt lõi','Thực hành & ví dụ','Nâng cao và mở rộng','Tổng kết & lộ trình'];
+  return titles.map((t,i)=>({
+    t:'Chương '+(i+1)+': '+t,
+    body:'<p>Đây là nội dung minh họa của ebook <b>“'+p.name+'”</b> do '+p.by+' biên soạn, phát hành bởi '+p.nxb+'.</p>'+
+      '<p>'+(i===0
+        ? 'Chương mở đầu giới thiệu mục tiêu, đối tượng phù hợp và cách học hiệu quả nhất với cuốn sách. Bạn đang đọc bản xem thử — hãy sở hữu ebook để mở khóa toàn bộ '+p.pages+' trang.'
+        : 'Chương '+(i+1)+' đi sâu vào chủ đề với các ví dụ thực tế, bài tập áp dụng và lưu ý quan trọng. Nội dung được trình bày mạch lạc, dễ theo dõi cho người tự học.')+'</p>'+
+      '<p>“Mỗi trang sách hôm nay là một bước tiến của ngày mai.” Hãy đọc đều đặn mỗi ngày để đạt kết quả tốt nhất. Tiến độ đọc của bạn được lưu tự động trên thiết bị này.</p>'+
+      '<p>— Hết phần minh họa của '+('Chương '+(i+1))+' —</p>'
+  }));
+}
+let library = LS.get('library',[]);          // ebook id đã sở hữu
+function isOwned(id){return library.includes(Number(id));}
+function grantEbook(id){id=Number(id);if(!isOwned(id)){library.push(id);LS.set('library',library);}}
+function readProgress(){return LS.get('readprog',{});}
+function setReadProgress(id,ch){const m=readProgress();m[id]=ch;LS.set('readprog',m);}
 
 const ICONS = {
   pen:'<path d="M5 19l1-4L17 4l3 3L9 18l-4 1Z"/>',
@@ -32,8 +56,8 @@ const ICONS = {
 };
 
 function cover(p,scale){
-  if(p.cat==='sach'){
-    return '<div class="book-cover" style="background:linear-gradient(150deg,'+p.c+',rgba(0,0,0,.35))"><div class="bc-t">'+p.name+'</div><div class="bc-a">'+p.by+'</div></div>';
+  if(p.cat==='sach'||p.cat==='ebook'){
+    return '<div class="book-cover'+(p.ebook?' ebook':'')+'" style="background:linear-gradient(150deg,'+p.c+',rgba(0,0,0,.35))">'+(p.ebook?'<span class="eb-ribbon">E-BOOK</span>':'')+'<div class="bc-t">'+p.name+'</div><div class="bc-a">'+p.by+'</div></div>';
   }
   return '<div class="obj-cover" style="background:linear-gradient(150deg,'+p.c+',rgba(0,0,0,.3))"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[p.icon]||'')+'</svg></div>';
 }
@@ -145,6 +169,8 @@ function render(){
   else if(view==='wheel')renderWheel();
   else if(view==='missions')renderMissions();
   else if(view==='referral')renderReferral();
+  else if(view==='reader')renderReader();
+  else if(view==='library')renderLibrary();
 }
 
 /* ---------------- Cards ---------------- */
@@ -184,9 +210,9 @@ function hmCard(p,dark){
   const sold=p.sold>=1000?(p.sold/1000).toFixed(1)+'k':p.sold;
   return '<div class="hm-card'+(dark?' dark':'')+'">'+
     '<div class="hm-cover" onclick="go(\'product\','+p.id+')">'+
-      '<img src="'+himg(p.id,500)+'" alt="'+p.name+'" loading="lazy">'+
-      '<div class="hm-cov-ov" style="background:'+overlay+'"></div>'+
-      (isBook?'<div class="hm-cov-tt"><div class="t">'+p.name+'</div><div class="a">'+p.by+'</div></div>':'')+
+      (p.ebook
+        ? '<div class="hm-ebcover" style="background:linear-gradient(150deg,'+p.c+',rgba(0,0,0,.42))"><span class="eb-ribbon">E-BOOK</span><div class="ebt">'+p.name+'</div><div class="eba">'+p.by+'</div></div>'
+        : '<img src="'+himg(p.id,500)+'" alt="'+p.name+'" loading="lazy"><div class="hm-cov-ov" style="background:'+overlay+'"></div>'+(isBook?'<div class="hm-cov-tt"><div class="t">'+p.name+'</div><div class="a">'+p.by+'</div></div>':''))+
       '<span class="hm-disc">-'+discount(p)+'%</span>'+
       (tag?'<span class="hm-tag">'+tag+'</span>':'')+
       '<button class="hm-fav'+(inWish(p.id)?' on':'')+'" data-wish="'+p.id+'" onclick="event.stopPropagation();toggleWish('+p.id+')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9Z"/></svg></button>'+
@@ -218,6 +244,7 @@ function renderHome(){
   const vpp=P.filter(p=>p.cat==='vpp');
   const tb=P.filter(p=>p.cat==='tbgd');
   const flashItems=[7,4,1,5,9].map(id=>P.find(x=>x.id===id));
+  const ebs=P.filter(p=>p.cat==='ebook').slice(0,5);
 
   const COLLS=[
     ['Tuyển chọn biên tập','100 cuốn sách nên đọc trong đời','Hành trình văn học vượt thời gian, từ kinh điển đến hiện đại.','1771647287015-f30dbb239646','rgba(120,30,20,.6)','sach'],
@@ -325,6 +352,10 @@ function renderHome(){
   hmHead('Thiết bị giáo dục','Được yêu thích','tbgd')+
   '<div class="hm-grid g4">'+tb.map(p=>hmCard(p)).join('')+'</div>'+
 
+  /* Ebook */
+  hmHead('Ebook nổi bật','Sách số · Đọc ngay','ebook')+
+  '<div class="hm-grid g5">'+ebs.map(p=>hmCard(p)).join('')+'</div>'+
+
   /* Articles */
   '<div class="hm-arts-head"><h2>Khám phá thêm</h2><a onclick="toast(\'Mở trang bài viết\')">Tất cả bài viết '+ARR+'</a></div>'+
   '<div class="hm-arts-bar"></div>'+
@@ -412,17 +443,17 @@ function renderProduct(){
     '<div class="pdp-gallery" style="background:#f3ede3">'+cover(p)+'</div>'+
     '<div class="pdp-info">'+
       '<h1>'+p.name+'</h1>'+
-      '<div class="by">'+(p.cat==='sach'?'Tác giả: ':'Thương hiệu: ')+p.by+' · NXB/Hãng: '+p.nxb+'</div>'+
-      '<div class="pdp-rate"><span class="star">★ '+p.rate.toFixed(1)+'</span><span>'+p.sold.toLocaleString('vi-VN')+' đã bán</span><span>Còn hàng</span></div>'+
+      '<div class="by">'+((p.cat==='sach'||p.ebook)?'Tác giả: ':'Thương hiệu: ')+p.by+' · NXB/Hãng: '+p.nxb+'</div>'+
+      '<div class="pdp-rate"><span class="star">★ '+p.rate.toFixed(1)+'</span><span>'+p.sold.toLocaleString('vi-VN')+(p.ebook?' lượt tải':' đã bán')+'</span><span>'+(p.ebook?'Bản điện tử':'Còn hàng')+'</span></div>'+
       '<div class="price-box"><div class="big">'+fmt(p.price)+'</div>'+(p.old>p.price?'<div class="save">Tiết kiệm '+fmt(p.old-p.price)+' (-'+discount(p)+'%) so với '+fmt(p.old)+'</div>':'')+'</div>'+
-      '<div style="font-size:13.5px;font-weight:500">Phân loại</div>'+
-      '<div class="variants" id="pdpVars">'+variants.map((v,i)=>'<button class="'+(i===0?'on':'')+'" onclick="pickVar('+i+')">'+v+'</button>').join('')+'</div>'+
-      '<div style="font-size:13.5px;font-weight:500;margin-bottom:6px">Số lượng</div>'+
-      '<div class="qty"><button onclick="pdpStep(-1)">−</button><span id="pdpQ">1</span><button onclick="pdpStep(1)">+</button></div>'+
-      '<div class="pdp-cta"><button class="cart-btn" onclick="addToCart('+p.id+',pdpQty)">Thêm vào giỏ</button><button class="buy-btn" onclick="addToCart('+p.id+',pdpQty);go(\'cart\')">Mua ngay</button></div>'+
-      '<div class="perks">'+
-        '<span>🚚 Giao nhanh toàn quốc</span><span>↩ Đổi trả trong 7 ngày</span><span>✔ Sách chính hãng</span><span>💳 MoMo · ZaloPay · VNPay · COD</span>'+
-      '</div>'+
+      (p.ebook? ebookCTA(p) : (
+        '<div style="font-size:13.5px;font-weight:500">Phân loại</div>'+
+        '<div class="variants" id="pdpVars">'+variants.map((v,i)=>'<button class="'+(i===0?'on':'')+'" onclick="pickVar('+i+')">'+v+'</button>').join('')+'</div>'+
+        '<div style="font-size:13.5px;font-weight:500;margin-bottom:6px">Số lượng</div>'+
+        '<div class="qty"><button onclick="pdpStep(-1)">−</button><span id="pdpQ">1</span><button onclick="pdpStep(1)">+</button></div>'+
+        '<div class="pdp-cta"><button class="cart-btn" onclick="addToCart('+p.id+',pdpQty)">Thêm vào giỏ</button><button class="buy-btn" onclick="addToCart('+p.id+',pdpQty);go(\'cart\')">Mua ngay</button></div>'+
+        '<div class="perks"><span>🚚 Giao nhanh toàn quốc</span><span>↩ Đổi trả trong 7 ngày</span><span>✔ Sách chính hãng</span><span>💳 MoMo · ZaloPay · VNPay · COD</span></div>'
+      ))+
     '</div>'+
   '</div>'+
 
@@ -645,11 +676,14 @@ let coShip='std', coPay='momo';
 function renderCheckout(){
   const ids=Object.keys(cart); if(!ids.length){go('cart');return;}
   const sub=cartSubtotal();
-  const baseShip=sub>300000?0:25000;
-  const ship=baseShip+(coShip==='fast'?20000:0);
+  const allDigital=ids.length>0 && ids.every(id=>{const pr=P.find(x=>x.id==id);return pr&&pr.ebook;});
+  const baseShip=allDigital?0:(sub>300000?0:25000);
+  const ship=allDigital?0:baseShip+(coShip==='fast'?20000:0);
   const disc=Math.round(sub*voucherPct/100);
   const total=sub-disc+ship;
-  const shipOpts=[['std','Giao tiêu chuẩn (2–4 ngày)',baseShip===0?'Miễn phí':fmt(baseShip)],['fast','Giao nhanh (1–2 ngày)',fmt(baseShip+20000)]];
+  const shipOpts=allDigital
+    ?[['std','Giao hàng số — gửi ngay vào Tủ sách','Miễn phí']]
+    :[['std','Giao tiêu chuẩn (2–4 ngày)',baseShip===0?'Miễn phí':fmt(baseShip)],['fast','Giao nhanh (1–2 ngày)',fmt(baseShip+20000)]];
   const pays=[['momo','Ví MoMo',''],['zalopay','ZaloPay',''],['vnpay','VNPay',''],['cod','Thanh toán khi nhận hàng (COD)','Phổ biến'],['atm','Thẻ ATM / Visa / Mastercard','']];
   document.getElementById('app').innerHTML=
   '<div class="breadcrumb"><a onclick="go(\'cart\')">Giỏ hàng</a> › <b>Thanh toán</b></div>'+
@@ -678,10 +712,13 @@ function placeOrder(total){
   const d=new Date(), date=d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
   orders.unshift({id,items,total,date,status:'Đang xử lý',stage:0,placed:date});
   saveOrders();
+  const ebooksIn=items.filter(it=>{const pr=P.find(x=>x.id===it.id);return pr&&pr.ebook;});
+  ebooksIn.forEach(it=>grantEbook(it.id));
   cart={};voucherPct=0;saveCart();updateCartCount();
   if(user){user.points=(user.points||0)+Math.floor(total/1000);saveUser();}
   addNotif('Đơn hàng #'+id+' đã được đặt thành công, tổng '+fmt(total)+'.');
-  window._lastOrder={id,total};
+  if(ebooksIn.length)addNotif(ebooksIn.length+' ebook đã được thêm vào Tủ sách của bạn.');
+  window._lastOrder={id,total,ebook:ebooksIn.length>0};
   go('orderdone');
 }
 function renderOrderDone(){
@@ -691,7 +728,8 @@ function renderOrderDone(){
     '<h1>Đặt hàng thành công!</h1><p>Cảm ơn bạn đã mua sắm tại EduMart.</p>'+
     '<p>Mã đơn hàng của bạn</p><div class="ocode">#'+o.id+'</div>'+
     '<p style="margin-top:10px">Tổng thanh toán: <b style="color:var(--coral)">'+fmt(o.total)+'</b></p>'+
-    '<div class="acts"><button class="btn-ghost" onclick="goOrders()">Xem đơn hàng</button><button class="btn-primary" onclick="go(\'home\')">Tiếp tục mua sắm</button></div></div>';
+    (o.ebook?'<p style="margin-top:10px;color:#1a7a4a;font-weight:500">📖 Ebook đã sẵn sàng trong Tủ sách của bạn!</p>':'')+
+    '<div class="acts">'+(o.ebook?'<button class="btn-ghost" onclick="go(\'library\')">Vào Tủ sách</button>':'<button class="btn-ghost" onclick="goOrders()">Xem đơn hàng</button>')+'<button class="btn-primary" onclick="go(\'home\')">Tiếp tục mua sắm</button></div></div>';
 }
 
 /* ---------------- Shared helpers for new modules ---------------- */
@@ -865,6 +903,71 @@ function renderReferral(){
    '<h1 class="page-title">Giới thiệu bạn — cả hai cùng lợi</h1>'+
    '<div class="ref-card"><p class="rl">Mã giới thiệu của bạn</p><div class="ref-code">'+code+'</div><button class="btn-primary" onclick="copyCode(\''+code+'\')">Sao chép mã</button>'+
    '<div class="ref-steps"><div><b>1</b> Gửi mã cho bạn bè</div><div><b>2</b> Bạn mới nhập mã khi đăng ký</div><div><b>3</b> Mỗi người nhận voucher 20k</div></div></div>';
+}
+
+/* ---------------- Ebook: CTA, reader, library ---------------- */
+function ebookCTA(p){
+  const owned=isOwned(p.id);
+  return '<div class="eb-specs">'+
+      '<div class="ebs"><span class="k">Định dạng</span><b>'+(p.format||'PDF · EPUB')+'</b></div>'+
+      '<div class="ebs"><span class="k">Số trang</span><b>'+(p.pages||'—')+'</b></div>'+
+      '<div class="ebs"><span class="k">Dung lượng</span><b>'+(p.size||'—')+' MB</b></div>'+
+    '</div>'+
+    '<div class="pdp-cta">'+
+      (owned
+        ? '<button class="buy-btn" onclick="openReader('+p.id+',true)">📖 Đọc ngay</button>'
+        : '<button class="cart-btn" onclick="openReader('+p.id+',false)">Đọc thử</button><button class="buy-btn" onclick="addToCart('+p.id+');go(\'cart\')">Mua &amp; đọc ngay</button>')+
+    '</div>'+
+    (owned?'<div class="eb-owned">✔ Bạn đã sở hữu ebook này — có trong <a onclick="go(\'library\')">Tủ sách</a>.</div>':'')+
+    '<div class="perks"><span>📱 Đọc trên mọi thiết bị</span><span>⚡ Nhận ngay sau thanh toán</span><span>♾ Sở hữu vĩnh viễn</span><span>🔖 Lưu tiến độ &amp; ghi chú</span></div>';
+}
+let readerCh=0;
+function openReader(id,resume){readerCh=resume?(readProgress()[id]||0):0;go('reader',id);}
+function renderReader(){
+  const p=P.find(x=>x.id==arg);
+  if(!p||!p.ebook){go('home');return;}
+  const owned=isOwned(p.id);
+  const chapters=ebookChapters(p);
+  const maxCh=owned?chapters.length:1;             // chưa mua: chỉ đọc thử chương 1
+  if(readerCh>=maxCh)readerCh=maxCh-1; if(readerCh<0)readerCh=0;
+  setReadProgress(p.id,readerCh);
+  const ch=chapters[readerCh];
+  const theme=LS.get('readerTheme','light'), font=LS.get('readerFont',18);
+  const opts=chapters.map((c,i)=>'<option value="'+i+'"'+(i===readerCh?' selected':'')+(i>=maxCh?' disabled':'')+'>'+c.t+(i>=maxCh?' 🔒':'')+'</option>').join('');
+  const atSampleEnd=!owned&&readerCh>=maxCh-1;
+  document.getElementById('app').innerHTML=
+   '<div class="reader theme-'+theme+'">'+
+     '<div class="reader-bar">'+
+       '<button class="rb" onclick="go(\'product\','+p.id+')">‹ Thoát</button>'+
+       '<div class="rb-title">'+p.name+(owned?'':' · <span style="color:var(--coral)">Đọc thử</span>')+'</div>'+
+       '<div class="rb-tools">'+
+         '<select onchange="readerCh=+this.value;renderReader()">'+opts+'</select>'+
+         '<button class="rb" title="Thu nhỏ chữ" onclick="readerFont(-1)">A−</button>'+
+         '<button class="rb" title="Phóng to chữ" onclick="readerFont(1)">A+</button>'+
+         '<button class="rb" title="Đổi nền" onclick="readerTheme()">🌓</button>'+
+       '</div>'+
+     '</div>'+
+     '<div class="reader-page" style="font-size:'+font+'px">'+
+       '<h2>'+ch.t+'</h2>'+ch.body+
+       (atSampleEnd?'<div class="paywall"><div class="pw-ic">🔒</div><h3>Hết phần đọc thử</h3><p>Mua ebook để mở khóa toàn bộ '+chapters.length+' chương ('+p.pages+' trang) và sở hữu vĩnh viễn.</p><button class="checkout" style="max-width:280px;margin:14px auto 0" onclick="addToCart('+p.id+');go(\'cart\')">Mua '+fmt(p.price)+' — đọc trọn bộ</button></div>':'')+
+     '</div>'+
+     '<div class="reader-nav">'+
+       '<button class="btn-ghost" '+(readerCh<=0?'disabled':'')+' onclick="readerCh--;renderReader();window.scrollTo(0,0)">‹ Chương trước</button>'+
+       '<span>'+(readerCh+1)+' / '+chapters.length+'</span>'+
+       '<button class="btn-primary" '+(readerCh>=maxCh-1?'disabled':'')+' onclick="readerCh++;renderReader();window.scrollTo(0,0)">Chương sau ›</button>'+
+     '</div>'+
+   '</div>';
+}
+function readerFont(d){let f=(LS.get('readerFont',18))+d*2;f=Math.max(14,Math.min(26,f));LS.set('readerFont',f);renderReader();}
+function readerTheme(){const seq=['light','sepia','dark'];const t=LS.get('readerTheme','light');LS.set('readerTheme',seq[(seq.indexOf(t)+1)%3]);renderReader();}
+function renderLibrary(){
+  const items=library.map(id=>P.find(p=>p.id===id)).filter(Boolean);
+  const prog=readProgress();
+  document.getElementById('app').innerHTML=
+   '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <b>Tủ sách của tôi</b></div>'+
+   '<h1 class="page-title">Tủ sách của tôi'+(items.length?' ('+items.length+')':'')+'</h1>'+
+   (items.length?'<div class="lib-grid">'+items.map(p=>{const ch=(prog[p.id]||0)+1;const total=5;return '<div class="lib-item"><div class="cover-sm">'+cover(p)+'</div><div class="li-info"><div class="nm">'+p.name+'</div><div class="au">'+p.by+'</div><div class="li-prog">Đang đọc: chương '+ch+'/'+total+'</div></div><button class="btn-primary" onclick="openReader('+p.id+',true)">Đọc tiếp</button></div>';}).join('')+'</div>'
+    :'<div class="empty"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19V5a1 1 0 0 1 1-1h6v16H5a1 1 0 0 1-1-1Z"/><path d="M13 4h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-6"/></svg><div style="font-size:17px;margin-bottom:6px">Tủ sách của bạn đang trống</div><a class="hero-cta" style="display:inline-flex" onclick="go(\'listing\',\'ebook\')">Khám phá ebook</a></div>');
 }
 
 /* ---------------- init ---------------- */

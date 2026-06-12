@@ -161,11 +161,14 @@ const DEF_PRODUCTS=[
   {id:7,name:'Combo bút bi Thiên Long 20 cây',cat:'Văn phòng phẩm',price:48000,stock:0,sold:9200,c:'#2563a8',icon:'pen'},
   {id:8,name:'Vở Campus 200 trang (lốc 10)',cat:'Văn phòng phẩm',price:102000,stock:210,sold:5600,c:'#e08a2e',icon:'note'},
   {id:11,name:'Máy tính Casio fx-580VN X',cat:'Thiết bị giáo dục',price:490000,stock:46,sold:3400,c:'#2b3a4a',icon:'calc'},
-  {id:13,name:'Địa cầu phát sáng 25cm',cat:'Thiết bị giáo dục',price:210000,stock:7,sold:1600,c:'#2f6ca5',icon:'globe'}
+  {id:13,name:'Địa cầu phát sáng 25cm',cat:'Thiết bị giáo dục',price:210000,stock:7,sold:1600,c:'#2f6ca5',icon:'globe'},
+  {id:15,name:'Lập trình JavaScript từ con số 0',cat:'Ebook',price:79000,stock:9999,sold:2300,c:'#1f6e6e',digital:true},
+  {id:16,name:'Tiếng Anh giao tiếp cấp tốc',cat:'Ebook',price:59000,stock:9999,sold:4100,c:'#2f6ca5',digital:true},
+  {id:18,name:'Cẩm nang ôn thi THPT Quốc gia',cat:'Ebook',price:99000,stock:9999,sold:3600,c:'#c1572f',digital:true}
 ];
 const ICONS={pen:'<path d="M5 19l1-4L17 4l3 3L9 18l-4 1Z"/>',note:'<rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 7h6M9 11h6"/>',calc:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 15h2"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18"/>'};
 function cover(p){
-  if(p.cat==='Sách')return '<div class="book-cover" style="background:linear-gradient(150deg,'+p.c+',rgba(0,0,0,.35))">'+p.name.slice(0,14)+'</div>';
+  if(p.cat==='Sách'||p.cat==='Ebook')return '<div class="book-cover" style="background:linear-gradient(150deg,'+p.c+',rgba(0,0,0,.35))">'+p.name.slice(0,14)+'</div>';
   return '<div class="obj-cover" style="background:linear-gradient(150deg,'+p.c+',rgba(0,0,0,.3))"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">'+(ICONS[p.icon]||'')+'</svg></div>';
 }
 function stockBadge(s){if(s===0)return '<span class="badge b-out">Hết hàng</span>';if(s<20)return '<span class="badge b-low">Sắp hết ('+s+')</span>';return '<span class="badge b-stock">Còn '+s+'</span>';}
@@ -207,15 +210,16 @@ function openProd(id){
   const p=id?PRODUCTS.find(x=>x.id===id):{name:'',cat:'Sách',price:0,stock:0};
   openModal('<h2>'+(id?'Sửa sản phẩm':'Thêm sản phẩm')+'</h2>'+
    '<label>Tên sản phẩm</label><input id="mName" value="'+p.name.replace(/"/g,'&quot;')+'">'+
-   '<label>Danh mục</label><select id="mCat"><option'+(p.cat==='Sách'?' selected':'')+'>Sách</option><option'+(p.cat==='Văn phòng phẩm'?' selected':'')+'>Văn phòng phẩm</option><option'+(p.cat==='Thiết bị giáo dục'?' selected':'')+'>Thiết bị giáo dục</option></select>'+
+   '<label>Danh mục</label><select id="mCat"><option'+(p.cat==='Sách'?' selected':'')+'>Sách</option><option'+(p.cat==='Ebook'?' selected':'')+'>Ebook</option><option'+(p.cat==='Văn phòng phẩm'?' selected':'')+'>Văn phòng phẩm</option><option'+(p.cat==='Thiết bị giáo dục'?' selected':'')+'>Thiết bị giáo dục</option></select>'+
    '<div class="mrow"><div><label>Giá (đ)</label><input id="mPrice" type="number" value="'+p.price+'"></div><div><label>Tồn kho</label><input id="mStock" type="number" value="'+p.stock+'"></div></div>'+
    '<div class="mact"><button class="act-btn" onclick="closeModal()">Hủy</button><button class="add" onclick="saveProd('+(id||0)+')">Lưu</button></div>');
 }
 function saveProd(id){
   const name=document.getElementById('mName').value.trim(); if(!name){toast('Nhập tên sản phẩm');return;}
   const cat=document.getElementById('mCat').value,price=+document.getElementById('mPrice').value||0,stock=+document.getElementById('mStock').value||0;
-  if(id){Object.assign(PRODUCTS.find(x=>x.id===id),{name,cat,price,stock});}
-  else{const nid=Math.max(0,...PRODUCTS.map(x=>x.id))+1;PRODUCTS.unshift({id:nid,name,cat,price,stock,sold:0,c:'#2f6ca5',icon:cat==='Sách'?undefined:'note'});}
+  const digital=cat==='Ebook';
+  if(id){Object.assign(PRODUCTS.find(x=>x.id===id),{name,cat,price,stock,digital});}
+  else{const nid=Math.max(0,...PRODUCTS.map(x=>x.id))+1;PRODUCTS.unshift({id:nid,name,cat,price,stock,sold:0,c:'#2f6ca5',digital,icon:(cat==='Sách'||cat==='Ebook')?undefined:'note'});}
   saveP();closeModal();toast('Đã lưu sản phẩm');render();
 }
 function delProd(id){PRODUCTS=PRODUCTS.filter(x=>x.id!==id);saveP();toast('Đã xóa sản phẩm');render();}
@@ -267,7 +271,7 @@ function kpi(bg,fg,icon,v,l,trend,trtext){
 function products(){
   return '<div class="toolbar"><button class="add" onclick="openProd()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>Thêm sản phẩm</button><button class="act-btn" onclick="toast(\'Tải lên file Excel\')">Đăng hàng loạt (Excel)</button><div class="sp"></div></div>'+
   '<div class="panel" style="padding:6px 8px"><table><thead><tr><th>Sản phẩm</th><th>Danh mục</th><th>Giá</th><th>Tồn kho</th><th>Đã bán</th><th></th></tr></thead><tbody>'+
-  PRODUCTS.map(p=>'<tr><td><div class="prod-cell"><div class="cover-sm">'+cover(p)+'</div><span class="nm">'+p.name+'</span></div></td><td>'+p.cat+'</td><td style="font-weight:600">'+fmt(p.price)+'</td><td>'+stockBadge(p.stock)+'</td><td>'+p.sold.toLocaleString('vi-VN')+'</td><td style="white-space:nowrap"><button class="act-btn" onclick="openProd('+p.id+')">Sửa</button><button class="del-btn" onclick="delProd('+p.id+')">Xóa</button></td></tr>').join('')+
+  PRODUCTS.map(p=>'<tr><td><div class="prod-cell"><div class="cover-sm">'+cover(p)+'</div><span class="nm">'+p.name+'</span></div></td><td>'+p.cat+'</td><td style="font-weight:600">'+fmt(p.price)+'</td><td>'+(p.digital?'<span class="badge b-stock">Bản số ∞</span>':stockBadge(p.stock))+'</td><td>'+p.sold.toLocaleString('vi-VN')+'</td><td style="white-space:nowrap"><button class="act-btn" onclick="openProd('+p.id+')">Sửa</button><button class="del-btn" onclick="delProd('+p.id+')">Xóa</button></td></tr>').join('')+
   '</tbody></table></div>';
 }
 

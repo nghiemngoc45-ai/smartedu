@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EduMart — Sàn sách & thiết bị giáo dục</title>
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+
+<header>
+  <div class="util"><div class="util-inner">
+    <span>Giao đến: Việt Nam</span>
+    <span class="sp"></span>
+    <a class="mystic" onclick="go('huyenhoc')">✦ Quẻ sách thần số</a>
+    <a onclick="go('account')">Đăng nhập / Tài khoản</a>
+    <a onclick="toast('Trung tâm trợ giúp')">Trợ giúp</a>
+    <a href="/admin.html">Bán hàng cùng EduMart</a>
+  </div></div>
+  <div class="topbar">
+    <a class="logo" onclick="go('home')">
+      <span class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a1 1 0 0 1 1-1h6v16H5a1 1 0 0 1-1-1Z"/><path d="M13 4h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-6"/></svg></span>
+      <span class="name">EduMart</span>
+    </a>
+    <div class="search">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+      <input id="searchInput" placeholder="Tìm theo tựa sách, tác giả, từ khóa hoặc ISBN…" onkeydown="if(event.key==='Enter')doSearch()" />
+    </div>
+    <div class="header-actions">
+      <button class="ico-btn" onclick="go('account')" title="Tài khoản">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+        Tài khoản
+      </button>
+      <button class="ico-btn" onclick="go('cart')" title="Giỏ hàng">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.5 13h11l2-9H6"/></svg>
+        Giỏ hàng
+        <span class="badge" id="cartCount" style="display:none">0</span>
+      </button>
+    </div>
+  </div>
+  <nav class="mainnav"><div class="mainnav-inner">
+    <a onclick="go('listing','sach')">Sách</a>
+    <a onclick="go('listing','thcs')">Sách giáo khoa</a>
+    <a onclick="go('listing','sach')">Sách tham khảo</a>
+    <a onclick="go('listing','vpp')">Văn phòng phẩm</a>
+    <a onclick="go('listing','tbgd')">Thiết bị giáo dục</a>
+    <a onclick="go('listing','tieuhoc')">Tiểu học</a>
+    <a onclick="go('listing','thpt')">THPT</a>
+    <a onclick="go('listing','sinhvien')">Sinh viên</a>
+    <a onclick="go('listing','giaovien')">Giáo viên</a>
+    <a onclick="go('listing','school')">Trường học · Mua sỉ</a>
+    <a class="mystic" onclick="go('huyenhoc')">✦ Quẻ sách</a>
+  </div></nav>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-col">
+      <h5>EduMart</h5>
+      <p>Sàn sách, văn phòng phẩm<br>và thiết bị giáo dục.</p>
+      <p>Hotline: 1900 6868</p>
+    </div>
+    <div class="foot-col"><h5>Mua sắm</h5><p>Sách giáo khoa</p><p>Văn phòng phẩm</p><p>Thiết bị giáo dục</p><p>Quẻ sách thần số</p></div>
+    <div class="foot-col"><h5>Hỗ trợ</h5><p>Hướng dẫn mua hàng</p><p>Chính sách đổi trả</p><p>Vận chuyển</p><p>Câu hỏi thường gặp</p></div>
+    <div class="foot-col"><h5>Thanh toán</h5><p>MoMo · ZaloPay · VNPay</p><p>COD · Thẻ ATM/Visa</p><p>Trả góp</p></div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="/app.js"></script>
+</body>
+</html>

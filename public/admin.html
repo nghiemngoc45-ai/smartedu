@@ -104,6 +104,19 @@
 
   @media (max-width:900px){.shell{grid-template-columns:1fr;}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;}.kpis{grid-template-columns:repeat(2,1fr);}.grid2,.promo-grid{grid-template-columns:1fr;}.navg,.side-foot{display:none;}.nav-item{width:auto;}}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+
+  /* Modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(22,53,84,.4);display:none;align-items:center;justify-content:center;z-index:60;padding:20px;}
+  .modal-bg.show{display:flex;}
+  .modal{background:#fff;border-radius:14px;padding:24px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+  .modal h2{font-family:'Lora',serif;font-size:19px;color:var(--ink-deep);margin:0 0 14px;}
+  .modal label{display:block;font-size:12.5px;font-weight:500;color:var(--text-soft);margin:10px 0 5px;}
+  .modal input,.modal select{width:100%;font-family:inherit;font-size:14px;border:1.5px solid var(--line);border-radius:9px;padding:10px 12px;outline:none;color:var(--text);background:var(--paper);}
+  .modal input:focus,.modal select:focus{border-color:var(--ink);}
+  .modal .mrow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .modal .mact{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+  .del-btn{font-size:12.5px;color:var(--coral);font-weight:500;padding:5px 10px;border:1px solid #f1d6d0;border-radius:8px;margin-left:6px;}
+  .del-btn:hover{background:#fae3df;}
 </style>
 </head>
 <body>
@@ -133,13 +146,15 @@
     <div class="content" id="content"></div>
   </div>
 </div>
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
 const fmt=n=>n.toLocaleString('vi-VN')+'đ';
 const TITLES={overview:'Bảng điều khiển',products:'Sản phẩm',orders:'Đơn hàng',users:'Người dùng',promos:'Khuyến mãi',settings:'Cài đặt'};
 
-const PRODUCTS=[
+const ALS={get(k,d){try{const v=localStorage.getItem('edumart_admin_'+k);return v===null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem('edumart_admin_'+k,JSON.stringify(v));}catch(e){}}};
+const DEF_PRODUCTS=[
   {id:1,name:'Bộ SGK lớp 6 - Kết nối tri thức',cat:'Sách',price:187000,stock:340,sold:1200,c:'#2f6ca5'},
   {id:2,name:'Dế Mèn phiêu lưu ký',cat:'Sách',price:45000,stock:88,sold:5400,c:'#3a7a52'},
   {id:5,name:'Atomic Habits',cat:'Sách',price:145000,stock:12,sold:6700,c:'#1f6e6e'},
@@ -155,7 +170,7 @@ function cover(p){
 }
 function stockBadge(s){if(s===0)return '<span class="badge b-out">Hết hàng</span>';if(s<20)return '<span class="badge b-low">Sắp hết ('+s+')</span>';return '<span class="badge b-stock">Còn '+s+'</span>';}
 
-const ORDERS=[
+const DEF_ORDERS=[
   {id:'48213',cust:'Ngọc Anh',role:'Học sinh',date:'10/06/2026',items:3,total:421000,status:'wait'},
   {id:'48212',cust:'Thầy Tuấn',role:'Giáo viên',date:'10/06/2026',items:12,total:1840000,status:'proc'},
   {id:'48210',cust:'THCS Lê Quý Đôn',role:'Trường học',date:'09/06/2026',items:120,total:14200000,status:'ship'},
@@ -172,11 +187,42 @@ const USERS=[
   {name:'Minh Hương',role:'Phụ huynh',contact:'09xx xxx 456',orders:22,points:560},
   {name:'Quốc Bảo',role:'Sinh viên',contact:'bao@gmail.com',orders:7,points:180}
 ];
-const PROMOS=[
+const DEF_PROMOS=[
   {code:'EDU10',d:'Giảm 10% toàn sàn cho mọi đơn hàng',st:'Đang chạy · hết hạn 30/06',on:true},
   {code:'GIAOVIEN',d:'Ưu đãi 15% cho giáo viên đã xác thực',st:'Đang chạy · không giới hạn',on:true},
   {code:'TUUTRUONG',d:'Freeship đơn từ 200k mùa tựu trường',st:'Lên lịch · bắt đầu 15/08',on:false}
 ];
+
+let PRODUCTS=ALS.get('products',DEF_PRODUCTS);
+let ORDERS=ALS.get('orders',DEF_ORDERS);
+let PROMOS=ALS.get('promos',DEF_PROMOS);
+function saveP(){ALS.set('products',PRODUCTS);}
+function saveO(){ALS.set('orders',ORDERS);}
+function savePr(){ALS.set('promos',PROMOS);}
+
+/* ---- Modal + CRUD ---- */
+function openModal(html){document.getElementById('modal').innerHTML=html;document.getElementById('modalBg').classList.add('show');}
+function closeModal(){document.getElementById('modalBg').classList.remove('show');}
+function openProd(id){
+  const p=id?PRODUCTS.find(x=>x.id===id):{name:'',cat:'Sách',price:0,stock:0};
+  openModal('<h2>'+(id?'Sửa sản phẩm':'Thêm sản phẩm')+'</h2>'+
+   '<label>Tên sản phẩm</label><input id="mName" value="'+p.name.replace(/"/g,'&quot;')+'">'+
+   '<label>Danh mục</label><select id="mCat"><option'+(p.cat==='Sách'?' selected':'')+'>Sách</option><option'+(p.cat==='Văn phòng phẩm'?' selected':'')+'>Văn phòng phẩm</option><option'+(p.cat==='Thiết bị giáo dục'?' selected':'')+'>Thiết bị giáo dục</option></select>'+
+   '<div class="mrow"><div><label>Giá (đ)</label><input id="mPrice" type="number" value="'+p.price+'"></div><div><label>Tồn kho</label><input id="mStock" type="number" value="'+p.stock+'"></div></div>'+
+   '<div class="mact"><button class="act-btn" onclick="closeModal()">Hủy</button><button class="add" onclick="saveProd('+(id||0)+')">Lưu</button></div>');
+}
+function saveProd(id){
+  const name=document.getElementById('mName').value.trim(); if(!name){toast('Nhập tên sản phẩm');return;}
+  const cat=document.getElementById('mCat').value,price=+document.getElementById('mPrice').value||0,stock=+document.getElementById('mStock').value||0;
+  if(id){Object.assign(PRODUCTS.find(x=>x.id===id),{name,cat,price,stock});}
+  else{const nid=Math.max(0,...PRODUCTS.map(x=>x.id))+1;PRODUCTS.unshift({id:nid,name,cat,price,stock,sold:0,c:'#2f6ca5',icon:cat==='Sách'?undefined:'note'});}
+  saveP();closeModal();toast('Đã lưu sản phẩm');render();
+}
+function delProd(id){PRODUCTS=PRODUCTS.filter(x=>x.id!==id);saveP();toast('Đã xóa sản phẩm');render();}
+function advO(id){const o=ORDERS.find(x=>x.id===id);if(!o)return;const seq=['wait','proc','ship','done'];const i=seq.indexOf(o.status);if(i>=0&&i<seq.length-1){o.status=seq[i+1];saveO();toast('Đơn #'+id+' → '+STATUS[o.status][0]);render();}else{toast('Đơn đã ở trạng thái cuối');}}
+function openPromo(){openModal('<h2>Tạo khuyến mãi</h2><label>Mã giảm giá</label><input id="mCode" placeholder="VD: HE2026"><label>Mô tả</label><input id="mDesc" placeholder="Giảm 12% toàn sàn"><div class="mact"><button class="act-btn" onclick="closeModal()">Hủy</button><button class="add" onclick="savePromo()">Tạo</button></div>');}
+function savePromo(){const code=document.getElementById('mCode').value.trim().toUpperCase();const d=document.getElementById('mDesc').value.trim();if(!code||!d){toast('Nhập mã và mô tả');return;}PROMOS.unshift({code,d,st:'Đang chạy',on:true});savePr();closeModal();toast('Đã tạo mã '+code);render();}
+function togglePromo(code){const p=PROMOS.find(x=>x.code===code);if(p){p.on=!p.on;savePr();toast(p.on?'Đã bật '+code:'Đã tắt '+code);render();}}
 
 let view='overview';
 function nav(v,el){
@@ -219,9 +265,9 @@ function kpi(bg,fg,icon,v,l,trend,trtext){
 }
 
 function products(){
-  return '<div class="toolbar"><button class="add" onclick="toast(\'Mở form thêm sản phẩm\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>Thêm sản phẩm</button><button class="act-btn" onclick="toast(\'Tải lên file Excel\')">Đăng hàng loạt (Excel)</button><div class="sp"></div></div>'+
+  return '<div class="toolbar"><button class="add" onclick="openProd()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>Thêm sản phẩm</button><button class="act-btn" onclick="toast(\'Tải lên file Excel\')">Đăng hàng loạt (Excel)</button><div class="sp"></div></div>'+
   '<div class="panel" style="padding:6px 8px"><table><thead><tr><th>Sản phẩm</th><th>Danh mục</th><th>Giá</th><th>Tồn kho</th><th>Đã bán</th><th></th></tr></thead><tbody>'+
-  PRODUCTS.map(p=>'<tr><td><div class="prod-cell"><div class="cover-sm">'+cover(p)+'</div><span class="nm">'+p.name+'</span></div></td><td>'+p.cat+'</td><td style="font-weight:600">'+fmt(p.price)+'</td><td>'+stockBadge(p.stock)+'</td><td>'+p.sold.toLocaleString('vi-VN')+'</td><td><button class="act-btn" onclick="toast(\'Sửa: '+p.name+'\')">Sửa</button></td></tr>').join('')+
+  PRODUCTS.map(p=>'<tr><td><div class="prod-cell"><div class="cover-sm">'+cover(p)+'</div><span class="nm">'+p.name+'</span></div></td><td>'+p.cat+'</td><td style="font-weight:600">'+fmt(p.price)+'</td><td>'+stockBadge(p.stock)+'</td><td>'+p.sold.toLocaleString('vi-VN')+'</td><td style="white-space:nowrap"><button class="act-btn" onclick="openProd('+p.id+')">Sửa</button><button class="del-btn" onclick="delProd('+p.id+')">Xóa</button></td></tr>').join('')+
   '</tbody></table></div>';
 }
 
@@ -231,7 +277,7 @@ function orders(){
   const list=oFilter==='all'?ORDERS:ORDERS.filter(o=>o.status===oFilter);
   return '<div class="toolbar">'+chips.map(c=>'<button class="fchip '+(oFilter===c[0]?'on':'')+'" onclick="oFilter=\''+c[0]+'\';render()">'+c[1]+'</button>').join('')+'</div>'+
   '<div class="panel" style="padding:6px 8px"><table><thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Ngày</th><th>SL</th><th>Tổng tiền</th><th>Trạng thái</th><th></th></tr></thead><tbody>'+
-  list.map(o=>'<tr><td style="font-weight:600">#'+o.id+'</td><td>'+o.cust+'<div style="font-size:11.5px;color:var(--text-soft)">'+o.role+'</div></td><td>'+o.date+'</td><td>'+o.items+'</td><td style="font-weight:600">'+fmt(o.total)+'</td><td><span class="badge '+STATUS[o.status][1]+'">'+STATUS[o.status][0]+'</span></td><td><button class="act-btn" onclick="toast(\'Cập nhật đơn #'+o.id+'\')">Cập nhật</button></td></tr>').join('')+
+  list.map(o=>'<tr><td style="font-weight:600">#'+o.id+'</td><td>'+o.cust+'<div style="font-size:11.5px;color:var(--text-soft)">'+o.role+'</div></td><td>'+o.date+'</td><td>'+o.items+'</td><td style="font-weight:600">'+fmt(o.total)+'</td><td><span class="badge '+STATUS[o.status][1]+'">'+STATUS[o.status][0]+'</span></td><td><button class="act-btn" onclick="advO(\''+o.id+'\')">Cập nhật ›</button></td></tr>').join('')+
   (list.length?'':'<tr><td colspan="7" style="text-align:center;color:var(--text-soft);padding:30px">Không có đơn hàng ở trạng thái này.</td></tr>')+
   '</tbody></table></div>';
 }
@@ -243,8 +289,8 @@ function users(){
 }
 
 function promos(){
-  return '<div class="toolbar"><button class="add" onclick="toast(\'Tạo khuyến mãi mới\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>Tạo khuyến mãi</button></div>'+
-  '<div class="promo-grid">'+PROMOS.map(p=>'<div class="promo"><div class="code">'+p.code+'</div><div class="d">'+p.d+'</div><div class="st"><span class="badge '+(p.on?'b-done':'b-wait')+'">'+(p.on?'Đang chạy':'Lên lịch')+'</span></div><div style="margin-top:12px"><button class="act-btn" onclick="toast(\'Sửa mã '+p.code+'\')">Chỉnh sửa</button></div></div>').join('')+'</div>';
+  return '<div class="toolbar"><button class="add" onclick="openPromo()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>Tạo khuyến mãi</button></div>'+
+  '<div class="promo-grid">'+PROMOS.map(p=>'<div class="promo"><div class="code">'+p.code+'</div><div class="d">'+p.d+'</div><div class="st"><span class="badge '+(p.on?'b-done':'b-wait')+'">'+(p.on?'Đang chạy':'Tạm tắt')+'</span></div><div style="margin-top:12px"><button class="act-btn" onclick="togglePromo(\''+p.code+'\')">'+(p.on?'Tắt':'Bật')+'</button></div></div>').join('')+'</div>';
 }
 
 function settings(){

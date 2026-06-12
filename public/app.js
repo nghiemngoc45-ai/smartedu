@@ -39,13 +39,20 @@ function cover(p,scale){
 }
 function discount(p){return Math.round((1-p.price/p.old)*100);}
 
+/* ---------------- Persistence (localStorage) ---------------- */
+const LS={
+  get(k,d){try{const v=localStorage.getItem('edumart_'+k);return v===null?d:JSON.parse(v);}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem('edumart_'+k,JSON.stringify(v));}catch(e){}}
+};
+
 /* ---------------- Cart ---------------- */
-let cart = {};
+let cart = LS.get('cart',{});
+function saveCart(){LS.set('cart',cart);}
 function addToCart(id,qty){
   qty=qty||1; cart[id]=(cart[id]||0)+qty;
-  updateCartCount(); toast('Đã thêm vào giỏ hàng');
+  saveCart(); updateCartCount(); toast('Đã thêm vào giỏ hàng');
 }
-function setQty(id,q){ if(q<=0){delete cart[id];}else{cart[id]=q;} updateCartCount(); if(view==='cart')renderCart(); }
+function setQty(id,q){ if(q<=0){delete cart[id];}else{cart[id]=q;} saveCart(); updateCartCount(); if(view==='cart')renderCart(); }
 function updateCartCount(){
   const n=Object.values(cart).reduce((a,b)=>a+b,0);
   const el=document.getElementById('cartCount');
@@ -61,6 +68,50 @@ function applyVoucher(){
   else {voucherPct=0;toast('Mã không hợp lệ');}
   renderCart();
 }
+
+/* ---------------- Wishlist ---------------- */
+let wishlist = LS.get('wishlist',[]);          // mảng id sản phẩm
+function inWish(id){return wishlist.includes(Number(id));}
+function toggleWish(id){
+  id=Number(id);
+  if(inWish(id)){wishlist=wishlist.filter(x=>x!==id);toast('Đã bỏ khỏi yêu thích');}
+  else{wishlist.push(id);toast('Đã lưu vào yêu thích');addNotif('Đã thêm “'+P.find(p=>p.id===id).name+'” vào danh sách yêu thích');}
+  LS.set('wishlist',wishlist); updateWishCount();
+  if(view==='wishlist')renderWishlist();
+  // cập nhật icon tim đang hiển thị
+  document.querySelectorAll('[data-wish="'+id+'"]').forEach(el=>el.classList.toggle('on',inWish(id)));
+}
+function updateWishCount(){
+  const el=document.getElementById('wishCount'); if(!el)return;
+  el.textContent=wishlist.length; el.style.display=wishlist.length>0?'flex':'none';
+}
+
+/* ---------------- Recently viewed ---------------- */
+let recentIds = LS.get('recent',[]);
+function pushRecent(id){
+  id=Number(id); recentIds=[id,...recentIds.filter(x=>x!==id)].slice(0,8);
+  LS.set('recent',recentIds);
+}
+
+/* ---------------- Notifications ---------------- */
+let notifs = LS.get('notifs',[
+  {t:'Chào mừng bạn đến EduMart! Nhập mã EDU10 để giảm 10% đơn đầu tiên.',time:'Hôm nay',read:false},
+  {t:'Flash Sale sách tham khảo đang diễn ra — giảm tới 40%.',time:'Hôm nay',read:false}
+]);
+function saveNotifs(){LS.set('notifs',notifs);updateNotifCount();}
+function addNotif(text){notifs.unshift({t:text,time:'Vừa xong',read:false});saveNotifs();}
+function updateNotifCount(){
+  const el=document.getElementById('notifCount'); if(!el)return;
+  const n=notifs.filter(x=>!x.read).length;
+  el.textContent=n; el.style.display=n>0?'flex':'none';
+}
+
+/* ---------------- Reviews & Q&A (per product) ---------------- */
+let reviewsStore = LS.get('reviews',{});   // {id:[{a,name,rate,text,img,date}]}
+let questionsStore = LS.get('questions',{}); // {id:[{q,a,date}]}
+
+/* ---------------- B2B / RFQ ---------------- */
+let rfqs = LS.get('rfqs',[]);
 
 /* ---------------- Toast ---------------- */
 let toastT;
@@ -85,6 +136,15 @@ function render(){
   else if(view==='account')renderAccount();
   else if(view==='checkout')renderCheckout();
   else if(view==='orderdone')renderOrderDone();
+  else if(view==='wishlist')renderWishlist();
+  else if(view==='order')renderOrderDetail();
+  else if(view==='notif')renderNotifications();
+  else if(view==='rfq')renderRFQ();
+  else if(view==='classlist')renderClassList();
+  else if(view==='promo')renderPromoHub();
+  else if(view==='wheel')renderWheel();
+  else if(view==='missions')renderMissions();
+  else if(view==='referral')renderReferral();
 }
 
 /* ---------------- Cards ---------------- */
@@ -92,7 +152,7 @@ function pcard(p){
   return '<div class="pcard">'+
     '<div class="pcover" style="background:#f3ede3" onclick="go(\'product\','+p.id+')">'+
       (p.old>p.price?'<span class="badge">-'+discount(p)+'%</span>':'')+
-      '<button class="fav" onclick="event.stopPropagation();toast(\'Đã lưu vào yêu thích\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9Z"/></svg></button>'+
+      '<button class="fav'+(inWish(p.id)?' on':'')+'" data-wish="'+p.id+'" onclick="event.stopPropagation();toggleWish('+p.id+')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9Z"/></svg></button>'+
       cover(p)+
     '</div>'+
     '<div class="pinfo">'+
@@ -129,7 +189,7 @@ function hmCard(p,dark){
       (isBook?'<div class="hm-cov-tt"><div class="t">'+p.name+'</div><div class="a">'+p.by+'</div></div>':'')+
       '<span class="hm-disc">-'+discount(p)+'%</span>'+
       (tag?'<span class="hm-tag">'+tag+'</span>':'')+
-      '<button class="hm-fav" onclick="event.stopPropagation();toast(\'Đã lưu vào yêu thích\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9Z"/></svg></button>'+
+      '<button class="hm-fav'+(inWish(p.id)?' on':'')+'" data-wish="'+p.id+'" onclick="event.stopPropagation();toggleWish('+p.id+')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9Z"/></svg></button>'+
     '</div>'+
     '<div class="hm-info">'+
       '<div class="hm-nm" onclick="go(\'product\','+p.id+')">'+p.name+'</div>'+
@@ -339,10 +399,12 @@ function renderListing(){
 /* ---------------- Product detail ---------------- */
 let pdpQty=1,pdpVar=0;
 function renderProduct(){
-  const p=P.find(x=>x.id==arg); pdpQty=1;pdpVar=0;
+  const p=P.find(x=>x.id==arg); pdpQty=1;pdpVar=0; window._rvStar=5;
+  pushRecent(p.id);
   const related=P.filter(x=>x.cat===p.cat&&x.id!==p.id).slice(0,5);
   const variants=p.cat==='sach'?['Bìa mềm','Bìa cứng']:['Loại tiêu chuẩn','Combo tiết kiệm'];
-  const reviews=[['N','Ngọc Anh',5,'Sách đẹp, giao nhanh, đóng gói cẩn thận. Rất hài lòng!'],['T','Thầy Tuấn',5,'Mua cho lớp, chất lượng tốt, giá hợp lý cho giáo viên.'],['H','Hương',4,'Nội dung ổn, ship hơi lâu một chút.']];
+  const seed=[{name:'Ngọc Anh',rate:5,text:'Sách đẹp, giao nhanh, đóng gói cẩn thận. Rất hài lòng!'},{name:'Thầy Tuấn',rate:5,text:'Mua cho lớp, chất lượng tốt, giá hợp lý cho giáo viên.'},{name:'Hương',rate:4,text:'Nội dung ổn, ship hơi lâu một chút.'}];
+  const reviews=[...(reviewsStore[p.id]||[]),...seed];
 
   document.getElementById('app').innerHTML=
   '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <a onclick="go(\'listing\',\''+p.cat+'\')">'+CATLBL[p.cat]+'</a> › <b>'+p.name+'</b></div>'+
@@ -370,7 +432,8 @@ function renderProduct(){
   '</div>'+
 
   '<div class="section-head"><h2>Sản phẩm liên quan</h2></div>'+
-  '<div class="grid">'+related.map(pcard).join('')+'</div>';
+  '<div class="grid">'+related.map(pcard).join('')+'</div>'+
+  recentSection(p.id);
 
   window._pdpReviews=reviews; window._pdpP=p; pdpTab(0,null);
 }
@@ -380,8 +443,36 @@ function pdpTab(i,btn){
   if(btn){document.querySelectorAll('.tab-heads button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
   const p=window._pdpP,el=document.getElementById('tabBody');
   if(i===0)el.innerHTML='<p>'+p.name+' là sản phẩm '+(p.cat==='sach'?'thuộc danh mục sách, phù hợp với học sinh/sinh viên ở trình độ tương ứng. Nội dung được biên soạn kỹ lưỡng, in ấn rõ nét.':'thuộc nhóm '+CATLBL[p.cat].toLowerCase()+', bền đẹp và phù hợp cho việc học tập.')+' Hãng/NXB: '+p.nxb+'. Sản phẩm chính hãng, có đầy đủ hóa đơn VAT khi yêu cầu.</p>';
-  else if(i===1)el.innerHTML=window._pdpReviews.map(r=>'<div class="review"><div class="rh"><div class="av">'+r[0]+'</div><div><div class="rn">'+r[1]+'</div><div class="rs">'+'★'.repeat(r[2])+'☆'.repeat(5-r[2])+'</div></div></div><p style="margin:0;font-size:14px">'+r[3]+'</p></div>').join('');
-  else el.innerHTML='<p style="color:var(--text-soft)">Chưa có câu hỏi nào. <a style="color:var(--ink);font-weight:500" onclick="toast(\'Đã mở ô đặt câu hỏi\')">Đặt câu hỏi cho người bán ›</a></p>';
+  else if(i===1){
+    const list=window._pdpReviews.map(r=>'<div class="review"><div class="rh"><div class="av">'+(r.name||'?').charAt(0).toUpperCase()+'</div><div><div class="rn">'+r.name+'</div><div class="rs">'+'★'.repeat(r.rate)+'☆'.repeat(5-r.rate)+'</div></div></div>'+(r.img?'<img src="'+r.img+'" alt="" style="max-width:140px;border-radius:8px;margin:6px 0;display:block">':'')+'<p style="margin:0;font-size:14px">'+r.text+'</p></div>').join('');
+    el.innerHTML='<div class="rv-form"><div class="rv-h">Viết đánh giá của bạn</div><div class="rv-stars" id="rvStars">'+[1,2,3,4,5].map(n=>'<span data-n="'+n+'" onclick="setRvStar('+n+')">★</span>').join('')+'</div><textarea id="rvText" placeholder="Chia sẻ cảm nhận về sản phẩm…"></textarea><input id="rvImg" placeholder="Dán link ảnh thực tế (không bắt buộc)"><button class="btn-primary" onclick="addReview('+p.id+')">Gửi đánh giá</button></div>'+list;
+    setRvStar(window._rvStar||5);
+  }
+  else {
+    const qs=questionsStore[p.id]||[];
+    const list=qs.length?qs.map(x=>'<div class="review"><div style="font-weight:600;font-size:14px">❓ '+x.q+'</div>'+(x.a?'<div style="font-size:13.5px;color:var(--text-soft);margin-top:5px">↳ '+x.a+'</div>':'<div style="font-size:12.5px;color:var(--text-soft);margin-top:5px">Người bán sẽ trả lời sớm.</div>')+'</div>').join(''):'<p style="color:var(--text-soft)">Chưa có câu hỏi nào. Hãy là người đầu tiên!</p>';
+    el.innerHTML='<div class="rv-form"><div class="rv-h">Đặt câu hỏi cho người bán</div><input id="qaText" placeholder="Ví dụ: Sách có kèm đáp án không?"><button class="btn-primary" onclick="addQuestion('+p.id+')">Gửi câu hỏi</button></div>'+list;
+  }
+}
+function setRvStar(n){window._rvStar=n;document.querySelectorAll('#rvStars span').forEach(s=>s.classList.toggle('on',Number(s.dataset.n)<=n));}
+function addReview(id){
+  const t=(document.getElementById('rvText').value||'').trim(); if(!t){toast('Nhập nội dung đánh giá nhé');return;}
+  const img=(document.getElementById('rvImg').value||'').trim();
+  const r={name:user?user.name:'Khách EduMart',rate:window._rvStar||5,text:t,img:img};
+  (reviewsStore[id]=reviewsStore[id]||[]).unshift(r); LS.set('reviews',reviewsStore);
+  window._pdpReviews=[r,...window._pdpReviews]; window._rvStar=5;
+  if(user){user.points=(user.points||0)+20;saveUser();}
+  toast('Cảm ơn đánh giá của bạn!'+(user?' +20 điểm':'')); pdpTab(1,null);
+}
+function addQuestion(id){
+  const t=(document.getElementById('qaText').value||'').trim(); if(!t){toast('Nhập câu hỏi nhé');return;}
+  (questionsStore[id]=questionsStore[id]||[]).unshift({q:t,a:''}); LS.set('questions',questionsStore);
+  toast('Đã gửi câu hỏi cho người bán'); pdpTab(2,null);
+}
+function recentSection(excludeId){
+  const items=recentIds.filter(id=>id!==Number(excludeId)).map(id=>P.find(p=>p.id===id)).filter(Boolean).slice(0,5);
+  if(!items.length)return '';
+  return '<div class="section-head"><h2>Đã xem gần đây</h2></div><div class="grid">'+items.map(pcard).join('')+'</div>';
 }
 
 /* ---------------- Cart ---------------- */
@@ -476,8 +567,10 @@ async function gieoQue(){
 }
 
 /* ---------------- Account / Auth ---------------- */
-const ROLELBL={student:'Học sinh / Sinh viên',teacher:'Giáo viên',parent:'Phụ huynh'};
-let user=null, orders=[], acctTab='orders', authMode=1;
+const ROLELBL={student:'Học sinh / Sinh viên',teacher:'Giáo viên',parent:'Phụ huynh',school:'Trường học / Tổ chức'};
+let user=LS.get('user',null), orders=LS.get('orders',[]), acctTab='orders', authMode=1;
+function saveUser(){LS.set('user',user);}
+function saveOrders(){LS.set('orders',orders);}
 
 function renderLogin(){
   document.getElementById('app').innerHTML=
@@ -497,19 +590,21 @@ function authTab(login){
     '<div style="text-align:center;font-size:12px;color:var(--text-soft);margin:14px 0 8px">hoặc tiếp tục với</div>'+
     '<div class="social-btns"><button onclick="doLogin()">Zalo</button><button onclick="doLogin()">Google</button><button onclick="doLogin()">Facebook</button></div>';
 }
+function refCode(name){return 'EDU'+String((name||'EDUMART').split('').reduce((a,c)=>a+c.charCodeAt(0),0)%9000+1000);}
 function doLogin(){
   const nameEl=document.getElementById('lgName'),roleEl=document.getElementById('lgRole');
   const name=nameEl?nameEl.value.trim():'';
-  user={name:name||'Bạn đọc EduMart',role:roleEl?roleEl.value:'student',points:120,phone:'09xx xxx xxx'};
-  toast('Đăng nhập thành công'); acctTab='orders'; go('account');
+  const role=roleEl?roleEl.value:'student';
+  user={name:name||'Bạn đọc EduMart',role:role,points:120,phone:'09xx xxx xxx',ref:refCode(name),checkin:null,streak:0};
+  saveUser(); toast('Đăng nhập thành công'); acctTab='orders'; go('account');
 }
-function logout(){user=null;toast('Đã đăng xuất');go('home');}
+function logout(){user=null;LS.set('user',null);toast('Đã đăng xuất');go('home');}
 function goOrders(){acctTab='orders';go('account');}
 
 function orderCard(o){
   return '<div class="order-card"><div class="oh"><span>Mã đơn <b>#'+o.id+'</b> · '+o.date+'</span><span class="ostatus">'+o.status+'</span></div>'+
     o.items.map(it=>{const p=P.find(x=>x.id==it.id);return '<div class="oi"><div class="cover-sm">'+cover(p)+'</div><div style="flex:1">'+p.name+' × '+it.qty+'</div><div style="font-weight:600">'+fmt(p.price*it.qty)+'</div></div>';}).join('')+
-    '<div style="text-align:right;margin-top:8px;font-weight:700;color:var(--coral)">Tổng: '+fmt(o.total)+'</div></div>';
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px"><button class="act-track" onclick="go(\'order\',\''+o.id+'\')">Theo dõi đơn ›</button><span style="font-weight:700;color:var(--coral)">Tổng: '+fmt(o.total)+'</span></div></div>';
 }
 function acctContent(){
   if(acctTab==='orders'){
@@ -526,7 +621,10 @@ function acctContent(){
     return '<div class="panel"><h3>Sổ địa chỉ</h3><div class="order-card"><div style="font-weight:600;font-size:14px">'+user.name+' · '+user.phone+' <span style="font-size:11px;background:#f6ece4;color:var(--ink);padding:2px 8px;border-radius:20px;margin-left:6px">Mặc định</span></div><div style="font-size:13.5px;color:var(--text-soft);margin-top:4px">123 Đường Láng, P. Láng Thượng, Q. Đống Đa, Hà Nội</div></div><button class="btn-ghost" onclick="toast(\'Đã mở form thêm địa chỉ\')">+ Thêm địa chỉ mới</button></div>';
   }
   if(acctTab==='points'){
-    return '<div class="panel"><h3>Điểm thưởng</h3><div class="stat-row"><div class="stat-box"><div class="v">'+user.points+'</div><div class="l">Điểm tích lũy</div></div><div class="stat-box"><div class="v">Vàng</div><div class="l">Hạng thành viên</div></div><div class="stat-box"><div class="v">'+(user.role==='teacher'?'15%':'5%')+'</div><div class="l">Ưu đãi của bạn</div></div></div><p style="font-size:13px;color:var(--text-soft);margin-top:14px">Mỗi 1.000đ chi tiêu tích 1 điểm. Đổi điểm lấy voucher giảm giá ở mục khuyến mãi.</p></div>';
+    return '<div class="panel"><h3>Điểm thưởng</h3><div class="stat-row"><div class="stat-box"><div class="v">'+user.points+'</div><div class="l">Điểm tích lũy</div></div><div class="stat-box"><div class="v">Vàng</div><div class="l">Hạng thành viên</div></div><div class="stat-box"><div class="v">'+(user.role==='teacher'?'15%':'5%')+'</div><div class="l">Ưu đãi của bạn</div></div></div><p style="font-size:13px;color:var(--text-soft);margin-top:14px">Mỗi 1.000đ chi tiêu tích 1 điểm. Đổi điểm lấy voucher giảm giá ở mục khuyến mãi.</p><div class="acct-promo"><button class="btn-ghost" onclick="go(\'missions\')">Điểm danh</button><button class="btn-ghost" onclick="go(\'wheel\')">Vòng quay</button><button class="btn-ghost" onclick="go(\'referral\')">Giới thiệu bạn</button></div></div>';
+  }
+  if(acctTab==='rfq'){
+    return '<div class="panel"><h3>Yêu cầu báo giá của tôi</h3>'+(rfqs.length?rfqs.map(r=>'<div class="order-card"><div class="oh"><span>Mã <b>#'+r.id+'</b> · '+r.date+'</span><span class="ostatus">'+r.status+'</span></div><div style="font-size:13.5px;font-weight:500">'+r.org+' · '+r.phone+'</div><div style="font-size:13px;color:var(--text-soft);white-space:pre-line;margin-top:6px">'+r.items+'</div></div>').join(''):'<p style="color:var(--text-soft)">Chưa có yêu cầu nào. <a style="color:var(--ink);font-weight:500" onclick="go(\'rfq\')">Gửi yêu cầu báo giá ›</a></p>')+'</div>';
   }
   if(acctTab==='teacher'){
     if(user.role==='teacher')return '<div class="panel"><h3>Xác thực giáo viên</h3><p style="color:#1a7a4a;font-weight:500">✔ Tài khoản của bạn đã được xác thực là giáo viên — đang hưởng ưu đãi đến 15%.</p></div>';
@@ -535,7 +633,7 @@ function acctContent(){
 }
 function renderAccount(){
   if(!user){renderLogin();return;}
-  const nav=[['orders','Đơn hàng của tôi'],['profile','Hồ sơ'],['address','Sổ địa chỉ'],['points','Điểm thưởng'],['teacher','Xác thực giáo viên']];
+  const nav=[['orders','Đơn hàng của tôi'],['rfq','Yêu cầu báo giá'],['profile','Hồ sơ'],['address','Sổ địa chỉ'],['points','Điểm thưởng'],['teacher','Xác thực giáo viên']];
   document.getElementById('app').innerHTML=
   '<div class="acct"><aside class="acct-side"><div class="acct-user"><div class="av">'+user.name.charAt(0).toUpperCase()+'</div><div><div class="nm">'+user.name+'</div><div class="rl">'+ROLELBL[user.role]+'</div></div></div>'+
     '<div class="acct-nav">'+nav.map(n=>'<button class="'+(acctTab===n[0]?'on':'')+'" onclick="acctTab=\''+n[0]+'\';renderAccount()">'+n[1]+'</button>').join('')+'<button class="danger" onclick="logout()">Đăng xuất</button></div></aside>'+
@@ -578,8 +676,11 @@ function placeOrder(total){
   const id=String(Math.floor(Math.random()*90000)+10000);
   const items=Object.entries(cart).map(([k,q])=>({id:Number(k),qty:q}));
   const d=new Date(), date=d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
-  orders.unshift({id,items,total,date,status:'Đang xử lý'});
-  cart={};voucherPct=0;updateCartCount();
+  orders.unshift({id,items,total,date,status:'Đang xử lý',stage:0,placed:date});
+  saveOrders();
+  cart={};voucherPct=0;saveCart();updateCartCount();
+  if(user){user.points=(user.points||0)+Math.floor(total/1000);saveUser();}
+  addNotif('Đơn hàng #'+id+' đã được đặt thành công, tổng '+fmt(total)+'.');
   window._lastOrder={id,total};
   go('orderdone');
 }
@@ -593,5 +694,179 @@ function renderOrderDone(){
     '<div class="acts"><button class="btn-ghost" onclick="goOrders()">Xem đơn hàng</button><button class="btn-primary" onclick="go(\'home\')">Tiếp tục mua sắm</button></div></div>';
 }
 
+/* ---------------- Shared helpers for new modules ---------------- */
+function val(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+function todayStr(){const d=new Date();return d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();}
+function loginPrompt(action){
+  document.getElementById('app').innerHTML='<div class="empty"><svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg><div style="font-size:17px;margin:8px 0 12px">Vui lòng đăng nhập để '+action+'.</div><a class="hero-cta" style="display:inline-flex" onclick="go(\'account\')">Đăng nhập / Đăng ký</a></div>';
+}
+
+/* ---------------- Wishlist page ---------------- */
+function renderWishlist(){
+  const items=wishlist.map(id=>P.find(p=>p.id===id)).filter(Boolean);
+  document.getElementById('app').innerHTML=
+   '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <b>Yêu thích</b></div>'+
+   '<h1 class="page-title">Danh sách yêu thích'+(items.length?' ('+items.length+')':'')+'</h1>'+
+   (items.length?'<div class="grid">'+items.map(pcard).join('')+'</div>'
+    :'<div class="empty"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9Z"/></svg><div style="font-size:17px;margin-bottom:6px">Chưa có sản phẩm yêu thích</div><a class="hero-cta" style="display:inline-flex" onclick="go(\'home\')">Khám phá sản phẩm</a></div>');
+}
+
+/* ---------------- Order tracking ---------------- */
+function orderStage(o){return typeof o.stage==='number'?o.stage:(o.status==='Hoàn thành'?4:o.status==='Đang giao'?3:1);}
+function advanceOrder(id){
+  const o=orders.find(x=>x.id===id); if(!o)return;
+  let s=orderStage(o);
+  if(s<4){s++;o.stage=s;o.status=['Chờ xác nhận','Đang xử lý','Đang đóng gói','Đang giao','Đã giao'][s];saveOrders();addNotif('Đơn #'+id+' cập nhật: '+o.status);renderOrderDetail();}
+}
+function reorder(id){const o=orders.find(x=>x.id===id);if(!o)return;o.items.forEach(it=>{cart[it.id]=(cart[it.id]||0)+it.qty;});saveCart();updateCartCount();toast('Đã thêm lại sản phẩm vào giỏ');go('cart');}
+function renderOrderDetail(){
+  const o=orders.find(x=>x.id===arg);
+  if(!o){go('account');return;}
+  const STAGES=['Đã đặt hàng','Đang xử lý','Đang đóng gói','Đang giao','Đã giao'];
+  const cur=orderStage(o);
+  const steps=STAGES.map((s,i)=>'<div class="tl-step '+(i<=cur?'done':'')+(i===cur?' cur':'')+'"><span class="dot"></span><div class="lbl">'+s+'</div></div>').join('');
+  const items=o.items.map(it=>{const p=P.find(x=>x.id==it.id);return '<div class="oi"><div class="cover-sm">'+cover(p)+'</div><div style="flex:1">'+p.name+' × '+it.qty+'</div><div style="font-weight:600">'+fmt(p.price*it.qty)+'</div></div>';}).join('');
+  document.getElementById('app').innerHTML=
+   '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <a onclick="go(\'account\')">Tài khoản</a> › <b>Đơn #'+o.id+'</b></div>'+
+   '<h1 class="page-title">Theo dõi đơn hàng #'+o.id+'</h1>'+
+   '<div class="cart"><div>'+
+     '<div class="panel"><h3>Trạng thái vận chuyển</h3><div class="timeline">'+steps+'</div>'+
+       (cur<4?'<button class="btn-ghost" style="margin-top:16px" onclick="advanceOrder(\''+o.id+'\')">Mô phỏng cập nhật trạng thái ›</button>':'<p style="color:#1a7a4a;font-weight:500;margin-top:16px">✔ Đơn hàng đã giao thành công.</p>')+
+     '</div>'+
+     '<div class="panel" style="margin-top:16px"><h3>Sản phẩm trong đơn</h3>'+items+'</div>'+
+   '</div>'+
+   '<div class="summary"><h3>Thông tin đơn</h3>'+
+     '<div class="sum-row"><span>Ngày đặt</span><span>'+(o.placed||o.date)+'</span></div>'+
+     '<div class="sum-row"><span>Số sản phẩm</span><span>'+o.items.reduce((a,b)=>a+b.qty,0)+'</span></div>'+
+     '<div class="sum-row total"><span>Tổng tiền</span><b>'+fmt(o.total)+'</b></div>'+
+     '<button class="checkout" onclick="reorder(\''+o.id+'\')">Mua lại đơn này</button>'+
+     '<button class="btn-ghost" style="width:100%;margin-top:10px" onclick="toast(\'Đã gửi yêu cầu đổi/trả — CSKH sẽ liên hệ\')">Yêu cầu đổi / trả</button>'+
+   '</div></div>';
+}
+
+/* ---------------- Notifications ---------------- */
+function renderNotifications(){
+  notifs.forEach(n=>n.read=true); saveNotifs();
+  document.getElementById('app').innerHTML=
+   '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <b>Thông báo</b></div>'+
+   '<h1 class="page-title">Thông báo</h1>'+
+   (notifs.length?'<div class="panel" style="padding:4px 18px">'+notifs.map(n=>'<div class="notif-row"><div class="ic">🔔</div><div><div>'+n.t+'</div><div class="tm">'+n.time+'</div></div></div>').join('')+'</div>':'<div class="empty">Chưa có thông báo nào.</div>');
+}
+
+/* ---------------- B2B: RFQ + class list ---------------- */
+function renderRFQ(){
+  document.getElementById('app').innerHTML=
+   '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <b>Trường học · Mua sỉ</b></div>'+
+   '<div class="b2b-hero"><p class="eyebrow">EduMart for Schools</p><h1>Mua sỉ &amp; Yêu cầu báo giá cho trường học</h1><p class="lead">Đặt số lượng lớn, nhận chiết khấu theo bậc, xuất hóa đơn VAT và biên bản giao nhận. Gửi yêu cầu, đội ngũ B2B phản hồi trong 24 giờ.</p><div class="b2b-perks"><span>✔ Chiết khấu theo số lượng</span><span>✔ Công nợ theo kỳ</span><span>✔ Hóa đơn VAT &amp; hợp đồng</span><span>✔ Giao theo lịch năm học</span></div></div>'+
+   '<div class="checkout-grid"><div>'+
+     '<div class="step-card"><h3><span class="n">1</span>Thông tin tổ chức</h3>'+
+       '<div class="form-row"><div class="form-field"><label>Tên trường / tổ chức</label><input id="rqOrg" placeholder="VD: THCS Lê Quý Đôn"></div><div class="form-field"><label>Người phụ trách</label><input id="rqName" placeholder="Họ và tên"></div></div>'+
+       '<div class="form-row"><div class="form-field"><label>Số điện thoại</label><input id="rqPhone" placeholder="09xx xxx xxx"></div><div class="form-field"><label>Email nhận báo giá</label><input id="rqEmail" placeholder="truong@edu.vn"></div></div></div>'+
+     '<div class="step-card"><h3><span class="n">2</span>Danh sách cần báo giá</h3>'+
+       '<div class="form-field"><label>Sản phẩm &amp; số lượng</label><textarea id="rqItems" rows="5" placeholder="VD:&#10;- Bộ SGK lớp 6 Kết nối tri thức × 120&#10;- Vở Campus 200 trang × 300 lốc"></textarea></div>'+
+       '<div class="form-field"><label>Ghi chú</label><textarea id="rqNote" rows="2" placeholder="Cần nhận trước 15/08, xuất hóa đơn VAT…"></textarea></div></div>'+
+   '</div>'+
+   '<div class="summary"><h3>Bậc chiết khấu</h3><p style="font-size:13px;color:var(--text-soft);margin:0 0 12px">Yêu cầu miễn phí, không ràng buộc.</p>'+
+     '<div class="bracket"><div class="br"><span>Từ 50 sản phẩm</span><b>-5%</b></div><div class="br"><span>Từ 200 sản phẩm</span><b>-10%</b></div><div class="br"><span>Từ 500 sản phẩm</span><b>-15%</b></div></div>'+
+     '<button class="checkout" onclick="submitRFQ()">Gửi yêu cầu báo giá</button>'+
+     '<button class="btn-ghost" style="width:100%;margin-top:10px" onclick="go(\'classlist\')">Mua theo danh sách lớp ›</button>'+
+   '</div></div>';
+}
+function submitRFQ(){
+  const org=val('rqOrg'),items=val('rqItems'),phone=val('rqPhone');
+  if(!org||!phone||!items){toast('Nhập tên tổ chức, SĐT và danh sách sản phẩm nhé');return;}
+  const id='RFQ'+(Math.floor(Math.random()*9000)+1000);
+  rfqs.unshift({id,org,name:val('rqName'),phone,email:val('rqEmail'),items,note:val('rqNote'),date:todayStr(),status:'Chờ báo giá'});
+  LS.set('rfqs',rfqs); addNotif('Yêu cầu báo giá '+id+' đã gửi, phản hồi trong 24h.');
+  window.scrollTo(0,0);
+  document.getElementById('app').innerHTML='<div class="done"><div class="check"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 13 4 4L19 7"/></svg></div><h1>Đã gửi yêu cầu báo giá!</h1><p>Mã yêu cầu của bạn</p><div class="ocode">#'+id+'</div><p style="margin-top:10px">Đội ngũ B2B sẽ liên hệ <b>'+org+'</b> trong vòng 24 giờ.</p><div class="acts"><button class="btn-ghost" onclick="go(\'home\')">Về trang chủ</button><button class="btn-primary" onclick="'+(user?'acctTab=\'rfq\';go(\'account\')':'go(\'classlist\')')+'">'+(user?'Xem yêu cầu của tôi':'Xem danh sách lớp')+'</button></div></div>';
+}
+let clsSel='Lớp 6';
+function renderClassList(){
+  const CLS={'Lớp 1':[2,9,10,8],'Lớp 6':[1,7,8,3],'Lớp 12':[6,11,12,5]};
+  const ids=CLS[clsSel]||[];
+  const rows=ids.map(id=>{const p=P.find(x=>x.id===id);return '<div class="cart-item"><div class="cover-sm">'+cover(p)+'</div><div class="ci-info"><div class="nm">'+p.name+'</div><div class="pr">'+fmt(p.price)+'</div></div><button class="add" style="width:auto;padding:8px 14px;flex:none" onclick="addToCart('+id+')">Thêm</button></div>';}).join('');
+  const total=ids.reduce((s,id)=>s+P.find(x=>x.id===id).price,0);
+  document.getElementById('app').innerHTML=
+   '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <a onclick="go(\'rfq\')">Mua sỉ</a> › <b>Danh sách theo lớp</b></div>'+
+   '<h1 class="page-title">Danh sách đồ dùng học tập theo lớp</h1>'+
+   '<p style="color:var(--text-soft);margin:0 0 16px">Chọn lớp để xem danh sách chuẩn nhà trường gợi ý — thêm cả bộ chỉ với một chạm.</p>'+
+   '<div class="chiprow">'+Object.keys(CLS).map(c=>'<button class="fchip2 '+(clsSel===c?'on':'')+'" onclick="clsSel=\''+c+'\';renderClassList()">'+c+'</button>').join('')+'</div>'+
+   '<div class="cart" style="margin-top:14px"><div>'+rows+'</div><div class="summary"><h3>Trọn bộ '+clsSel+'</h3><div class="sum-row"><span>'+ids.length+' sản phẩm</span><span>'+fmt(total)+'</span></div><div class="sum-row total"><span>Tạm tính</span><b>'+fmt(total)+'</b></div><button class="checkout" onclick="addAllClass(['+ids.join(',')+'])">Thêm cả bộ vào giỏ</button></div></div>';
+}
+function addAllClass(ids){ids.forEach(id=>{cart[id]=(cart[id]||0)+1;});saveCart();updateCartCount();toast('Đã thêm cả bộ vào giỏ');go('cart');}
+
+/* ---------------- Promotions hub ---------------- */
+function renderPromoHub(){
+  const cards=[['🎡','Vòng quay may mắn','Quay mỗi ngày nhận voucher, điểm thưởng và quà.','wheel'],['✅','Nhiệm vụ &amp; điểm danh','Điểm danh mỗi ngày, làm nhiệm vụ để tích điểm.','missions'],['🤝','Giới thiệu bạn bè','Mời bạn, cả hai cùng nhận ưu đãi.','referral']];
+  document.getElementById('app').innerHTML=
+   '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <b>Ưu đãi</b></div>'+
+   '<h1 class="page-title">Trung tâm ưu đãi</h1>'+
+   '<div class="promo-hub">'+cards.map(c=>'<div class="ph-card" onclick="go(\''+c[3]+'\')"><div class="emo">'+c[0]+'</div><h3>'+c[1]+'</h3><p>'+c[2]+'</p><span class="coll-link">Tham gia ›</span></div>').join('')+'</div>'+
+   '<div class="section-head"><h2>Mã giảm giá đang có</h2></div>'+
+   '<div class="vouchers">'+[['EDU10','Giảm 10% cho mọi đơn hàng'],['GIAOVIEN','Ưu đãi giáo viên giảm 15%'],['FREESHIP','Miễn phí vận chuyển đơn từ 200k']].map(v=>'<div class="vch"><div class="vch-l"><div class="vcode">'+v[0]+'</div><div class="vd">'+v[1]+'</div></div><button class="act-copy" onclick="copyCode(\''+v[0]+'\')">Lưu mã</button></div>').join('')+'</div>';
+}
+function copyCode(c){toast('Đã lưu mã '+c+' — áp dụng ở bước thanh toán');}
+
+/* Lucky wheel */
+const WHEEL_PRIZES=['+50 điểm','Voucher 10k','+20 điểm','Freeship','Voucher 30k','May mắn lần sau'];
+function renderWheel(){
+  const can=LS.get('lastSpin',null)!==todayStr();
+  document.getElementById('app').innerHTML=
+   '<div class="breadcrumb"><a onclick="go(\'promo\')">Ưu đãi</a> › <b>Vòng quay</b></div>'+
+   '<div class="wheel-wrap"><h1 class="page-title" style="text-align:center">🎡 Vòng quay may mắn</h1>'+
+   '<div class="wheel"><div class="wheel-pin"></div></div>'+
+   '<div id="wheelResult" class="wheel-res"></div>'+
+   '<button class="checkout" id="spinBtn" style="max-width:240px" '+(can?'':'disabled')+' onclick="spinWheel()">'+(can?'Quay ngay (miễn phí)':'Mai quay tiếp nhé!')+'</button>'+
+   '<p style="color:var(--text-soft);font-size:13px;margin-top:10px">Mỗi ngày quay 1 lần miễn phí.</p></div>';
+}
+function spinWheel(){
+  if(LS.get('lastSpin',null)===todayStr()){toast('Hôm nay bạn đã quay rồi');return;}
+  const prize=WHEEL_PRIZES[Math.floor(Math.random()*WHEEL_PRIZES.length)];
+  LS.set('lastSpin',todayStr());
+  const w=document.querySelector('.wheel'); if(w){w.classList.add('spin');}
+  const btn=document.getElementById('spinBtn'); if(btn){btn.setAttribute('disabled','');btn.textContent='Mai quay tiếp nhé!';}
+  setTimeout(()=>{
+    const r=document.getElementById('wheelResult'); if(r)r.innerHTML='🎉 Bạn nhận được: <b>'+prize+'</b>';
+    if(user&&prize.indexOf('điểm')>=0){user.points=(user.points||0)+parseInt(prize.replace(/\D/g,''))||0;saveUser();}
+    addNotif('Vòng quay may mắn: bạn nhận “'+prize+'”.');
+    toast('Kết quả: '+prize);
+  },1100);
+}
+
+/* Missions & check-in */
+function renderMissions(){
+  if(!user){loginPrompt('điểm danh và nhận điểm');return;}
+  const today=todayStr(); const checked=user.checkin===today;
+  const tasks=[['📅 Điểm danh hôm nay','+5 điểm',checked],['👀 Xem ít nhất 3 sản phẩm','+10 điểm',recentIds.length>=3],['❤️ Thêm 1 sản phẩm yêu thích','+5 điểm',wishlist.length>=1],['🛒 Hoàn tất 1 đơn hàng','+50 điểm',orders.length>=1]];
+  document.getElementById('app').innerHTML=
+   '<div class="breadcrumb"><a onclick="go(\'promo\')">Ưu đãi</a> › <b>Nhiệm vụ</b></div>'+
+   '<h1 class="page-title">Nhiệm vụ &amp; Điểm danh</h1>'+
+   '<div class="cart"><div>'+
+     '<div class="panel"><h3>Điểm danh hằng ngày</h3><p style="color:var(--text-soft);font-size:13.5px;margin:0 0 12px">Chuỗi điểm danh: <b>'+(user.streak||0)+'</b> ngày liên tiếp.</p>'+
+       '<button class="'+(checked?'btn-ghost':'btn-primary')+'" '+(checked?'disabled':'')+' onclick="checkin()">'+(checked?'Đã điểm danh hôm nay ✔':'Điểm danh nhận +5 điểm')+'</button></div>'+
+     '<div class="panel" style="margin-top:16px"><h3>Nhiệm vụ hằng ngày</h3>'+tasks.map(t=>'<div class="mission"><div class="mi-ic '+(t[2]?'done':'')+'">'+(t[2]?'✔':'')+'</div><div style="flex:1">'+t[0]+'</div><span class="mi-rw">'+t[1]+'</span></div>').join('')+'</div>'+
+   '</div>'+
+   '<div class="summary"><h3>Điểm của bạn</h3><div class="stat-box" style="text-align:center"><div class="v">'+(user.points||0)+'</div><div class="l">điểm tích lũy</div></div><button class="checkout" onclick="go(\'wheel\')">Dùng điểm quay thưởng</button></div></div>';
+}
+function checkin(){
+  if(!user)return; const today=todayStr(); if(user.checkin===today){toast('Bạn đã điểm danh hôm nay');return;}
+  user.streak=(user.streak||0)+1; user.checkin=today; user.points=(user.points||0)+5; saveUser();
+  addNotif('Điểm danh thành công +5 điểm. Chuỗi '+user.streak+' ngày!');
+  toast('Điểm danh +5 điểm'); renderMissions();
+}
+
+/* Referral */
+function renderReferral(){
+  if(!user){loginPrompt('lấy mã giới thiệu của bạn');return;}
+  const code=user.ref||refCode(user.name);
+  document.getElementById('app').innerHTML=
+   '<div class="breadcrumb"><a onclick="go(\'promo\')">Ưu đãi</a> › <b>Giới thiệu bạn bè</b></div>'+
+   '<h1 class="page-title">Giới thiệu bạn — cả hai cùng lợi</h1>'+
+   '<div class="ref-card"><p class="rl">Mã giới thiệu của bạn</p><div class="ref-code">'+code+'</div><button class="btn-primary" onclick="copyCode(\''+code+'\')">Sao chép mã</button>'+
+   '<div class="ref-steps"><div><b>1</b> Gửi mã cho bạn bè</div><div><b>2</b> Bạn mới nhập mã khi đăng ký</div><div><b>3</b> Mỗi người nhận voucher 20k</div></div></div>';
+}
+
 /* ---------------- init ---------------- */
+updateCartCount(); updateWishCount(); updateNotifCount();
 render();

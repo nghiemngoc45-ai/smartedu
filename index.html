@@ -13,6 +13,7 @@
     <span>Giao đến: Việt Nam</span>
     <span class="sp"></span>
     <a class="mystic" onclick="go('huyenhoc')">✦ Quẻ sách thần số</a>
+    <a onclick="go('promo')">Ưu đãi</a>
     <a onclick="go('account')">Đăng nhập / Tài khoản</a>
     <a onclick="toast('Trung tâm trợ giúp')">Trợ giúp</a>
     <a href="admin.html">Bán hàng cùng EduMart</a>
@@ -27,6 +28,16 @@
       <input id="searchInput" placeholder="Tìm theo tựa sách, tác giả, từ khóa hoặc ISBN…" onkeydown="if(event.key==='Enter')doSearch()" />
     </div>
     <div class="header-actions">
+      <button class="ico-btn" onclick="go('notif')" title="Thông báo">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        Thông báo
+        <span class="badge" id="notifCount" style="display:none">0</span>
+      </button>
+      <button class="ico-btn" onclick="go('wishlist')" title="Yêu thích">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9Z"/></svg>
+        Yêu thích
+        <span class="badge" id="wishCount" style="display:none">0</span>
+      </button>
       <button class="ico-btn" onclick="go('account')" title="Tài khoản">
         <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
         Tài khoản
@@ -48,7 +59,7 @@
     <a onclick="go('listing','thpt')">THPT</a>
     <a onclick="go('listing','sinhvien')">Sinh viên</a>
     <a onclick="go('listing','giaovien')">Giáo viên</a>
-    <a onclick="go('listing','school')">Trường học · Mua sỉ</a>
+    <a onclick="go('rfq')">Trường học · Mua sỉ</a>
     <a class="mystic" onclick="go('huyenhoc')">✦ Quẻ sách</a>
   </div></nav>
 </header>

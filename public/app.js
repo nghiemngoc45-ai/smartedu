@@ -1,7 +1,7 @@
 /* ---------------- Data ---------------- */
 const fmt = n => n.toLocaleString('vi-VN') + 'đ';
 const AUD = {tieuhoc:'Tiểu học',thcs:'THCS',thpt:'THPT',sinhvien:'Sinh viên',giaovien:'Giáo viên',school:'Trường học'};
-const CATLBL = {sach:'Sách',vpp:'Văn phòng phẩm',tbgd:'Thiết bị giáo dục',ebook:'Ebook'};
+const CATLBL = {sach:'Sách',vpp:'Văn phòng phẩm',tbgd:'Thiết bị giáo dục',ebook:'Ebook',audiobook:'Sách nói'};
 
 const P = [
   {id:1,name:'Bộ SGK lớp 6 - Kết nối tri thức',by:'NXB Giáo Dục Việt Nam',cat:'sach',aud:['thcs'],nxb:'Giáo Dục',price:187000,old:249000,rate:4.9,sold:1200,c:'#2f6ca5'},
@@ -22,7 +22,10 @@ const P = [
   {id:16,name:'Tiếng Anh giao tiếp cấp tốc',by:'Lê Hằng',cat:'ebook',aud:['sinhvien','thpt'],nxb:'EduMart Digital',price:59000,old:99000,rate:4.7,sold:4100,c:'#2f6ca5',ebook:true,format:'PDF · EPUB',pages:198,size:5.1},
   {id:17,name:'Tư duy phản biện cho học sinh',by:'Trần Quốc',cat:'ebook',aud:['thpt'],nxb:'EduMart Digital',price:65000,old:90000,rate:4.9,sold:1800,c:'#7a4a8c',ebook:true,format:'PDF',pages:256,size:6.7},
   {id:18,name:'Cẩm nang ôn thi THPT Quốc gia',by:'Tổ Giáo Dục',cat:'ebook',aud:['thpt'],nxb:'EduMart Digital',price:99000,old:150000,rate:4.6,sold:3600,c:'#c1572f',ebook:true,format:'PDF · EPUB',pages:420,size:12.3},
-  {id:19,name:'Toán tư duy cho học sinh tiểu học',by:'Phạm Lan',cat:'ebook',aud:['tieuhoc'],nxb:'EduMart Digital',price:49000,old:75000,rate:4.8,sold:2900,c:'#3a7a52',ebook:true,format:'PDF · EPUB',pages:164,size:4.2}
+  {id:19,name:'Toán tư duy cho học sinh tiểu học',by:'Phạm Lan',cat:'ebook',aud:['tieuhoc'],nxb:'EduMart Digital',price:49000,old:75000,rate:4.8,sold:2900,c:'#3a7a52',ebook:true,format:'PDF · EPUB',pages:164,size:4.2},
+  {id:20,name:'Đắc Nhân Tâm (sách nói)',by:'Dale Carnegie',cat:'audiobook',aud:['sinhvien'],nxb:'EduMart Audio',price:69000,old:99000,rate:4.9,sold:5200,c:'#c1572f',audio:true,narrator:'Minh Quân',duration:372,format:'MP3'},
+  {id:21,name:'Tư duy nhanh và chậm (sách nói)',by:'Daniel Kahneman',cat:'audiobook',aud:['sinhvien'],nxb:'EduMart Audio',price:89000,old:129000,rate:4.7,sold:2400,c:'#7a4a8c',audio:true,narrator:'Thu Hà',duration:540,format:'MP3'},
+  {id:22,name:'Luyện nghe Tiếng Anh mỗi ngày (sách nói)',by:'Lê Hằng',cat:'audiobook',aud:['thpt','sinhvien'],nxb:'EduMart Audio',price:55000,old:85000,rate:4.8,sold:3100,c:'#2f6ca5',audio:true,narrator:'David Le',duration:248,format:'MP3'}
 ];
 
 /* ---------------- Ebook: nội dung, sở hữu, tiến độ đọc ---------------- */
@@ -38,11 +41,31 @@ function ebookChapters(p){
       '<p>— Hết phần minh họa của '+('Chương '+(i+1))+' —</p>'
   }));
 }
-let library = LS.get('library',[]);          // ebook id đã sở hữu
+let library = LS.get('library',[]);          // ebook/audiobook id đã sở hữu vĩnh viễn
 function isOwned(id){return library.includes(Number(id));}
 function grantEbook(id){id=Number(id);if(!isOwned(id)){library.push(id);LS.set('library',library);}}
 function readProgress(){return LS.get('readprog',{});}
 function setReadProgress(id,ch){const m=readProgress();m[id]=ch;LS.set('readprog',m);}
+
+/* Thuê ebook có thời hạn */
+let rentals = LS.get('rentals',{});          // {id: timestamp hết hạn}
+function rentalActive(id){const e=rentals[Number(id)];return !!e&&e>Date.now();}
+function rentDaysLeft(id){const e=rentals[Number(id)];if(!e||e<=Date.now())return 0;return Math.ceil((e-Date.now())/86400000);}
+function hasAccess(id){return isOwned(id)||rentalActive(id);}
+function rentEbook(id,days){id=Number(id);rentals[id]=Date.now()+days*86400000;LS.set('rentals',rentals);}
+
+/* Bookmark & ghi chú trong trình đọc */
+let bookmarks = LS.get('bookmarks',{});       // {id:[chương đã đánh dấu]}
+let notesStore = LS.get('notes',{});          // {id:[{ch,text}]}
+function isBookmarked(id,ch){return (bookmarks[Number(id)]||[]).includes(ch);}
+function toggleBookmark(id){id=Number(id);const arr=bookmarks[id]||[];const i=arr.indexOf(readerCh);if(i>=0)arr.splice(i,1);else arr.push(readerCh);bookmarks[id]=arr;LS.set('bookmarks',bookmarks);toast(i>=0?'Đã bỏ đánh dấu':'Đã đánh dấu chương này');renderReader();}
+function addReaderNote(id){id=Number(id);const t=val('noteInput');if(!t){toast('Nhập nội dung ghi chú nhé');return;}(notesStore[id]=notesStore[id]||[]).push({ch:readerCh,text:t});LS.set('notes',notesStore);toast('Đã lưu ghi chú');renderReader();}
+function delReaderNote(id,idx){notesStore[Number(id)].splice(idx,1);LS.set('notes',notesStore);renderReader();}
+
+/* Audiobook: thời lượng, vị trí nghe */
+function fmtTime(s){s=Math.max(0,Math.floor(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),ss=s%60;const mm=String(m).padStart(2,'0'),s2=String(ss).padStart(2,'0');return h>0?h+':'+mm+':'+s2:m+':'+s2;}
+function audioPos(){return LS.get('audiopos',{});}
+function setAudioPos(id,sec){const m=audioPos();m[id]=sec;LS.set('audiopos',m);}
 
 const ICONS = {
   pen:'<path d="M5 19l1-4L17 4l3 3L9 18l-4 1Z"/>',
@@ -56,8 +79,9 @@ const ICONS = {
 };
 
 function cover(p,scale){
-  if(p.cat==='sach'||p.cat==='ebook'){
-    return '<div class="book-cover'+(p.ebook?' ebook':'')+'" style="background:linear-gradient(150deg,'+p.c+',rgba(0,0,0,.35))">'+(p.ebook?'<span class="eb-ribbon">E-BOOK</span>':'')+'<div class="bc-t">'+p.name+'</div><div class="bc-a">'+p.by+'</div></div>';
+  if(p.cat==='sach'||p.cat==='ebook'||p.cat==='audiobook'){
+    const rb=p.audio?'<span class="eb-ribbon audio">AUDIO</span>':p.ebook?'<span class="eb-ribbon">E-BOOK</span>':'';
+    return '<div class="book-cover'+(p.ebook||p.audio?' ebook':'')+'" style="background:linear-gradient(150deg,'+p.c+',rgba(0,0,0,.35))">'+rb+'<div class="bc-t">'+p.name+'</div><div class="bc-a">'+p.by+'</div></div>';
   }
   return '<div class="obj-cover" style="background:linear-gradient(150deg,'+p.c+',rgba(0,0,0,.3))"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[p.icon]||'')+'</svg></div>';
 }
@@ -148,7 +172,7 @@ function toast(msg){
 
 /* ---------------- Router ---------------- */
 let view='home', arg=null;
-function go(v,a){view=v;arg=a||null;window.scrollTo(0,0);render();}
+function go(v,a){if(typeof audioTimer!=='undefined'){clearInterval(audioTimer);audioPlaying=false;}view=v;arg=a||null;window.scrollTo(0,0);render();}
 function doSearch(){const q=document.getElementById('searchInput').value.trim();go('listing',{q});}
 
 function render(){
@@ -171,6 +195,7 @@ function render(){
   else if(view==='referral')renderReferral();
   else if(view==='reader')renderReader();
   else if(view==='library')renderLibrary();
+  else if(view==='player')renderPlayer();
 }
 
 /* ---------------- Cards ---------------- */
@@ -210,8 +235,8 @@ function hmCard(p,dark){
   const sold=p.sold>=1000?(p.sold/1000).toFixed(1)+'k':p.sold;
   return '<div class="hm-card'+(dark?' dark':'')+'">'+
     '<div class="hm-cover" onclick="go(\'product\','+p.id+')">'+
-      (p.ebook
-        ? '<div class="hm-ebcover" style="background:linear-gradient(150deg,'+p.c+',rgba(0,0,0,.42))"><span class="eb-ribbon">E-BOOK</span><div class="ebt">'+p.name+'</div><div class="eba">'+p.by+'</div></div>'
+      ((p.ebook||p.audio)
+        ? '<div class="hm-ebcover" style="background:linear-gradient(150deg,'+p.c+',rgba(0,0,0,.42))">'+(p.audio?'<span class="eb-ribbon audio">AUDIO</span>':'<span class="eb-ribbon">E-BOOK</span>')+'<div class="ebt">'+p.name+'</div><div class="eba">'+p.by+'</div>'+(p.audio?'<div class="eba-play">▶</div>':'')+'</div>'
         : '<img src="'+himg(p.id,500)+'" alt="'+p.name+'" loading="lazy"><div class="hm-cov-ov" style="background:'+overlay+'"></div>'+(isBook?'<div class="hm-cov-tt"><div class="t">'+p.name+'</div><div class="a">'+p.by+'</div></div>':''))+
       '<span class="hm-disc">-'+discount(p)+'%</span>'+
       (tag?'<span class="hm-tag">'+tag+'</span>':'')+
@@ -244,7 +269,7 @@ function renderHome(){
   const vpp=P.filter(p=>p.cat==='vpp');
   const tb=P.filter(p=>p.cat==='tbgd');
   const flashItems=[7,4,1,5,9].map(id=>P.find(x=>x.id===id));
-  const ebs=P.filter(p=>p.cat==='ebook').slice(0,5);
+  const ebs=P.filter(p=>p.ebook||p.audio).slice(0,5);
 
   const COLLS=[
     ['Tuyển chọn biên tập','100 cuốn sách nên đọc trong đời','Hành trình văn học vượt thời gian, từ kinh điển đến hiện đại.','1771647287015-f30dbb239646','rgba(120,30,20,.6)','sach'],
@@ -352,8 +377,8 @@ function renderHome(){
   hmHead('Thiết bị giáo dục','Được yêu thích','tbgd')+
   '<div class="hm-grid g4">'+tb.map(p=>hmCard(p)).join('')+'</div>'+
 
-  /* Ebook */
-  hmHead('Ebook nổi bật','Sách số · Đọc ngay','ebook')+
+  /* Ebook & Audiobook */
+  hmHead('Ebook & Sách nói','Sách số · Đọc/Nghe ngay','ebook')+
   '<div class="hm-grid g5">'+ebs.map(p=>hmCard(p)).join('')+'</div>'+
 
   /* Articles */
@@ -443,10 +468,10 @@ function renderProduct(){
     '<div class="pdp-gallery" style="background:#f3ede3">'+cover(p)+'</div>'+
     '<div class="pdp-info">'+
       '<h1>'+p.name+'</h1>'+
-      '<div class="by">'+((p.cat==='sach'||p.ebook)?'Tác giả: ':'Thương hiệu: ')+p.by+' · NXB/Hãng: '+p.nxb+'</div>'+
-      '<div class="pdp-rate"><span class="star">★ '+p.rate.toFixed(1)+'</span><span>'+p.sold.toLocaleString('vi-VN')+(p.ebook?' lượt tải':' đã bán')+'</span><span>'+(p.ebook?'Bản điện tử':'Còn hàng')+'</span></div>'+
+      '<div class="by">'+((p.cat==='sach'||p.ebook||p.audio)?'Tác giả: ':'Thương hiệu: ')+p.by+' · '+(p.audio?'Người đọc: '+p.narrator:'NXB/Hãng: '+p.nxb)+'</div>'+
+      '<div class="pdp-rate"><span class="star">★ '+p.rate.toFixed(1)+'</span><span>'+p.sold.toLocaleString('vi-VN')+(p.audio?' lượt nghe':p.ebook?' lượt tải':' đã bán')+'</span><span>'+(p.audio?'Bản sách nói':p.ebook?'Bản điện tử':'Còn hàng')+'</span></div>'+
       '<div class="price-box"><div class="big">'+fmt(p.price)+'</div>'+(p.old>p.price?'<div class="save">Tiết kiệm '+fmt(p.old-p.price)+' (-'+discount(p)+'%) so với '+fmt(p.old)+'</div>':'')+'</div>'+
-      (p.ebook? ebookCTA(p) : (
+      (p.ebook? ebookCTA(p) : p.audio? audioCTA(p) : (
         '<div style="font-size:13.5px;font-weight:500">Phân loại</div>'+
         '<div class="variants" id="pdpVars">'+variants.map((v,i)=>'<button class="'+(i===0?'on':'')+'" onclick="pickVar('+i+')">'+v+'</button>').join('')+'</div>'+
         '<div style="font-size:13.5px;font-weight:500;margin-bottom:6px">Số lượng</div>'+
@@ -676,7 +701,7 @@ let coShip='std', coPay='momo';
 function renderCheckout(){
   const ids=Object.keys(cart); if(!ids.length){go('cart');return;}
   const sub=cartSubtotal();
-  const allDigital=ids.length>0 && ids.every(id=>{const pr=P.find(x=>x.id==id);return pr&&pr.ebook;});
+  const allDigital=ids.length>0 && ids.every(id=>{const pr=P.find(x=>x.id==id);return pr&&(pr.ebook||pr.audio);});
   const baseShip=allDigital?0:(sub>300000?0:25000);
   const ship=allDigital?0:baseShip+(coShip==='fast'?20000:0);
   const disc=Math.round(sub*voucherPct/100);
@@ -712,12 +737,12 @@ function placeOrder(total){
   const d=new Date(), date=d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
   orders.unshift({id,items,total,date,status:'Đang xử lý',stage:0,placed:date});
   saveOrders();
-  const ebooksIn=items.filter(it=>{const pr=P.find(x=>x.id===it.id);return pr&&pr.ebook;});
+  const ebooksIn=items.filter(it=>{const pr=P.find(x=>x.id===it.id);return pr&&(pr.ebook||pr.audio);});
   ebooksIn.forEach(it=>grantEbook(it.id));
   cart={};voucherPct=0;saveCart();updateCartCount();
   if(user){user.points=(user.points||0)+Math.floor(total/1000);saveUser();}
   addNotif('Đơn hàng #'+id+' đã được đặt thành công, tổng '+fmt(total)+'.');
-  if(ebooksIn.length)addNotif(ebooksIn.length+' ebook đã được thêm vào Tủ sách của bạn.');
+  if(ebooksIn.length)addNotif(ebooksIn.length+' sản phẩm số (ebook/sách nói) đã vào Tủ sách của bạn.');
   window._lastOrder={id,total,ebook:ebooksIn.length>0};
   go('orderdone');
 }
@@ -906,68 +931,147 @@ function renderReferral(){
 }
 
 /* ---------------- Ebook: CTA, reader, library ---------------- */
+function rentPrice(p,days){const f=days<=7?0.3:0.5;return Math.round(p.price*f/1000)*1000;}
+function doRent(id,days){rentEbook(id,days);const p=P.find(x=>x.id===Number(id));addNotif('Đã thuê “'+p.name+'” '+days+' ngày — hết hạn sẽ tự thu hồi.');toast('Thuê thành công — bắt đầu ngay!');p.audio?openPlayer(id):openReader(id,false);}
+function rentBox(p){
+  return '<div class="rent-box"><div class="rb-h">Hoặc thuê '+(p.audio?'nghe':'đọc')+' tiết kiệm</div><div class="rent-opts">'+
+    '<button onclick="doRent('+p.id+',7)"><b>Thuê 7 ngày</b><span>'+fmt(rentPrice(p,7))+'</span></button>'+
+    '<button onclick="doRent('+p.id+',30)"><b>Thuê 30 ngày</b><span>'+fmt(rentPrice(p,30))+'</span></button>'+
+  '</div></div>';
+}
 function ebookCTA(p){
-  const owned=isOwned(p.id);
-  return '<div class="eb-specs">'+
-      '<div class="ebs"><span class="k">Định dạng</span><b>'+(p.format||'PDF · EPUB')+'</b></div>'+
-      '<div class="ebs"><span class="k">Số trang</span><b>'+(p.pages||'—')+'</b></div>'+
-      '<div class="ebs"><span class="k">Dung lượng</span><b>'+(p.size||'—')+' MB</b></div>'+
-    '</div>'+
-    '<div class="pdp-cta">'+
-      (owned
-        ? '<button class="buy-btn" onclick="openReader('+p.id+',true)">📖 Đọc ngay</button>'
-        : '<button class="cart-btn" onclick="openReader('+p.id+',false)">Đọc thử</button><button class="buy-btn" onclick="addToCart('+p.id+');go(\'cart\')">Mua &amp; đọc ngay</button>')+
-    '</div>'+
-    (owned?'<div class="eb-owned">✔ Bạn đã sở hữu ebook này — có trong <a onclick="go(\'library\')">Tủ sách</a>.</div>':'')+
-    '<div class="perks"><span>📱 Đọc trên mọi thiết bị</span><span>⚡ Nhận ngay sau thanh toán</span><span>♾ Sở hữu vĩnh viễn</span><span>🔖 Lưu tiến độ &amp; ghi chú</span></div>';
+  const owned=isOwned(p.id), rented=rentalActive(p.id), access=owned||rented;
+  let h='<div class="eb-specs"><div class="ebs"><span class="k">Định dạng</span><b>'+(p.format||'PDF · EPUB')+'</b></div><div class="ebs"><span class="k">Số trang</span><b>'+(p.pages||'—')+'</b></div><div class="ebs"><span class="k">Dung lượng</span><b>'+(p.size||'—')+' MB</b></div></div>';
+  if(access){
+    h+='<div class="pdp-cta"><button class="buy-btn" onclick="openReader('+p.id+',true)">📖 Đọc ngay</button>'+(rented&&!owned?'<button class="cart-btn" onclick="addToCart('+p.id+');go(\'cart\')">Mua đứt</button>':'')+'</div>';
+    h+=owned?'<div class="eb-owned">✔ Bạn sở hữu vĩnh viễn — có trong <a onclick="go(\'library\')">Tủ sách</a>.</div>':'<div class="eb-owned">⏳ Đang thuê · còn '+rentDaysLeft(p.id)+' ngày — có trong <a onclick="go(\'library\')">Tủ sách</a>.</div>';
+  }else{
+    h+='<div class="pdp-cta"><button class="cart-btn" onclick="openReader('+p.id+',false)">Đọc thử</button><button class="buy-btn" onclick="addToCart('+p.id+');go(\'cart\')">Mua &amp; đọc ngay</button></div>'+rentBox(p);
+  }
+  return h+'<div class="perks"><span>📱 Đọc trên mọi thiết bị</span><span>⚡ Nhận ngay sau thanh toán</span><span>♾ Sở hữu vĩnh viễn</span><span>🔖 Ghi chú &amp; đánh dấu trang</span></div>';
+}
+function audioCTA(p){
+  const owned=isOwned(p.id), rented=rentalActive(p.id), access=owned||rented;
+  let h='<div class="eb-specs"><div class="ebs"><span class="k">Thời lượng</span><b>'+Math.floor(p.duration/60)+'h'+String(p.duration%60).padStart(2,'0')+'</b></div><div class="ebs"><span class="k">Người đọc</span><b>'+p.narrator+'</b></div><div class="ebs"><span class="k">Định dạng</span><b>'+p.format+'</b></div></div>';
+  if(access){
+    h+='<div class="pdp-cta"><button class="buy-btn" onclick="openPlayer('+p.id+')">🎧 Nghe ngay</button>'+(rented&&!owned?'<button class="cart-btn" onclick="addToCart('+p.id+');go(\'cart\')">Mua đứt</button>':'')+'</div>';
+    h+=owned?'<div class="eb-owned">✔ Bạn sở hữu vĩnh viễn — có trong <a onclick="go(\'library\')">Tủ sách</a>.</div>':'<div class="eb-owned">⏳ Đang thuê · còn '+rentDaysLeft(p.id)+' ngày.</div>';
+  }else{
+    h+='<div class="pdp-cta"><button class="cart-btn" onclick="openPlayer('+p.id+')">Nghe thử</button><button class="buy-btn" onclick="addToCart('+p.id+');go(\'cart\')">Mua &amp; nghe ngay</button></div>'+rentBox(p);
+  }
+  return h+'<div class="perks"><span>🎧 Nghe mọi lúc mọi nơi</span><span>⏩ Tua nhanh · chỉnh tốc độ</span><span>⚡ Nhận ngay sau thanh toán</span><span>🔖 Lưu vị trí nghe</span></div>';
 }
 let readerCh=0;
 function openReader(id,resume){readerCh=resume?(readProgress()[id]||0):0;go('reader',id);}
 function renderReader(){
   const p=P.find(x=>x.id==arg);
   if(!p||!p.ebook){go('home');return;}
-  const owned=isOwned(p.id);
+  const access=hasAccess(p.id), owned=isOwned(p.id), rented=rentalActive(p.id);
   const chapters=ebookChapters(p);
-  const maxCh=owned?chapters.length:1;             // chưa mua: chỉ đọc thử chương 1
+  const maxCh=access?chapters.length:1;            // chưa có quyền: chỉ đọc thử chương 1
   if(readerCh>=maxCh)readerCh=maxCh-1; if(readerCh<0)readerCh=0;
   setReadProgress(p.id,readerCh);
   const ch=chapters[readerCh];
   const theme=LS.get('readerTheme','light'), font=LS.get('readerFont',18);
-  const opts=chapters.map((c,i)=>'<option value="'+i+'"'+(i===readerCh?' selected':'')+(i>=maxCh?' disabled':'')+'>'+c.t+(i>=maxCh?' 🔒':'')+'</option>').join('');
-  const atSampleEnd=!owned&&readerCh>=maxCh-1;
+  const opts=chapters.map((c,i)=>'<option value="'+i+'"'+(i===readerCh?' selected':'')+(i>=maxCh?' disabled':'')+'>'+(isBookmarked(p.id,i)?'🔖 ':'')+c.t+(i>=maxCh?' 🔒':'')+'</option>').join('');
+  const atSampleEnd=!access&&readerCh>=maxCh-1;
+  const bm=(bookmarks[p.id]||[]).slice().sort((a,b)=>a-b), notes=notesStore[p.id]||[];
   document.getElementById('app').innerHTML=
    '<div class="reader theme-'+theme+'">'+
      '<div class="reader-bar">'+
        '<button class="rb" onclick="go(\'product\','+p.id+')">‹ Thoát</button>'+
-       '<div class="rb-title">'+p.name+(owned?'':' · <span style="color:var(--coral)">Đọc thử</span>')+'</div>'+
+       '<div class="rb-title">'+p.name+(access?'':' · <span style="color:var(--coral)">Đọc thử</span>')+'</div>'+
        '<div class="rb-tools">'+
          '<select onchange="readerCh=+this.value;renderReader()">'+opts+'</select>'+
+         '<button class="rb'+(isBookmarked(p.id,readerCh)?' on':'')+'" title="Đánh dấu chương" onclick="toggleBookmark('+p.id+')">🔖</button>'+
          '<button class="rb" title="Thu nhỏ chữ" onclick="readerFont(-1)">A−</button>'+
          '<button class="rb" title="Phóng to chữ" onclick="readerFont(1)">A+</button>'+
          '<button class="rb" title="Đổi nền" onclick="readerTheme()">🌓</button>'+
        '</div>'+
      '</div>'+
+     (rented&&!owned?'<div class="rent-banner">⏳ Bạn đang thuê — còn '+rentDaysLeft(p.id)+' ngày. <a onclick="addToCart('+p.id+');go(\'cart\')">Mua đứt để giữ vĩnh viễn ›</a></div>':'')+
      '<div class="reader-page" style="font-size:'+font+'px">'+
        '<h2>'+ch.t+'</h2>'+ch.body+
-       (atSampleEnd?'<div class="paywall"><div class="pw-ic">🔒</div><h3>Hết phần đọc thử</h3><p>Mua ebook để mở khóa toàn bộ '+chapters.length+' chương ('+p.pages+' trang) và sở hữu vĩnh viễn.</p><button class="checkout" style="max-width:280px;margin:14px auto 0" onclick="addToCart('+p.id+');go(\'cart\')">Mua '+fmt(p.price)+' — đọc trọn bộ</button></div>':'')+
+       (atSampleEnd?'<div class="paywall"><div class="pw-ic">🔒</div><h3>Hết phần đọc thử</h3><p>Mua hoặc thuê để mở khóa toàn bộ '+chapters.length+' chương ('+p.pages+' trang).</p><div class="pw-acts"><button class="checkout" onclick="addToCart('+p.id+');go(\'cart\')">Mua '+fmt(p.price)+'</button><button class="btn-ghost" onclick="doRent('+p.id+',7)">Thuê 7 ngày · '+fmt(rentPrice(p,7))+'</button></div></div>':'')+
      '</div>'+
      '<div class="reader-nav">'+
        '<button class="btn-ghost" '+(readerCh<=0?'disabled':'')+' onclick="readerCh--;renderReader();window.scrollTo(0,0)">‹ Chương trước</button>'+
        '<span>'+(readerCh+1)+' / '+chapters.length+'</span>'+
        '<button class="btn-primary" '+(readerCh>=maxCh-1?'disabled':'')+' onclick="readerCh++;renderReader();window.scrollTo(0,0)">Chương sau ›</button>'+
      '</div>'+
+     '<div class="reader-extra">'+
+       (bm.length?'<div class="rx-block"><h4>🔖 Đánh dấu</h4><div class="bm-chips">'+bm.map(i=>'<button class="bm-chip" onclick="readerCh='+i+';renderReader();window.scrollTo(0,0)">'+chapters[i].t+'</button>').join('')+'</div></div>':'')+
+       '<div class="rx-block"><h4>📝 Ghi chú của bạn</h4>'+
+         '<div class="note-form"><textarea id="noteInput" placeholder="Ghi chú cho '+ch.t+'…"></textarea><button class="btn-primary" onclick="addReaderNote('+p.id+')">Thêm ghi chú</button></div>'+
+         (notes.length?'<div class="note-list">'+notes.map((n,idx)=>'<div class="note-item"><div class="ni-ch">'+chapters[n.ch].t+'</div><div class="ni-tx">'+n.text+'</div><button class="ni-del" title="Xóa" onclick="delReaderNote('+p.id+','+idx+')">✕</button></div>').join('')+'</div>':'<p class="note-empty">Chưa có ghi chú nào.</p>')+
+       '</div>'+
+     '</div>'+
    '</div>';
 }
 function readerFont(d){let f=(LS.get('readerFont',18))+d*2;f=Math.max(14,Math.min(26,f));LS.set('readerFont',f);renderReader();}
 function readerTheme(){const seq=['light','sepia','dark'];const t=LS.get('readerTheme','light');LS.set('readerTheme',seq[(seq.indexOf(t)+1)%3]);renderReader();}
+/* ---- Audiobook player (mô phỏng phát) ---- */
+const AUDIO_PREVIEW=120;                          // giây nghe thử khi chưa sở hữu
+let audioId=null,audioCur=0,audioPlaying=false,audioSpeed=1,audioTimer=null;
+function audioLimit(p){return hasAccess(p.id)?p.duration*60:AUDIO_PREVIEW;}
+function openPlayer(id){
+  audioId=Number(id); const p=P.find(x=>x.id===audioId);
+  audioCur=Math.min(audioPos()[audioId]||0,audioLimit(p)-1); if(audioCur<0)audioCur=0;
+  audioPlaying=false; audioSpeed=1; go('player',id);
+}
+function renderPlayer(){
+  const p=P.find(x=>x.id==arg); if(!p||!p.audio){go('home');return;} audioId=p.id;
+  const access=hasAccess(p.id),lim=audioLimit(p),total=p.duration*60;
+  document.getElementById('app').innerHTML=
+   '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <a onclick="go(\'product\','+p.id+')">'+p.name+'</a> › <b>Trình nghe</b></div>'+
+   '<div class="player">'+
+     '<div class="pl-cover">'+cover(p)+'</div>'+
+     '<div class="pl-main">'+
+       '<div class="pl-title">'+p.name+(access?'':' · <span style="color:var(--coral)">Nghe thử</span>')+'</div>'+
+       '<div class="pl-by">Người đọc: '+p.narrator+'</div>'+
+       '<div class="pl-seek" id="plSeek" onclick="seekAudio(event)"><div class="pl-fill" id="apFill"></div>'+(access?'':'<div class="pl-limit" style="left:'+(lim/total*100)+'%"></div>')+'</div>'+
+       '<div class="pl-time"><span id="apCur">'+fmtTime(audioCur)+'</span><span>'+fmtTime(total)+'</span></div>'+
+       '<div class="pl-ctrls"><button onclick="skipAudio(-15)">⏪15</button><button class="pl-play" id="apPlay" onclick="toggleAudio()">▶</button><button onclick="skipAudio(15)">15⏩</button><button class="pl-speed" id="apSpeed" onclick="cycleSpeed()">1x</button></div>'+
+       (access?'':'<div class="pl-paywall">Bản nghe thử giới hạn '+fmtTime(lim)+'. <a onclick="addToCart('+p.id+');go(\'cart\')">Mua nghe trọn bộ ›</a></div>')+
+     '</div>'+
+   '</div>';
+  updateAudioUI();
+}
+function updateAudioUI(){
+  const p=P.find(x=>x.id===audioId); if(!p)return; const total=p.duration*60;
+  const f=document.getElementById('apFill'); if(f)f.style.width=(audioCur/total*100)+'%';
+  const c=document.getElementById('apCur'); if(c)c.textContent=fmtTime(audioCur);
+  const pl=document.getElementById('apPlay'); if(pl)pl.textContent=audioPlaying?'❚❚':'▶';
+  const sp=document.getElementById('apSpeed'); if(sp)sp.textContent=audioSpeed+'x';
+}
+function toggleAudio(){audioPlaying=!audioPlaying;clearInterval(audioTimer);if(audioPlaying)audioTimer=setInterval(audioTick,1000);updateAudioUI();}
+function audioTick(){
+  const p=P.find(x=>x.id===audioId); if(!p){clearInterval(audioTimer);return;}
+  const lim=audioLimit(p); audioCur+=audioSpeed;
+  if(audioCur>=lim){audioCur=lim;audioPlaying=false;clearInterval(audioTimer);setAudioPos(audioId,Math.floor(audioCur));updateAudioUI();if(!hasAccess(p.id))toast('Hết phần nghe thử — mua để nghe tiếp');return;}
+  setAudioPos(audioId,Math.floor(audioCur)); updateAudioUI();
+}
+function skipAudio(d){const p=P.find(x=>x.id===audioId);if(!p)return;audioCur=Math.max(0,Math.min(audioLimit(p),audioCur+d));setAudioPos(audioId,Math.floor(audioCur));updateAudioUI();}
+function seekAudio(e){const p=P.find(x=>x.id===audioId);if(!p)return;const r=document.getElementById('plSeek').getBoundingClientRect();const pct=(e.clientX-r.left)/r.width;audioCur=Math.max(0,Math.min(audioLimit(p),pct*p.duration*60));setAudioPos(audioId,Math.floor(audioCur));updateAudioUI();}
+function cycleSpeed(){const seq=[1,1.25,1.5,2];audioSpeed=seq[(seq.indexOf(audioSpeed)+1)%seq.length];updateAudioUI();}
+
+/* ---- Tủ sách (sở hữu + đang thuê, ebook + audiobook) ---- */
 function renderLibrary(){
-  const items=library.map(id=>P.find(p=>p.id===id)).filter(Boolean);
-  const prog=readProgress();
+  const activeRent=Object.keys(rentals).map(Number).filter(id=>rentalActive(id));
+  const ids=[...new Set([...library,...activeRent])];
+  const items=ids.map(id=>P.find(p=>p.id===id)).filter(Boolean);
+  const prog=readProgress(), apos=audioPos();
   document.getElementById('app').innerHTML=
    '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <b>Tủ sách của tôi</b></div>'+
    '<h1 class="page-title">Tủ sách của tôi'+(items.length?' ('+items.length+')':'')+'</h1>'+
-   (items.length?'<div class="lib-grid">'+items.map(p=>{const ch=(prog[p.id]||0)+1;const total=5;return '<div class="lib-item"><div class="cover-sm">'+cover(p)+'</div><div class="li-info"><div class="nm">'+p.name+'</div><div class="au">'+p.by+'</div><div class="li-prog">Đang đọc: chương '+ch+'/'+total+'</div></div><button class="btn-primary" onclick="openReader('+p.id+',true)">Đọc tiếp</button></div>';}).join('')+'</div>'
-    :'<div class="empty"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19V5a1 1 0 0 1 1-1h6v16H5a1 1 0 0 1-1-1Z"/><path d="M13 4h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-6"/></svg><div style="font-size:17px;margin-bottom:6px">Tủ sách của bạn đang trống</div><a class="hero-cta" style="display:inline-flex" onclick="go(\'listing\',\'ebook\')">Khám phá ebook</a></div>');
+   (items.length?'<div class="lib-grid">'+items.map(p=>{
+     const owned=isOwned(p.id);
+     const badge=owned?'<span class="lib-badge own">Sở hữu</span>':'<span class="lib-badge rent">Thuê · còn '+rentDaysLeft(p.id)+' ngày</span>';
+     const sub=p.audio?('Đã nghe: '+fmtTime(apos[p.id]||0)):('Đang đọc: chương '+((prog[p.id]||0)+1)+'/5');
+     const btn=p.audio?'<button class="btn-primary" onclick="openPlayer('+p.id+')">Nghe tiếp</button>':'<button class="btn-primary" onclick="openReader('+p.id+',true)">Đọc tiếp</button>';
+     return '<div class="lib-item"><div class="cover-sm">'+cover(p)+'</div><div class="li-info"><div class="nm">'+p.name+'</div><div class="au">'+p.by+'</div><div class="li-prog">'+badge+' · '+sub+'</div></div>'+btn+'</div>';
+   }).join('')+'</div>'
+    :'<div class="empty"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19V5a1 1 0 0 1 1-1h6v16H5a1 1 0 0 1-1-1Z"/><path d="M13 4h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-6"/></svg><div style="font-size:17px;margin-bottom:6px">Tủ sách của bạn đang trống</div><a class="hero-cta" style="display:inline-flex" onclick="go(\'listing\',\'ebook\')">Khám phá ebook &amp; sách nói</a></div>');
 }
 
 /* ---------------- init ---------------- */

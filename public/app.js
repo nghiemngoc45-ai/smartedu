@@ -1,3 +1,9 @@
+/* ---------------- Persistence (localStorage) ---------------- */
+const LS={
+  get(k,d){try{const v=localStorage.getItem('edumart_'+k);return v===null?d:JSON.parse(v);}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem('edumart_'+k,JSON.stringify(v));}catch(e){}}
+};
+
 /* ---------------- Data ---------------- */
 const fmt = n => n.toLocaleString('vi-VN') + 'đ';
 const AUD = {tieuhoc:'Tiểu học',thcs:'THCS',thpt:'THPT',sinhvien:'Sinh viên',giaovien:'Giáo viên',school:'Trường học'};
@@ -86,12 +92,6 @@ function cover(p,scale){
   return '<div class="obj-cover" style="background:linear-gradient(150deg,'+p.c+',rgba(0,0,0,.3))"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[p.icon]||'')+'</svg></div>';
 }
 function discount(p){return Math.round((1-p.price/p.old)*100);}
-
-/* ---------------- Persistence (localStorage) ---------------- */
-const LS={
-  get(k,d){try{const v=localStorage.getItem('edumart_'+k);return v===null?d:JSON.parse(v);}catch(e){return d;}},
-  set(k,v){try{localStorage.setItem('edumart_'+k,JSON.stringify(v));}catch(e){}}
-};
 
 /* ---------------- Cart ---------------- */
 let cart = LS.get('cart',{});

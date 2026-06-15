@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>EduMart — Sàn sách & thiết bị giáo dục</title>
-<link rel="stylesheet" href="/styles.css" />
+<link rel="stylesheet" href="/styles.css?v=3" />
 </head>
 <body>
 
@@ -52,15 +52,15 @@
   </div>
   <nav class="mainnav"><div class="mainnav-inner">
     <div class="navitem has-menu">
-      <a onclick="go('listing','sach')">Sách ▾</a>
+      <a class="menu-trigger" onclick="toggleNav(event,this)">Sách <span class="caret">▾</span></a>
       <div class="dropdown">
-        <a onclick="go('listing','sach')">Tất cả sách</a>
-        <a onclick="go('listing','sgk')">Sách giáo khoa</a>
-        <a onclick="go('listing','thamkhao')">Sách tham khảo</a>
-        <a onclick="go('listing','vanhoc')">Văn học</a>
-        <a onclick="go('listing','thieunhi')">Thiếu nhi</a>
-        <a onclick="go('listing','kynang')">Kỹ năng sống</a>
-        <a onclick="go('listing','ngoaingu')">Ngoại ngữ</a>
+        <a onclick="go('listing','sach');closeNav()">Tất cả sách</a>
+        <a onclick="go('listing','sgk');closeNav()">Sách giáo khoa</a>
+        <a onclick="go('listing','thamkhao');closeNav()">Sách tham khảo</a>
+        <a onclick="go('listing','vanhoc');closeNav()">Văn học</a>
+        <a onclick="go('listing','thieunhi');closeNav()">Thiếu nhi</a>
+        <a onclick="go('listing','kynang');closeNav()">Kỹ năng sống</a>
+        <a onclick="go('listing','ngoaingu');closeNav()">Ngoại ngữ</a>
       </div>
     </div>
     <a onclick="go('listing','ebook')">Ebook</a>

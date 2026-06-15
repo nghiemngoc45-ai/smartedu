@@ -1196,6 +1196,11 @@ function renderLibrary(){
     :'<div class="empty"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19V5a1 1 0 0 1 1-1h6v16H5a1 1 0 0 1-1-1Z"/><path d="M13 4h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-6"/></svg><div style="font-size:17px;margin-bottom:6px">Tủ sách của bạn đang trống</div><a class="hero-cta" style="display:inline-flex" onclick="go(\'listing\',\'ebook\')">Khám phá ebook &amp; sách nói</a></div>');
 }
 
+/* ---------------- Mega-menu (mục Sách) ---------------- */
+function toggleNav(e,el){e.preventDefault();e.stopPropagation();const n=el.closest('.navitem');const open=n.classList.contains('open');closeNav();if(!open)n.classList.add('open');}
+function closeNav(){document.querySelectorAll('.mainnav .navitem.open').forEach(x=>x.classList.remove('open'));}
+document.addEventListener('click',e=>{if(!e.target.closest('.has-menu'))closeNav();});
+
 /* ---------------- init ---------------- */
 updateCartCount(); updateWishCount(); updateNotifCount();
 render();

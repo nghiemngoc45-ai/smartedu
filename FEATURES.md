@@ -84,6 +84,17 @@ Bản prototype chạy hoàn toàn ở trình duyệt (HTML/CSS/JS thuần + Vit
 - **Khuyến mãi:** tạo mới (modal), **bật/tắt**, lưu thật.
 - **Cài đặt hệ thống:** phí sàn, vận chuyển, cổng thanh toán, hóa đơn VAT, phân quyền (mục cấu hình).
 
+## L2. Kênh người bán / Nhà cung cấp (`seller.html`)
+Cổng riêng cho gian hàng, **tách khỏi Admin**, phạm vi chỉ trong gian hàng:
+- Tổng quan: doanh thu, đơn, **lượt xem gian hàng**, cảnh báo tồn kho, biểu đồ 7 ngày, bán chạy.
+- Sản phẩm: thêm/sửa/xóa (lưu thật), mọi danh mục gồm Ebook/Sách nói.
+- Đơn hàng: lọc trạng thái, cập nhật trạng thái, **in vận đơn**.
+- Khuyến mãi riêng gian hàng (tạo/bật-tắt).
+- Đánh giá & Hỏi đáp: **trả lời khách**.
+- Tài chính: số dư, đối soát, **yêu cầu rút tiền**, lịch sử giao dịch.
+- Hồ sơ gian hàng: thông tin, GPKD, **xác thực doanh nghiệp**.
+- Dữ liệu lưu riêng `edumart_seller_*`, độc lập với Admin.
+
 ## M. Nền tảng & Triển khai
 - Lưu localStorage: giỏ hàng, phiên đăng nhập, đơn hàng, wishlist, đã xem, thông báo, đánh giá, hỏi đáp, RFQ, tủ sách, hợp đồng thuê, bookmark, ghi chú, tiến độ đọc, vị trí nghe.
 - Vite dev/build; **tự động deploy lên GitHub Pages** mỗi lần push (GitHub Actions).
@@ -95,4 +106,4 @@ Bản prototype chạy hoàn toàn ở trình duyệt (HTML/CSS/JS thuần + Vit
 - Thanh toán, OTP/SMS/Zalo ZNS, đăng nhập mạng xã hội, hóa đơn điện tử — mô phỏng.
 - Phát audiobook là mô phỏng (chưa gắn file âm thanh thật).
 - Chưa có **backend/cơ sở dữ liệu** thật → dữ liệu chỉ lưu trên trình duyệt của máy đang dùng (không đồng bộ nhiều thiết bị/người dùng).
-- Chưa có: 2FA, gói đăng ký đọc không giới hạn (subscription), cổng người bán độc lập, app di động, tìm kiếm bằng ảnh/giọng nói.
+- Chưa có: 2FA, gói đăng ký đọc không giới hạn (subscription), app di động, tìm kiếm bằng ảnh/giọng nói.

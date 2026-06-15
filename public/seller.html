@@ -223,7 +223,7 @@ const DEF_FIN={balance:8420000,pending:1240000,withdrawn:46500000,txs:[
 // Kho chung giữa Kênh người bán và Admin (gian hàng + sản phẩm chờ duyệt)
 const MK={get(k,d){try{const v=localStorage.getItem('edumart_mk_'+k);return v===null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem('edumart_mk_'+k,JSON.stringify(v));}catch(e){}}};
 (function seedMK(){
-  if(MK.get('sellers',null)===null)MK.set('sellers',[{id:1,name:'Nhà sách Tri Thức',owner:'Trần Trí',phone:'0901112233',email:'trithuc@edu.vn',license:'0312xxxxxx',addr:'12 Nguyễn Huệ, Q.1, TP.HCM',status:'active'}]);
+  if(MK.get('sellers',null)===null)MK.set('sellers',[{id:1,name:'Nhà sách Tri Thức',owner:'Trần Trí',phone:'0901112233',email:'trithuc@edu.vn',license:'0312xxxxxx',addr:'12 Nguyễn Huệ, Q.1, TP.HCM',status:'active',pass:'123456'}]);
   if(MK.get('products',null)===null)MK.set('products',DEF_PRODUCTS.map(p=>({...p,shopId:1,shopName:'Nhà sách Tri Thức',status:'active'})));
 })();
 let SESSION=SLS.get('session',null);                 // shopId đang đăng nhập
@@ -384,23 +384,24 @@ function authTab(login){
   document.getElementById('taLogin').classList.toggle('on',!!login);
   document.getElementById('taReg').classList.toggle('on',!login);
   const b=document.getElementById('authBody');
-  if(login)b.innerHTML='<div class="af"><label>Số điện thoại gian hàng</label><input id="lgPhone" placeholder="VD: 0901112233"></div><div class="af"><label>Mật khẩu</label><input type="password" placeholder="••••••••"></div><button class="auth-btn" onclick="doSellerLogin()">Đăng nhập</button><p class="auth-hint">Demo: đăng nhập với SĐT <b>0901112233</b> (gian hàng mẫu đã duyệt).</p>';
-  else b.innerHTML='<div class="arow"><div class="af"><label>Tên gian hàng</label><input id="rgName" placeholder="Nhà sách ABC"></div><div class="af"><label>Người phụ trách</label><input id="rgOwner" placeholder="Họ và tên"></div></div><div class="arow"><div class="af"><label>Số điện thoại</label><input id="rgPhone" placeholder="09xx xxx xxx"></div><div class="af"><label>Email</label><input id="rgEmail" placeholder="shop@email.com"></div></div><div class="af"><label>Mã số thuế / GPKD</label><input id="rgLicense" placeholder="03xxxxxxxx"></div><div class="af"><label>Địa chỉ kho/cửa hàng</label><input id="rgAddr" placeholder="Số nhà, đường, quận, tỉnh"></div><button class="auth-btn" onclick="doSellerRegister()">Gửi đăng ký mở gian hàng</button><p class="auth-hint">Gian hàng sẽ hoạt động sau khi được EduMart duyệt.</p>';
+  if(login)b.innerHTML='<div class="af"><label>Số điện thoại gian hàng</label><input id="lgPhone" placeholder="VD: 0901112233"></div><div class="af"><label>Mật khẩu</label><input id="lgPass" type="password" placeholder="••••••••" onkeydown="if(event.key===\'Enter\')doSellerLogin()"></div><button class="auth-btn" onclick="doSellerLogin()">Đăng nhập</button><p class="auth-hint">Demo: SĐT <b>0901112233</b> · mật khẩu <b>123456</b> (gian hàng mẫu đã duyệt).</p>';
+  else b.innerHTML='<div class="arow"><div class="af"><label>Tên gian hàng</label><input id="rgName" placeholder="Nhà sách ABC"></div><div class="af"><label>Người phụ trách</label><input id="rgOwner" placeholder="Họ và tên"></div></div><div class="arow"><div class="af"><label>Số điện thoại</label><input id="rgPhone" placeholder="09xx xxx xxx"></div><div class="af"><label>Email</label><input id="rgEmail" placeholder="shop@email.com"></div></div><div class="arow"><div class="af"><label>Mật khẩu</label><input id="rgPass" type="password" placeholder="Tạo mật khẩu"></div><div class="af"><label>Mã số thuế / GPKD</label><input id="rgLicense" placeholder="03xxxxxxxx"></div></div><div class="af"><label>Địa chỉ kho/cửa hàng</label><input id="rgAddr" placeholder="Số nhà, đường, quận, tỉnh"></div><button class="auth-btn" onclick="doSellerRegister()">Gửi đăng ký mở gian hàng</button><p class="auth-hint">Gian hàng sẽ hoạt động sau khi được EduMart duyệt.</p>';
 }
 function doSellerLogin(){
-  const phone=val('lgPhone');const s=sellers().find(x=>x.phone===phone);
+  const phone=val('lgPhone'),pass=val('lgPass');const s=sellers().find(x=>x.phone===phone);
   if(!s){toast('Không tìm thấy gian hàng với SĐT này');return;}
+  if(s.pass&&s.pass!==pass){toast('Sai mật khẩu');return;}
   if(s.status==='pending'){toast('Gian hàng đang chờ EduMart duyệt');return;}
   if(s.status==='rejected'){toast('Đăng ký gian hàng đã bị từ chối');return;}
   SLS.set('session',s.id);location.reload();
 }
 function doSellerRegister(){
-  const name=val('rgName'),phone=val('rgPhone');
-  if(!name||!phone){toast('Nhập tên gian hàng và số điện thoại');return;}
+  const name=val('rgName'),phone=val('rgPhone'),pass=val('rgPass');
+  if(!name||!phone||!pass){toast('Nhập tên gian hàng, số điện thoại và mật khẩu');return;}
   const list=sellers();
   if(list.some(x=>x.phone===phone)){toast('SĐT này đã được đăng ký');return;}
   const id=Math.max(0,...list.map(x=>x.id))+1;
-  list.push({id,name,owner:val('rgOwner'),phone,email:val('rgEmail'),license:val('rgLicense'),addr:val('rgAddr'),status:'pending'});
+  list.push({id,name,owner:val('rgOwner'),phone,email:val('rgEmail'),license:val('rgLicense'),addr:val('rgAddr'),status:'pending',pass});
   MK.set('sellers',list);
   document.getElementById('authBody').innerHTML='<div class="auth-done"><div class="ic">✓</div><h3>Đã gửi đăng ký!</h3><p>Gian hàng <b>'+name+'</b> đang chờ EduMart duyệt. Bạn sẽ đăng nhập được sau khi được phê duyệt.</p></div>';
 }

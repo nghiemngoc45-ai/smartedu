@@ -117,6 +117,18 @@
   .modal .mact{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
   .del-btn{font-size:12.5px;color:var(--coral);font-weight:500;padding:5px 10px;border:1px solid #f1d6d0;border-radius:8px;margin-left:6px;}
   .del-btn:hover{background:#fae3df;}
+  /* Auth screen */
+  .auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--paper);padding:20px;}
+  .auth-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:30px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(22,53,84,.12);}
+  .auth-logo{display:flex;align-items:center;gap:10px;font-family:'Lora',serif;font-weight:600;font-size:18px;color:var(--ink-deep);margin-bottom:18px;}
+  .auth-logo .amark{width:34px;height:34px;border-radius:9px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+  .af{margin-bottom:13px;}
+  .af label{display:block;font-size:12.5px;font-weight:500;margin-bottom:5px;color:var(--text);}
+  .af input{width:100%;font-family:inherit;font-size:14px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;background:var(--paper);color:var(--text);}
+  .af input:focus{border-color:var(--ink);}
+  .auth-btn{width:100%;background:var(--ink);color:#fff;font-weight:600;font-size:14.5px;padding:12px;border-radius:10px;margin-top:6px;}
+  .auth-btn:hover{background:var(--ink-deep);}
+  .auth-hint{font-size:12.5px;color:var(--text-soft);margin:12px 0 0;text-align:center;}
 </style>
 </head>
 <body>
@@ -136,6 +148,7 @@
     <div class="navg">Hệ thống</div>
     <button class="nav-item" data-v="settings" onclick="nav('settings',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.3 1a7 7 0 0 0-1.7-1l-.4-2.5h-4l-.4 2.5a7 7 0 0 0-1.7 1l-2.3-1-2 3.5 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.5 2.3-1a7 7 0 0 0 1.7 1l.4 2.5h4l.4-2.5a7 7 0 0 0 1.7-1l2.3 1 2-3.5-2-1.5c.1-.3.1-.7.1-1Z"/></svg>Cài đặt</button>
     <a href="./" class="nav-item" style="margin-top:auto"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>Về trang mua sắm</a>
+    <button class="nav-item" onclick="adminLogout()" style="color:#ff9a8a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Đăng xuất</button>
     <div class="side-foot" style="margin-top:14px"><div class="av">QT</div><div><div class="nm">Quản trị viên</div><div class="rl">admin@edumart.vn</div></div></div>
   </aside>
 
@@ -160,7 +173,7 @@ const ALS={get(k,d){try{const v=localStorage.getItem('edumart_admin_'+k);return 
 // Kho chung với Kênh người bán (gian hàng + sản phẩm chờ duyệt)
 const MK={get(k,d){try{const v=localStorage.getItem('edumart_mk_'+k);return v===null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem('edumart_mk_'+k,JSON.stringify(v));}catch(e){}}};
 (function seedMK(){
-  if(MK.get('sellers',null)===null)MK.set('sellers',[{id:1,name:'Nhà sách Tri Thức',owner:'Trần Trí',phone:'0901112233',email:'trithuc@edu.vn',license:'0312xxxxxx',addr:'12 Nguyễn Huệ, Q.1, TP.HCM',status:'active'},{id:2,name:'Văn phòng phẩm Bút Chì Xanh',owner:'Lê Hoa',phone:'0907778899',email:'butchixanh@edu.vn',license:'0398xxxxxx',addr:'45 Trần Hưng Đạo, Hà Nội',status:'pending'}]);
+  if(MK.get('sellers',null)===null)MK.set('sellers',[{id:1,name:'Nhà sách Tri Thức',owner:'Trần Trí',phone:'0901112233',email:'trithuc@edu.vn',license:'0312xxxxxx',addr:'12 Nguyễn Huệ, Q.1, TP.HCM',status:'active',pass:'123456'},{id:2,name:'Văn phòng phẩm Bút Chì Xanh',owner:'Lê Hoa',phone:'0907778899',email:'butchixanh@edu.vn',license:'0398xxxxxx',addr:'45 Trần Hưng Đạo, Hà Nội',status:'pending',pass:'123456'}]);
   if(MK.get('products',null)===null)MK.set('products',[
     {id:1,name:'Bộ SGK lớp 6 - Kết nối tri thức',cat:'Sách',price:187000,stock:340,sold:1200,c:'#2f6ca5',shopId:1,shopName:'Nhà sách Tri Thức',status:'active'},
     {id:2,name:'Dế Mèn phiêu lưu ký',cat:'Sách',price:45000,stock:88,sold:5400,c:'#3a7a52',shopId:1,shopName:'Nhà sách Tri Thức',status:'active'},
@@ -341,7 +354,28 @@ function settings(){
   '</div></div>';
 }
 
-render();
+/* ---- Đăng nhập quản trị (có mật khẩu) ---- */
+function adminCred(){return ALS.get('cred',{user:'admin',pass:'admin123'});}
+function adminLogout(){ALS.set('session',false);location.reload();}
+function renderAdminAuth(){
+  document.body.innerHTML=
+   '<div class="auth-screen"><div class="auth-card">'+
+     '<div class="auth-logo"><span class="amark">QT</span> EduMart · Quản trị hệ thống</div>'+
+     '<div class="af"><label>Tên đăng nhập</label><input id="auUser" placeholder="admin"></div>'+
+     '<div class="af"><label>Mật khẩu</label><input id="auPass" type="password" placeholder="••••••••" onkeydown="if(event.key===\'Enter\')doAdminLogin()"></div>'+
+     '<button class="auth-btn" onclick="doAdminLogin()">Đăng nhập quản trị</button>'+
+     '<p class="auth-hint">Demo: <b>admin</b> / <b>admin123</b></p>'+
+     '<p class="auth-hint"><a href="./" style="color:var(--ink)">‹ Về trang mua sắm</a></p>'+
+   '</div></div><div class="toast" id="toast"></div>';
+}
+function doAdminLogin(){
+  const u=(document.getElementById('auUser').value||'').trim();
+  const p=(document.getElementById('auPass').value||'').trim();
+  const c=adminCred();
+  if(u===c.user&&p===c.pass){ALS.set('session',true);location.reload();}
+  else toast('Sai tên đăng nhập hoặc mật khẩu');
+}
+if(ALS.get('session',false))render(); else renderAdminAuth();
 </script>
 </body>
 </html>

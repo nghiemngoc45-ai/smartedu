@@ -295,10 +295,18 @@
   .util .sp{flex:1;}
   .util .mystic{color:var(--ink);font-weight:500;}
   .mainnav{background:var(--surface);border-top:1px solid var(--line);}
-  .mainnav-inner{max-width:1120px;margin:0 auto;padding:0 18px;display:flex;gap:2px;overflow-x:auto;}
+  .mainnav-inner{max-width:1120px;margin:0 auto;padding:0 18px;display:flex;gap:2px;flex-wrap:wrap;}
   .mainnav a{font-size:13.5px;font-weight:500;color:var(--text);padding:12px 13px;white-space:nowrap;border-bottom:2.5px solid transparent;transition:color .12s,border-color .12s;}
   .mainnav a:hover{color:var(--ink);border-bottom-color:var(--ink);}
   .mainnav a.mystic{color:var(--mystic-gold);}
+  /* Mega-menu thả xuống cho mục Sách */
+  .mainnav .navitem{position:relative;}
+  .mainnav .navitem.has-menu>a{display:inline-block;}
+  .mainnav .navitem.has-menu:hover>a,.mainnav .navitem.has-menu:focus-within>a{color:var(--ink);border-bottom-color:var(--ink);}
+  .mainnav .dropdown{position:absolute;top:100%;left:0;background:var(--surface);border:1px solid var(--line);border-radius:0 0 12px 12px;box-shadow:0 14px 34px rgba(44,38,32,.16);min-width:212px;padding:8px;display:none;z-index:50;}
+  .mainnav .navitem.has-menu:hover .dropdown,.mainnav .navitem.has-menu:focus-within .dropdown{display:block;}
+  .mainnav .dropdown a{display:block;padding:9px 12px;border-radius:8px;border-bottom:none;white-space:nowrap;color:var(--text);}
+  .mainnav .dropdown a:hover{background:var(--paper);color:var(--ink);border-bottom:none;}
 
   /* ---------- Editorial search hero ---------- */
   .searchband{background:var(--sand);border:1px solid var(--line);border-radius:var(--r);padding:34px;margin-top:8px;background-image:radial-gradient(circle at 94% 8%, rgba(200,54,42,.07), transparent 42%);}

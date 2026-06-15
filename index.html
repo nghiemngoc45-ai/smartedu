@@ -51,13 +51,18 @@
     </div>
   </div>
   <nav class="mainnav"><div class="mainnav-inner">
-    <a onclick="go('listing','sach')">Sách</a>
-    <a onclick="go('listing','sgk')">Sách giáo khoa</a>
-    <a onclick="go('listing','thamkhao')">Tham khảo</a>
-    <a onclick="go('listing','vanhoc')">Văn học</a>
-    <a onclick="go('listing','thieunhi')">Thiếu nhi</a>
-    <a onclick="go('listing','kynang')">Kỹ năng sống</a>
-    <a onclick="go('listing','ngoaingu')">Ngoại ngữ</a>
+    <div class="navitem has-menu">
+      <a onclick="go('listing','sach')">Sách ▾</a>
+      <div class="dropdown">
+        <a onclick="go('listing','sach')">Tất cả sách</a>
+        <a onclick="go('listing','sgk')">Sách giáo khoa</a>
+        <a onclick="go('listing','thamkhao')">Sách tham khảo</a>
+        <a onclick="go('listing','vanhoc')">Văn học</a>
+        <a onclick="go('listing','thieunhi')">Thiếu nhi</a>
+        <a onclick="go('listing','kynang')">Kỹ năng sống</a>
+        <a onclick="go('listing','ngoaingu')">Ngoại ngữ</a>
+      </div>
+    </div>
     <a onclick="go('listing','ebook')">Ebook</a>
     <a onclick="go('listing','audiobook')">Sách nói</a>
     <a onclick="go('listing','vpp')">Văn phòng phẩm</a>

@@ -311,6 +311,14 @@ function renderHome(){
     ['Góc học tập','Sắp xếp bàn học giúp con tập trung hơn','01 tháng 6, 2026','Ánh sáng, bố cục và một chút phong thủy cho không gian học ở nhà.','1761821170104-ccd3e3e21318','rgba(60,45,15,.48)']
   ];
   const fa=ARTS[0];
+  const GENT=[
+    ['sgk','Sách giáo khoa','#e8f0f8','#1e3a5a','<path d="M4 19V5a1 1 0 0 1 1-1h6v16H5a1 1 0 0 1-1-1Z"/><path d="M13 4h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-6"/>'],
+    ['thamkhao','Tham khảo','#fdf2dc','#8a5a00','<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 9h16M9 4v16"/>'],
+    ['vanhoc','Văn học','#f5eaf0','#6a1a3a','<path d="M12 7a4 3 0 0 0-8 0v11a4 3 0 0 1 8 0 4 3 0 0 1 8 0V7a4 3 0 0 0-8 0Z"/>'],
+    ['thieunhi','Thiếu nhi','#e8f4e8','#2d5a2d','<circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/>'],
+    ['kynang','Kỹ năng sống','#f0e8f8','#4a1e7a','<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/>'],
+    ['ngoaingu','Ngoại ngữ','#e8f5f5','#1a5a5a','<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>']
+  ];
 
   document.getElementById('app').innerHTML=
   /* Hero / search band */
@@ -354,6 +362,10 @@ function renderHome(){
     hmColl(COLLS[1])+hmColl(COLLS[2])+
     '<div class="coll-row">'+hmColl(COLLS[3])+hmColl(COLLS[4])+hmColl(COLLS[5])+'</div>'+
   '</div>'+
+
+  /* Khám phá theo thể loại */
+  hmHead('Khám phá theo thể loại','Sàn sách EduMart')+
+  '<div class="gen-grid">'+GENT.map(g=>{const n=P.filter(p=>p.genre===g[0]).length;return '<div class="gen-card" style="background:'+g[2]+'" onclick="go(\'listing\',\''+g[0]+'\')"><div class="gic" style="color:'+g[3]+'"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">'+g[4]+'</svg></div><div class="gtx"><div class="gn" style="color:'+g[3]+'">'+g[1]+'</div><div class="gc">'+n+' sản phẩm</div></div></div>';}).join('')+'</div>'+
 
   /* Flash sale */
   '<div class="hm-flash">'+

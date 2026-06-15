@@ -673,6 +673,11 @@ let lgRole='hocsinh', authMode=1;
 let user=LS.get('user',null), orders=LS.get('orders',[]), acctTab='dashboard';
 function saveUser(){LS.set('user',user);}
 function saveOrders(){LS.set('orders',orders);}
+let children=LS.get('children',[]);                 // hồ sơ con (phụ huynh)
+function saveChildren(){LS.set('children',children);}
+function gradeAud(g){const n=parseInt((g||'').replace(/\D/g,''))||6;return n<=5?'tieuhoc':n<=9?'thcs':'thpt';}
+function addChild(){const name=val('chName');if(!name){toast('Nhập tên của con');return;}children.push({name,grade:document.getElementById('chGrade').value});saveChildren();toast('Đã thêm hồ sơ con');renderAccount();}
+function removeChild(i){children.splice(i,1);saveChildren();renderAccount();}
 
 function pickRole(k){lgRole=k;authTab(authMode);}
 function renderLogin(){
@@ -722,13 +727,25 @@ function acctContent(){
     let sc;
     if(user.role==='teacher')sc=[['Xác thực giáo viên',"acctTab='teacher';renderAccount()"],['Mua sỉ cho lớp',"go('classlist')"],['Ưu đãi giáo viên ('+tierPct+')',"go('promo')"]];
     else if(user.role==='school')sc=[['Yêu cầu báo giá (RFQ)',"go('rfq')"],['Mua theo danh sách lớp',"go('classlist')"],['Đơn báo giá của tôi',"acctTab='rfq';renderAccount()"]];
-    else if(user.role==='parent')sc=[['Mua theo danh sách lớp',"go('classlist')"],['Theo dõi đơn hàng',"acctTab='orders';renderAccount()"],['Trung tâm ưu đãi',"go('promo')"]];
+    else if(user.role==='parent')sc=[['Theo dõi học tập của con',"acctTab='children';renderAccount()"],['Mua theo danh sách lớp',"go('classlist')"],['Trung tâm ưu đãi',"go('promo')"]];
     else sc=[['Ebook & Sách nói',"go('listing','ebook')"],['Mua theo đối tượng',"go('listing','"+(user.role==='sinhvien'?'sinhvien':'thcs')+"')"],['Trung tâm ưu đãi',"go('promo')"]];
     return '<div class="panel"><h3>Xin chào, '+user.name+'!</h3>'+
       '<p style="color:var(--text-soft);margin:-6px 0 14px;font-size:13.5px">Bảng điều khiển dành cho <b>'+(ROLELBL[user.role]||'Bạn đọc')+'</b>.</p>'+
       '<div class="stat-row">'+stats.map(s=>'<div class="stat-box"><div class="v">'+s[1]+'</div><div class="l">'+s[0]+'</div></div>').join('')+'</div>'+
       '<div style="font-weight:600;font-size:14px;margin:18px 0 10px">Lối tắt cho bạn</div>'+
       '<div class="dash-sc">'+sc.map(x=>'<button class="dash-card" onclick="'+x[1]+'">'+x[0]+' ›</button>').join('')+'</div>'+
+    '</div>';
+  }
+  if(acctTab==='children'){
+    const prog=readProgress(), apos=audioPos();
+    const reading=library.map(id=>P.find(p=>p.id===id)).filter(p=>p&&(p.ebook||p.audio));
+    const gradeOpts=Array.from({length:12},(_,i)=>'<option>Lớp '+(i+1)+'</option>').join('');
+    const cards=children.length?children.map((c,i)=>'<div class="child-card"><div class="ch-head"><div class="ch-av">'+c.name.charAt(0).toUpperCase()+'</div><div><div class="ch-nm">'+c.name+'</div><div class="ch-gr">'+c.grade+'</div></div><button class="ci-remove" title="Xóa" onclick="removeChild('+i+')">✕</button></div><div class="ch-acts"><button class="btn-ghost" onclick="go(\'classlist\')">Đồ dùng theo lớp</button><button class="btn-ghost" onclick="go(\'listing\',\''+gradeAud(c.grade)+'\')">Sách gợi ý theo cấp</button></div></div>').join(''):'<p style="color:var(--text-soft)">Chưa có hồ sơ con nào. Thêm để theo dõi học tập &amp; mua sắm nhanh hơn.</p>';
+    const readList=reading.length?reading.map(p=>'<div class="oi"><div class="cover-sm">'+cover(p)+'</div><div style="flex:1">'+p.name+'<div style="font-size:12px;color:var(--text-soft)">'+(p.audio?'Đã nghe '+fmtTime(apos[p.id]||0):'Chương '+((prog[p.id]||0)+1)+'/5')+'</div></div><button class="act-track" onclick="'+(p.audio?'openPlayer('+p.id+')':'openReader('+p.id+',true)')+'">'+(p.audio?'Nghe tiếp':'Đọc tiếp')+' ›</button></div>').join(''):'<p style="color:var(--text-soft);font-size:13.5px">Chưa có sách số trong tủ. <a style="color:var(--ink);font-weight:500" onclick="go(\'listing\',\'ebook\')">Khám phá ebook ›</a></p>';
+    return '<div class="panel"><h3>Theo dõi học tập của con</h3>'+
+      '<div class="child-add"><input id="chName" placeholder="Tên của con"><select id="chGrade">'+gradeOpts+'</select><button class="btn-primary" onclick="addChild()">Thêm con</button></div>'+
+      '<div class="child-list">'+cards+'</div>'+
+      '<div style="font-weight:600;font-size:14px;margin:18px 0 8px">Tiến độ đọc / nghe trong Tủ sách</div>'+readList+
     '</div>';
   }
   if(acctTab==='orders'){
@@ -757,6 +774,7 @@ function acctContent(){
 }
 function navForRole(r){
   const nav=[['dashboard','Tổng quan'],['orders','Đơn hàng của tôi']];
+  if(r==='parent')nav.push(['children','Theo dõi học tập của con']);
   if(r==='school')nav.push(['rfq','Yêu cầu báo giá']);
   if(r==='teacher')nav.push(['teacher','Xác thực giáo viên'],['rfq','Yêu cầu báo giá']);
   nav.push(['profile','Hồ sơ'],['address','Sổ địa chỉ'],['points','Điểm thưởng']);

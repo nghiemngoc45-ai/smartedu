@@ -743,3 +743,18 @@
   .dash-card{text-align:left;border:1px solid var(--line);border-radius:11px;padding:14px;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);transition:border-color .15s,background .15s;}
   .dash-card:hover{border-color:var(--ink);background:#f6ece4;}
   @media (max-width:560px){.role-grid{grid-template-columns:1fr;}.dash-sc{grid-template-columns:1fr;}}
+
+  /* Theo dõi học tập của con (phụ huynh) */
+  .child-add{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .child-add input{flex:1;min-width:150px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;outline:none;background:var(--paper);color:var(--text);}
+  .child-add input:focus{border-color:var(--ink);}
+  .child-add select{border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;background:var(--surface);color:var(--text);}
+  .child-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:8px;}
+  .child-card{border:1px solid var(--line);border-radius:12px;padding:14px;}
+  .ch-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .ch-av{width:38px;height:38px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0;}
+  .ch-nm{font-weight:600;font-size:14px;} .ch-gr{font-size:12.5px;color:var(--text-soft);}
+  .ch-head .ci-remove{margin-left:auto;color:var(--text-soft);padding:4px 8px;}
+  .ch-acts{display:flex;gap:8px;flex-wrap:wrap;}
+  .ch-acts .btn-ghost{padding:8px 12px;font-size:13px;}
+  @media (max-width:880px){.child-list{grid-template-columns:1fr;}}

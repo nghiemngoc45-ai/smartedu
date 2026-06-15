@@ -659,38 +659,55 @@ async function gieoQue(){
 }
 
 /* ---------------- Account / Auth ---------------- */
-const ROLELBL={student:'Học sinh / Sinh viên',teacher:'Giáo viên',parent:'Phụ huynh',school:'Trường học / Tổ chức'};
-let user=LS.get('user',null), orders=LS.get('orders',[]), acctTab='orders', authMode=1;
+const ROLELBL={hocsinh:'Học sinh',sinhvien:'Sinh viên',teacher:'Giáo viên',parent:'Phụ huynh',school:'Trường học / Tổ chức',student:'Học sinh / Sinh viên'};
+const ROLES=[
+  {k:'hocsinh',name:'Học sinh',desc:'SGK, dụng cụ học tập, sách tham khảo',ic:'<path d="M9 3 4 6v12l5 3 6-3 5 3V6l-5-3-6 3Z"/>',kind:'buyer'},
+  {k:'sinhvien',name:'Sinh viên',desc:'Giáo trình, sách kỹ năng, ebook',ic:'<path d="M3 9l9-5 9 5-9 5-9-5Z M7 11v5a5 3 0 0 0 10 0v-5"/>',kind:'buyer'},
+  {k:'teacher',name:'Giáo viên',desc:'Ưu đãi đến 15%, mua sỉ cho lớp',ic:'<rect x="3" y="4" width="18" height="13" rx="1"/><path d="M12 17v4M8 21h8"/>',kind:'buyer'},
+  {k:'parent',name:'Phụ huynh',desc:'Mua cho con, theo dõi đơn hàng',ic:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/>',kind:'buyer'},
+  {k:'school',name:'Trường học / Tổ chức',desc:'Mua sỉ, yêu cầu báo giá (RFQ)',ic:'<path d="M3 21h18M3 10l9-7 9 7M9 21V14h6v7"/>',kind:'buyer'},
+  {k:'seller',name:'Người bán / NCC',desc:'Quản lý gian hàng, đơn, tồn kho',ic:'<path d="M3 9l1-5h16l1 5M5 9v11h14V9"/>',kind:'redirect',to:'seller.html'},
+  {k:'admin',name:'Quản trị viên',desc:'Vận hành toàn sàn',ic:'<circle cx="12" cy="12" r="3"/><path d="M19.4 13a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7 19.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.7 7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 19 4.7l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V10a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/>',kind:'redirect',to:'admin.html'}
+];
+let lgRole='hocsinh', authMode=1;
+let user=LS.get('user',null), orders=LS.get('orders',[]), acctTab='dashboard';
 function saveUser(){LS.set('user',user);}
 function saveOrders(){LS.set('orders',orders);}
 
+function pickRole(k){lgRole=k;authTab(authMode);}
 function renderLogin(){
   document.getElementById('app').innerHTML=
-  '<div class="auth-wrap"><div class="auth-tabs"><button class="on" id="tabLogin" onclick="authTab(1)">Đăng nhập</button><button id="tabReg" onclick="authTab(0)">Đăng ký</button></div><div class="form-card" id="authBody"></div></div>';
+  '<div class="auth-wrap wide"><div class="auth-tabs"><button class="on" id="tabLogin" onclick="authTab(1)">Đăng nhập</button><button id="tabReg" onclick="authTab(0)">Đăng ký</button></div><div class="form-card" id="authBody"></div></div>';
   authTab(1);
 }
 function authTab(login){
   authMode=login;
-  document.getElementById('tabLogin').classList.toggle('on',!!login);
-  document.getElementById('tabReg').classList.toggle('on',!login);
+  const tl=document.getElementById('tabLogin'),tr=document.getElementById('tabReg');
+  if(tl)tl.classList.toggle('on',!!login); if(tr)tr.classList.toggle('on',!login);
+  const sel=ROLES.find(r=>r.k===lgRole)||ROLES[0];
+  const roleGrid='<div class="role-grid">'+ROLES.map(r=>'<button class="role-card'+(r.k===lgRole?' on':'')+(r.kind==='redirect'?' redirect':'')+'" onclick="pickRole(\''+r.k+'\')"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">'+r.ic+'</svg></span><span class="rt">'+r.name+'</span><span class="rd">'+r.desc+'</span></button>').join('')+'</div>';
   document.getElementById('authBody').innerHTML=
-    (login?'':'<div class="form-field"><label>Họ và tên</label><input id="lgName" placeholder="Nguyễn Văn An"></div>')+
-    '<div class="form-field"><label>Số điện thoại hoặc email</label><input placeholder="09xx xxx xxx"></div>'+
-    '<div class="form-field"><label>Mật khẩu</label><input type="password" placeholder="••••••••"></div>'+
-    '<div class="form-field"><label>Bạn là</label><select id="lgRole"><option value="student">Học sinh / Sinh viên</option><option value="teacher">Giáo viên</option><option value="parent">Phụ huynh</option></select></div>'+
-    '<button class="btn-primary" style="width:100%" onclick="doLogin()">'+(login?'Đăng nhập':'Tạo tài khoản')+'</button>'+
-    '<div style="text-align:center;font-size:12px;color:var(--text-soft);margin:14px 0 8px">hoặc tiếp tục với</div>'+
-    '<div class="social-btns"><button onclick="doLogin()">Zalo</button><button onclick="doLogin()">Google</button><button onclick="doLogin()">Facebook</button></div>';
+    '<div class="form-label">Chọn vai trò của bạn</div>'+roleGrid+
+    (sel.kind==='redirect'
+      ? '<div class="role-note">Vai trò “'+sel.name+'” có khu vực làm việc riêng. Bấm nút bên dưới để vào cổng tương ứng.</div>'+
+        '<button class="btn-primary" style="width:100%" onclick="doLogin()">Vào cổng '+sel.name+' ›</button>'
+      : (login?'':'<div class="form-field"><label>Họ và tên</label><input id="lgName" placeholder="Nguyễn Văn An"></div>')+
+        '<div class="form-field"><label>Số điện thoại hoặc email</label><input placeholder="09xx xxx xxx"></div>'+
+        '<div class="form-field"><label>Mật khẩu</label><input type="password" placeholder="••••••••"></div>'+
+        '<button class="btn-primary" style="width:100%" onclick="doLogin()">'+(login?'Đăng nhập — '+sel.name:'Tạo tài khoản — '+sel.name)+'</button>'+
+        '<div style="text-align:center;font-size:12px;color:var(--text-soft);margin:14px 0 8px">hoặc tiếp tục với</div>'+
+        '<div class="social-btns"><button onclick="doLogin()">Zalo</button><button onclick="doLogin()">Google</button><button onclick="doLogin()">Facebook</button></div>');
 }
 function refCode(name){return 'EDU'+String((name||'EDUMART').split('').reduce((a,c)=>a+c.charCodeAt(0),0)%9000+1000);}
 function doLogin(){
-  const nameEl=document.getElementById('lgName'),roleEl=document.getElementById('lgRole');
+  const sel=ROLES.find(r=>r.k===lgRole)||ROLES[0];
+  if(sel.kind==='redirect'){window.location.href=sel.to;return;}
+  const nameEl=document.getElementById('lgName');
   const name=nameEl?nameEl.value.trim():'';
-  const role=roleEl?roleEl.value:'student';
-  user={name:name||'Bạn đọc EduMart',role:role,points:120,phone:'09xx xxx xxx',ref:refCode(name),checkin:null,streak:0};
-  saveUser(); toast('Đăng nhập thành công'); acctTab='orders'; go('account');
+  user={name:name||(ROLELBL[sel.k]+' EduMart'),role:sel.k,points:120,phone:'09xx xxx xxx',ref:refCode(name),checkin:null,streak:0};
+  saveUser(); toast('Đăng nhập thành công · '+ROLELBL[sel.k]); acctTab='dashboard'; go('account');
 }
-function logout(){user=null;LS.set('user',null);toast('Đã đăng xuất');go('home');}
+function logout(){user=null;LS.set('user',null);acctTab='dashboard';toast('Đã đăng xuất');go('home');}
 function goOrders(){acctTab='orders';go('account');}
 
 function orderCard(o){
@@ -699,6 +716,21 @@ function orderCard(o){
     '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px"><button class="act-track" onclick="go(\'order\',\''+o.id+'\')">Theo dõi đơn ›</button><span style="font-weight:700;color:var(--coral)">Tổng: '+fmt(o.total)+'</span></div></div>';
 }
 function acctContent(){
+  if(acctTab==='dashboard'){
+    const tierPct=user.role==='teacher'?'15%':'5%';
+    const stats=[['Đơn hàng',orders.length],['Điểm thưởng',user.points||0],['Yêu thích',wishlist.length],['Tủ sách',library.length]];
+    let sc;
+    if(user.role==='teacher')sc=[['Xác thực giáo viên',"acctTab='teacher';renderAccount()"],['Mua sỉ cho lớp',"go('classlist')"],['Ưu đãi giáo viên ('+tierPct+')',"go('promo')"]];
+    else if(user.role==='school')sc=[['Yêu cầu báo giá (RFQ)',"go('rfq')"],['Mua theo danh sách lớp',"go('classlist')"],['Đơn báo giá của tôi',"acctTab='rfq';renderAccount()"]];
+    else if(user.role==='parent')sc=[['Mua theo danh sách lớp',"go('classlist')"],['Theo dõi đơn hàng',"acctTab='orders';renderAccount()"],['Trung tâm ưu đãi',"go('promo')"]];
+    else sc=[['Ebook & Sách nói',"go('listing','ebook')"],['Mua theo đối tượng',"go('listing','"+(user.role==='sinhvien'?'sinhvien':'thcs')+"')"],['Trung tâm ưu đãi',"go('promo')"]];
+    return '<div class="panel"><h3>Xin chào, '+user.name+'!</h3>'+
+      '<p style="color:var(--text-soft);margin:-6px 0 14px;font-size:13.5px">Bảng điều khiển dành cho <b>'+(ROLELBL[user.role]||'Bạn đọc')+'</b>.</p>'+
+      '<div class="stat-row">'+stats.map(s=>'<div class="stat-box"><div class="v">'+s[1]+'</div><div class="l">'+s[0]+'</div></div>').join('')+'</div>'+
+      '<div style="font-weight:600;font-size:14px;margin:18px 0 10px">Lối tắt cho bạn</div>'+
+      '<div class="dash-sc">'+sc.map(x=>'<button class="dash-card" onclick="'+x[1]+'">'+x[0]+' ›</button>').join('')+'</div>'+
+    '</div>';
+  }
   if(acctTab==='orders'){
     return '<div class="panel"><h3>Đơn hàng của tôi</h3>'+(orders.length?orders.map(orderCard).join(''):'<p style="color:var(--text-soft)">Bạn chưa có đơn hàng nào. <a style="color:var(--ink);font-weight:500" onclick="go(\'home\')">Mua sắm ngay ›</a></p>')+'</div>';
   }
@@ -706,7 +738,7 @@ function acctContent(){
     return '<div class="panel"><h3>Hồ sơ của tôi</h3>'+
       '<div class="form-field"><label>Họ và tên</label><input value="'+user.name+'"></div>'+
       '<div class="form-row"><div class="form-field"><label>Số điện thoại</label><input value="'+user.phone+'"></div><div class="form-field"><label>Email</label><input placeholder="ban@email.com"></div></div>'+
-      '<div class="form-field"><label>Vai trò</label><select><option '+(user.role==='student'?'selected':'')+'>Học sinh / Sinh viên</option><option '+(user.role==='teacher'?'selected':'')+'>Giáo viên</option><option '+(user.role==='parent'?'selected':'')+'>Phụ huynh</option></select></div>'+
+      '<div class="form-field"><label>Vai trò</label><select>'+['hocsinh','sinhvien','teacher','parent','school'].map(k=>'<option '+(user.role===k?'selected':'')+'>'+ROLELBL[k]+'</option>').join('')+'</select></div>'+
       '<button class="btn-primary" onclick="toast(\'Đã lưu thay đổi\')">Lưu thay đổi</button></div>';
   }
   if(acctTab==='address'){
@@ -723,9 +755,16 @@ function acctContent(){
     return '<div class="panel"><h3>Xác thực giáo viên</h3><p style="color:var(--text-soft);font-size:14px">Xác thực nghề giáo viên để nhận ưu đãi riêng đến 15% và quyền mua sỉ cho lớp. Tải lên thẻ giáo viên hoặc quyết định công tác.</p><button class="btn-primary" style="margin-top:12px" onclick="toast(\'Đã mở cửa sổ tải giấy tờ\')">Tải giấy tờ xác thực</button></div>';
   }
 }
+function navForRole(r){
+  const nav=[['dashboard','Tổng quan'],['orders','Đơn hàng của tôi']];
+  if(r==='school')nav.push(['rfq','Yêu cầu báo giá']);
+  if(r==='teacher')nav.push(['teacher','Xác thực giáo viên'],['rfq','Yêu cầu báo giá']);
+  nav.push(['profile','Hồ sơ'],['address','Sổ địa chỉ'],['points','Điểm thưởng']);
+  return nav;
+}
 function renderAccount(){
   if(!user){renderLogin();return;}
-  const nav=[['orders','Đơn hàng của tôi'],['rfq','Yêu cầu báo giá'],['profile','Hồ sơ'],['address','Sổ địa chỉ'],['points','Điểm thưởng'],['teacher','Xác thực giáo viên']];
+  const nav=navForRole(user.role);
   document.getElementById('app').innerHTML=
   '<div class="acct"><aside class="acct-side"><div class="acct-user"><div class="av">'+user.name.charAt(0).toUpperCase()+'</div><div><div class="nm">'+user.name+'</div><div class="rl">'+ROLELBL[user.role]+'</div></div></div>'+
     '<div class="acct-nav">'+nav.map(n=>'<button class="'+(acctTab===n[0]?'on':'')+'" onclick="acctTab=\''+n[0]+'\';renderAccount()">'+n[1]+'</button>').join('')+'<button class="danger" onclick="logout()">Đăng xuất</button></div></aside>'+

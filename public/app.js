@@ -31,8 +31,24 @@ const P = [
   {id:19,name:'Toán tư duy cho học sinh tiểu học',by:'Phạm Lan',cat:'ebook',aud:['tieuhoc'],nxb:'EduMart Digital',price:49000,old:75000,rate:4.8,sold:2900,c:'#3a7a52',ebook:true,format:'PDF · EPUB',pages:164,size:4.2},
   {id:20,name:'Đắc Nhân Tâm (sách nói)',by:'Dale Carnegie',cat:'audiobook',aud:['sinhvien'],nxb:'EduMart Audio',price:69000,old:99000,rate:4.9,sold:5200,c:'#c1572f',audio:true,narrator:'Minh Quân',duration:372,format:'MP3'},
   {id:21,name:'Tư duy nhanh và chậm (sách nói)',by:'Daniel Kahneman',cat:'audiobook',aud:['sinhvien'],nxb:'EduMart Audio',price:89000,old:129000,rate:4.7,sold:2400,c:'#7a4a8c',audio:true,narrator:'Thu Hà',duration:540,format:'MP3'},
-  {id:22,name:'Luyện nghe Tiếng Anh mỗi ngày (sách nói)',by:'Lê Hằng',cat:'audiobook',aud:['thpt','sinhvien'],nxb:'EduMart Audio',price:55000,old:85000,rate:4.8,sold:3100,c:'#2f6ca5',audio:true,narrator:'David Le',duration:248,format:'MP3'}
+  {id:22,name:'Luyện nghe Tiếng Anh mỗi ngày (sách nói)',by:'Lê Hằng',cat:'audiobook',aud:['thpt','sinhvien'],nxb:'EduMart Audio',price:55000,old:85000,rate:4.8,sold:3100,c:'#2f6ca5',audio:true,narrator:'David Le',duration:248,format:'MP3'},
+  {id:23,name:'Tắt đèn',by:'Ngô Tất Tố',cat:'sach',aud:['thpt'],nxb:'NXB Văn Học',price:72000,old:95000,rate:4.7,sold:2100,c:'#5a3a2a'},
+  {id:24,name:'Cây chuối non đi giày xanh',by:'Nguyễn Nhật Ánh',cat:'sach',aud:['thcs','thpt'],nxb:'NXB Trẻ',price:110000,old:135000,rate:4.9,sold:4300,c:'#2f8f6a'},
+  {id:25,name:'Bộ SGK lớp 1 - Cánh Diều',by:'NXB ĐH Sư Phạm',cat:'sach',aud:['tieuhoc'],nxb:'Cánh Diều',price:165000,old:210000,rate:4.8,sold:1800,c:'#c1572f'}
 ];
+
+/* ---------------- Thể loại sách (genre) ---------------- */
+const GENRE={sgk:'Sách giáo khoa',thamkhao:'Sách tham khảo',vanhoc:'Văn học',thieunhi:'Thiếu nhi',kynang:'Kỹ năng sống',ngoaingu:'Ngoại ngữ'};
+const GENREDESC={
+  sgk:'Sách giáo khoa các bộ Kết nối tri thức, Chân trời sáng tạo, Cánh diều theo lớp.',
+  thamkhao:'Sách bài tập, luyện thi và tài liệu tham khảo theo môn học, cấp học.',
+  vanhoc:'Tác phẩm văn học trong và ngoài chương trình, kinh điển đến hiện đại.',
+  thieunhi:'Truyện tranh, sách kỹ năng và thế giới diệu kỳ cho các bạn nhỏ.',
+  kynang:'Phát triển bản thân, tư duy và thói quen tốt cho học sinh, sinh viên.',
+  ngoaingu:'Sách học tiếng Anh và ngoại ngữ: từ vựng, giao tiếp, luyện thi.'
+};
+const GENRE_MAP={1:'sgk',2:'thieunhi',3:'kynang',4:'vanhoc',5:'kynang',6:'thamkhao',15:'kynang',16:'ngoaingu',17:'kynang',18:'thamkhao',19:'thamkhao',20:'kynang',21:'kynang',22:'ngoaingu',23:'vanhoc',24:'thieunhi',25:'sgk'};
+P.forEach(p=>{if(GENRE_MAP[p.id])p.genre=GENRE_MAP[p.id];});
 
 /* ---------------- Ebook: nội dung, sở hữu, tiến độ đọc ---------------- */
 function ebookChapters(p){
@@ -423,10 +439,11 @@ function clearFilter(k){if(k==='price')filt.price='all';else if(k==='rating')fil
 function resetFilters(){filt.aud=null;filt.brand=null;filt.fmt=null;filt.price='all';filt.rating=false;filt.sale=false;filt.q='';renderListing();}
 function setSearchQ(v){filt.q=(v||'').trim();renderListing();}
 function renderListing(){
-  let title='Tất cả sản phẩm', base=P.slice(), ctxKey='all', catKey=null;
+  let title='Tất cả sản phẩm', base=P.slice(), ctxKey='all', catKey=null, heroDesc='';
   if(typeof arg==='string'){
     if(AUD[arg]){title=AUD[arg];base=P.filter(p=>(p.aud&&p.aud.includes(arg))||arg==='school');ctxKey='aud:'+arg;}
-    else if(CATLBL[arg]){title=CATLBL[arg];base=P.filter(p=>p.cat===arg);ctxKey='cat:'+arg;catKey=arg;}
+    else if(CATLBL[arg]){title=CATLBL[arg];base=P.filter(p=>p.cat===arg);ctxKey='cat:'+arg;catKey=arg;heroDesc=CATDESC[arg]||'';}
+    else if(GENRE[arg]){title=GENRE[arg];base=P.filter(p=>p.genre===arg);ctxKey='genre:'+arg;heroDesc=GENREDESC[arg]||'';}
   } else if(arg&&arg.q){title='Kết quả cho “'+arg.q+'”';const q=arg.q.toLowerCase();base=P.filter(p=>p.name.toLowerCase().includes(q)||p.by.toLowerCase().includes(q));ctxKey='q:'+arg.q;}
   if(_listCtx!==ctxKey){_listCtx=ctxKey;filt.aud=null;filt.brand=null;filt.fmt=null;filt.price='all';filt.rating=false;filt.sale=false;filt.q='';}
 
@@ -479,7 +496,7 @@ function renderListing(){
       '<div class="fgroup"><div class="ftitle">Khác</div><label><input type="checkbox" '+(filt.rating?'checked':'')+' onchange="filt.rating=this.checked;renderListing()">Đánh giá 4.8★ trở lên</label><label><input type="checkbox" '+(filt.sale?'checked':'')+' onchange="filt.sale=this.checked;renderListing()">Đang giảm giá</label></div>'+
     '</aside>'+
     '<div>'+
-      (catKey&&CATDESC[catKey]?'<div class="cat-hero"><h1>'+title+'</h1><p>'+CATDESC[catKey]+'</p></div>':'')+
+      (heroDesc?'<div class="cat-hero"><h1>'+title+'</h1><p>'+heroDesc+'</p></div>':'')+
       chipHtml+
       '<div class="list-top"><span class="cnt"><b>'+list.length+'</b> sản phẩm</span>'+
         '<select onchange="filt.sort=this.value;renderListing()">'+sortOpts+'</select></div>'+

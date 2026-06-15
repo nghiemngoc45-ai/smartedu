@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Danh sách tính năng — EduMart</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+  *{box-sizing:border-box;}
+  body{margin:0;background:#eef2ee;color:#1f2a22;font-family:'Be Vietnam Pro',system-ui,sans-serif;font-size:13.5px;line-height:1.5;-webkit-font-smoothing:antialiased;padding:24px;}
+  .wrap{max-width:1040px;margin:0 auto;background:#fff;box-shadow:0 6px 30px rgba(20,52,42,.12);border:1px solid #cfe3d5;}
+  .title{background:#3f9b54;color:#fff;text-align:center;font-weight:700;font-size:18px;letter-spacing:.3px;padding:16px 18px;text-transform:uppercase;}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;background:#f3f9f4;border-bottom:1px solid #cfe3d5;padding:8px 12px;font-size:12px;color:#4a5a50;}
+  .legend b{color:#2f7d45;}
+  table{width:100%;border-collapse:collapse;}
+  col.c1{width:74px;} col.c2{width:300px;}
+  th{background:#d7ecdc;color:#1f5a30;font-weight:700;text-align:left;padding:10px 12px;border:1px solid #bcdcc6;font-size:13px;}
+  td{padding:8px 12px;border:1px solid #d8e8dc;vertical-align:top;}
+  tr.grp td{background:#bfe0c8;color:#13502a;font-weight:700;text-transform:uppercase;font-size:13px;letter-spacing:.2px;}
+  tr.grp td .code{display:inline-block;}
+  tr.sub td{background:#eef7f0;font-weight:600;color:#21503a;}
+  tr.feat td.code{color:#7a8f82;font-weight:600;text-align:center;}
+  tr.feat .fn{font-weight:500;}
+  tr.feat:nth-child(even) td{background:#fbfdfb;}
+  .code{text-align:center;font-weight:700;color:#2f7d45;}
+  .tag{font-size:11px;font-weight:600;padding:1px 7px;border-radius:20px;margin-left:6px;white-space:nowrap;}
+  .tag.sim{background:#fff1d6;color:#8a5a00;}
+  .tag.plan{background:#e7eef5;color:#3a5a7a;}
+  .foot{padding:12px 16px;font-size:12px;color:#5a6a60;background:#f3f9f4;border-top:1px solid #cfe3d5;}
+  @media print{body{background:#fff;padding:0;}.wrap{box-shadow:none;border:none;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">Danh sách tính năng hệ thống EduMart — Sàn sách, ebook, sách nói &amp; thiết bị giáo dục</div>
+  <div class="legend"><span>Chú thích:</span><span><b>(không nhãn)</b> = đã có trên hệ thống</span><span><span class="tag sim">mô phỏng</span> = demo, chưa nối hệ thống thật</span><span><span class="tag plan">dự kiến</span> = chưa triển khai</span></div>
+  <table>
+    <colgroup><col class="c1"><col class="c2"><col></colgroup>
+    <thead><tr><th>Mã nhóm</th><th>Chức năng</th><th>Mô tả</th></tr></thead>
+    <tbody>
+
+    <tr class="grp"><td class="code">A</td><td colspan="2">Nhóm tính năng cho người mua (khách, học sinh, sinh viên, giáo viên, phụ huynh)</td></tr>
+
+    <tr class="sub"><td class="code">1</td><td colspan="2">Tài khoản &amp; xác thực</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Đăng ký / đăng nhập theo vai trò</td><td>Học sinh/Sinh viên, Giáo viên, Phụ huynh, Trường học; nút Zalo/Google/Facebook <span class="tag sim">mô phỏng</span></td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Lưu phiên đăng nhập</td><td>Tự ghi nhớ đăng nhập trên thiết bị (localStorage)</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Quản lý hồ sơ cá nhân</td><td>Cập nhật họ tên, số điện thoại, email, vai trò</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Sổ địa chỉ</td><td>Lưu địa chỉ nhận hàng, đặt mặc định</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Xác thực nghề giáo viên</td><td>Tải giấy tờ để mở ưu đãi đến 15% <span class="tag sim">mô phỏng</span></td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Điểm thưởng &amp; hạng thành viên</td><td>Tích điểm theo chi tiêu, hiển thị hạng &amp; mức ưu đãi</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">OTP qua SMS/Zalo · 2FA · SSO</td><td>Xác thực nâng cao <span class="tag plan">dự kiến</span></td></tr>
+
+    <tr class="sub"><td class="code">2</td><td colspan="2">Tìm kiếm &amp; khám phá</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Thanh tìm kiếm</td><td>Tìm theo tựa sách, tác giả, từ khóa hoặc ISBN</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Tìm trong danh mục</td><td>Lọc nhanh theo tên/tác giả/NXB ngay trong chuyên mục</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Bộ lọc đa tiêu chí</td><td>Đối tượng, NXB/thương hiệu (kèm số lượng), định dạng (PDF/EPUB), khoảng giá, đánh giá 4.8★+, đang giảm giá</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Chip lọc đang áp dụng</td><td>Hiển thị &amp; xóa từng bộ lọc, đặt lại toàn bộ; tự reset khi đổi chuyên mục</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Sắp xếp kết quả</td><td>Bán chạy, đánh giá cao, giá tăng / giảm</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Danh mục đa dạng</td><td>Sách, SGK, tham khảo, Ebook, Sách nói, VPP, Thiết bị, theo đối tượng</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Tìm bằng hình ảnh / giọng nói</td><td>Quét ISBN/bìa sách, tìm bằng giọng nói <span class="tag plan">dự kiến</span></td></tr>
+
+    <tr class="sub"><td class="code">3</td><td colspan="2">Trang chi tiết sản phẩm</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Ảnh bìa &amp; thông tin giá</td><td>Bìa, giá / giá gốc / % giảm, đánh giá, lượt bán</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Mô tả &amp; thông số</td><td>NXB/hãng, tác giả; ebook: định dạng/số trang/dung lượng; sách nói: thời lượng/người đọc</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Biến thể sản phẩm</td><td>Bìa mềm/cứng, loại tiêu chuẩn/combo (sách giấy)</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Đánh giá từ người mua</td><td>Gửi sao + nội dung + ảnh thực tế, lưu lại</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Hỏi đáp sản phẩm (Q&amp;A)</td><td>Đặt câu hỏi cho người bán, lưu lại</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Sản phẩm liên quan &amp; đã xem gần đây</td><td>Gợi ý cùng danh mục, lịch sử sản phẩm đã xem</td></tr>
+
+    <tr class="sub"><td class="code">4</td><td colspan="2">Tính năng đặc thù giáo dục</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Mua theo đối tượng</td><td>Tiểu học, THCS/THPT, Sinh viên, Giáo viên…</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Mua theo danh sách lớp</td><td>Bộ đồ dùng chuẩn theo lớp, thêm cả bộ vào giỏ</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Mua trọn bộ sách giáo khoa</td><td>Theo lớp &amp; bộ sách (Kết nối tri thức, Chân trời, Cánh diều)</td></tr>
+
+    <tr class="sub"><td class="code">5</td><td colspan="2">Giỏ hàng &amp; thanh toán</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Giỏ hàng</td><td>Nhiều sản phẩm, tăng/giảm/xóa, lưu giỏ</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Mã giảm giá / voucher</td><td>EDU10, GIAOVIEN, freeship…</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Phí vận chuyển</td><td>Miễn phí đơn &gt; 300k; đơn hàng số (ebook/sách nói) miễn ship</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Thanh toán đa kênh</td><td>MoMo, ZaloPay, VNPay, COD, ATM/Visa <span class="tag sim">mô phỏng</span></td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Thanh toán nhanh không cần tài khoản</td><td>Guest checkout</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Hóa đơn điện tử VAT</td><td>Xuất hóa đơn cho cá nhân/tổ chức <span class="tag plan">dự kiến</span></td></tr>
+
+    <tr class="sub"><td class="code">6</td><td colspan="2">Đơn hàng &amp; sau bán</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Theo dõi đơn hàng</td><td>Timeline 5 trạng thái, mô phỏng cập nhật từng chặng</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Lịch sử đơn &amp; mua lại</td><td>Danh sách đơn theo tài khoản, thêm lại đơn cũ vào giỏ</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Yêu cầu đổi / trả</td><td>Gửi yêu cầu sau khi nhận hàng <span class="tag sim">mô phỏng</span></td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Tích điểm sau mua</td><td>Tự cộng điểm thưởng theo giá trị đơn</td></tr>
+
+    <tr class="sub"><td class="code">7</td><td colspan="2">Khuyến mãi &amp; khách thân thiết</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Flash sale</td><td>Khung giờ vàng với đồng hồ đếm ngược</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Vòng quay may mắn</td><td>Quay 1 lần/ngày nhận điểm/voucher</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Nhiệm vụ &amp; điểm danh</td><td>Chuỗi ngày liên tiếp, cộng điểm</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Giới thiệu bạn (referral)</td><td>Mã cá nhân, ưu đãi hai chiều</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Trung tâm ưu đãi &amp; voucher</td><td>Lưu mã giảm giá, áp dụng khi thanh toán</td></tr>
+
+    <tr class="sub"><td class="code">8</td><td colspan="2">Cá nhân hóa, yêu thích &amp; hỗ trợ</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Danh sách yêu thích (wishlist)</td><td>Lưu/bỏ sản phẩm, badge đếm, trang riêng</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Thông báo</td><td>Đơn hàng, thuê sách, vòng quay…; đánh dấu đã đọc</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Quẻ sách thần số (AI)</td><td>Gợi ý sách theo thần số học bằng trợ lý AI (có bản dự phòng ngoại tuyến)</td></tr>
+
+    <tr class="sub"><td class="code">9</td><td colspan="2">Ebook (sách số)</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Danh mục &amp; đọc thử</td><td>Sản phẩm số gắn nhãn E-BOOK, đọc thử miễn phí chương 1</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Trình đọc</td><td>Đọc theo chương, chỉnh cỡ chữ, nền sáng/sepia/tối, lưu tiến độ, paywall</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Ghi chú &amp; đánh dấu trang</td><td>Bookmark chương + ghi chú theo từng cuốn</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Mua đứt / thuê có thời hạn</td><td>Sở hữu vĩnh viễn hoặc thuê 7/30 ngày (đếm ngược, hết hạn tự thu hồi)</td></tr>
+
+    <tr class="sub"><td class="code">10</td><td colspan="2">Audiobook (sách nói)</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Danh mục &amp; nghe thử</td><td>Gắn nhãn AUDIO, nghe thử giới hạn 2 phút</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Trình phát</td><td>Play/pause, tua ±15s, kéo tiến trình, tốc độ 1–2x, lưu vị trí nghe</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Mua đứt / thuê</td><td>Sở hữu hoặc thuê 7/30 ngày</td></tr>
+
+    <tr class="sub"><td class="code">11</td><td colspan="2">Tủ sách của tôi</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Tủ sách</td><td>Ebook/sách nói đã sở hữu &amp; đang thuê (badge, đếm ngược hạn)</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Đọc tiếp / nghe tiếp</td><td>Tiếp tục đúng chương/vị trí đang dở</td></tr>
+
+    <tr class="grp"><td class="code">B</td><td colspan="2">Nhóm B2B — Trường học &amp; tổ chức</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Tài khoản tổ chức</td><td>Vai trò Trường học / Tổ chức</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Yêu cầu báo giá (RFQ)</td><td>Thông tin tổ chức + danh sách sản phẩm + ghi chú, lưu &amp; theo dõi trong tài khoản</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Bậc chiết khấu theo số lượng</td><td>≥50 (-5%), ≥200 (-10%), ≥500 (-15%)</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Mua theo danh sách lớp</td><td>Thêm trọn bộ đồ dùng theo lớp vào giỏ</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Công nợ · hóa đơn VAT · duyệt nhiều cấp</td><td>Quản lý mua sắm tổ chức <span class="tag plan">dự kiến</span></td></tr>
+
+    <tr class="grp"><td class="code">C</td><td colspan="2">Nhóm người bán / nhà cung cấp (cổng riêng <code>seller.html</code>)</td></tr>
+    <tr class="sub"><td class="code">1</td><td colspan="2">Tài khoản gian hàng</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Đăng nhập gian hàng</td><td>Đăng nhập bằng số điện thoại gian hàng</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Đăng ký mở gian hàng</td><td>Tên shop, người phụ trách, SĐT, email, GPKD, địa chỉ → chờ EduMart duyệt</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Hồ sơ &amp; xác thực gian hàng</td><td>Cập nhật thông tin, trạng thái xác thực doanh nghiệp</td></tr>
+    <tr class="sub"><td class="code">2</td><td colspan="2">Vận hành bán hàng</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Tổng quan gian hàng</td><td>Doanh thu, đơn, lượt xem, cảnh báo tồn kho, biểu đồ 7 ngày, bán chạy</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Quản lý sản phẩm</td><td>Thêm/sửa/xóa; sản phẩm mới ở trạng thái chờ duyệt</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Quản lý đơn hàng</td><td>Lọc trạng thái, cập nhật trạng thái, in vận đơn</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Khuyến mãi gian hàng</td><td>Tạo / bật-tắt mã giảm giá riêng</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Đánh giá &amp; hỏi đáp</td><td>Xem và trả lời khách hàng</td></tr>
+    <tr class="sub"><td class="code">3</td><td colspan="2">Tài chính</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Số dư &amp; đối soát</td><td>Số dư khả dụng, đang đối soát, đã rút lũy kế, lịch sử giao dịch</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Yêu cầu rút tiền</td><td>Tạo lệnh rút về ngân hàng <span class="tag sim">mô phỏng</span></td></tr>
+
+    <tr class="grp"><td class="code">D</td><td colspan="2">Nhóm quản trị viên — toàn sàn (cổng riêng <code>admin.html</code>)</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Bảng điều khiển tổng quan</td><td>KPI doanh thu/đơn/người dùng/tồn kho, biểu đồ, đơn gần đây, bán chạy</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Quản lý sản phẩm</td><td>Thêm/sửa/xóa sản phẩm toàn sàn</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Quản lý đơn hàng</td><td>Lọc theo trạng thái, cập nhật trạng thái</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Quản lý người dùng</td><td>Danh sách vai trò, điểm, số đơn</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Duyệt gian hàng người bán</td><td>Duyệt / từ chối đăng ký gian hàng mới</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Kiểm duyệt sản phẩm</td><td>Duyệt / từ chối sản phẩm người bán đăng trước khi lên sàn</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Quản lý khuyến mãi cấp sàn</td><td>Tạo / bật-tắt mã giảm giá toàn sàn</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Cài đặt hệ thống</td><td>Phí sàn, vận chuyển, cổng thanh toán, hóa đơn VAT, phân quyền (cấu hình)</td></tr>
+
+    <tr class="grp"><td class="code">E</td><td colspan="2">Nền tảng kỹ thuật &amp; triển khai</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Lưu dữ liệu cục bộ</td><td>localStorage cho toàn bộ thao tác (theo từng thiết bị)</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Kho dữ liệu chung</td><td><code>edumart_mk_*</code> dùng chung giữa cổng Người bán và Admin (gian hàng, sản phẩm chờ duyệt)</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Giao diện responsive</td><td>Tương thích máy tính &amp; điện thoại</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Triển khai tự động</td><td>Vite + GitHub Pages, tự build &amp; cập nhật mỗi lần push</td></tr>
+    <tr class="feat"><td class="code"></td><td class="fn">Backend · CSDL · đồng bộ đa thiết bị · app di động</td><td>Hạ tầng máy chủ cho dữ liệu thật &amp; đa người dùng <span class="tag plan">dự kiến</span></td></tr>
+
+    </tbody>
+  </table>
+  <div class="foot">EduMart — bản prototype giao diện (HTML/CSS/JS + Vite), dữ liệu lưu localStorage theo thiết bị. Cập nhật tự động theo mã nguồn. Mục có nhãn <span class="tag sim">mô phỏng</span>/<span class="tag plan">dự kiến</span> chưa nối hệ thống thật.</div>
+</div>
+</body>
+</html>

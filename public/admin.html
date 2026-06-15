@@ -130,6 +130,9 @@
     <button class="nav-item" data-v="orders" onclick="nav('orders',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h14l-1 16H6L5 4Z"/><path d="M9 8h6"/></svg>Đơn hàng</button>
     <button class="nav-item" data-v="users" onclick="nav('users',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><path d="M16 5a3 3 0 0 1 0 6M18 20c0-2-1-3.5-3-4"/></svg>Người dùng</button>
     <button class="nav-item" data-v="promos" onclick="nav('promos',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12a2 2 0 0 1 0-4V5H4v3a2 2 0 0 1 0 4 2 2 0 0 1 0 4v3h16v-3a2 2 0 0 1 0-4Z"/><path d="M9 9h0M15 15h0M15 9l-6 6"/></svg>Khuyến mãi</button>
+    <div class="navg">Người bán</div>
+    <button class="nav-item" data-v="sellers" onclick="nav('sellers',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1-5h16l1 5M5 9v11h14V9M3 9h18"/></svg>Gian hàng</button>
+    <button class="nav-item" data-v="review" onclick="nav('review',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Kiểm duyệt SP</button>
     <div class="navg">Hệ thống</div>
     <button class="nav-item" data-v="settings" onclick="nav('settings',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.3 1a7 7 0 0 0-1.7-1l-.4-2.5h-4l-.4 2.5a7 7 0 0 0-1.7 1l-2.3-1-2 3.5 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.5 2.3-1a7 7 0 0 0 1.7 1l.4 2.5h4l.4-2.5a7 7 0 0 0 1.7-1l2.3 1 2-3.5-2-1.5c.1-.3.1-.7.1-1Z"/></svg>Cài đặt</button>
     <a href="./" class="nav-item" style="margin-top:auto"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>Về trang mua sắm</a>
@@ -151,9 +154,19 @@
 
 <script>
 const fmt=n=>n.toLocaleString('vi-VN')+'đ';
-const TITLES={overview:'Bảng điều khiển',products:'Sản phẩm',orders:'Đơn hàng',users:'Người dùng',promos:'Khuyến mãi',settings:'Cài đặt'};
+const TITLES={overview:'Bảng điều khiển',products:'Sản phẩm',orders:'Đơn hàng',users:'Người dùng',promos:'Khuyến mãi',sellers:'Người bán / Gian hàng',review:'Kiểm duyệt sản phẩm',settings:'Cài đặt'};
 
 const ALS={get(k,d){try{const v=localStorage.getItem('edumart_admin_'+k);return v===null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem('edumart_admin_'+k,JSON.stringify(v));}catch(e){}}};
+// Kho chung với Kênh người bán (gian hàng + sản phẩm chờ duyệt)
+const MK={get(k,d){try{const v=localStorage.getItem('edumart_mk_'+k);return v===null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem('edumart_mk_'+k,JSON.stringify(v));}catch(e){}}};
+(function seedMK(){
+  if(MK.get('sellers',null)===null)MK.set('sellers',[{id:1,name:'Nhà sách Tri Thức',owner:'Trần Trí',phone:'0901112233',email:'trithuc@edu.vn',license:'0312xxxxxx',addr:'12 Nguyễn Huệ, Q.1, TP.HCM',status:'active'},{id:2,name:'Văn phòng phẩm Bút Chì Xanh',owner:'Lê Hoa',phone:'0907778899',email:'butchixanh@edu.vn',license:'0398xxxxxx',addr:'45 Trần Hưng Đạo, Hà Nội',status:'pending'}]);
+  if(MK.get('products',null)===null)MK.set('products',[
+    {id:1,name:'Bộ SGK lớp 6 - Kết nối tri thức',cat:'Sách',price:187000,stock:340,sold:1200,c:'#2f6ca5',shopId:1,shopName:'Nhà sách Tri Thức',status:'active'},
+    {id:2,name:'Dế Mèn phiêu lưu ký',cat:'Sách',price:45000,stock:88,sold:5400,c:'#3a7a52',shopId:1,shopName:'Nhà sách Tri Thức',status:'active'},
+    {id:101,name:'Bút gel màu pastel (vỉ 12)',cat:'Văn phòng phẩm',price:54000,stock:120,sold:0,c:'#c94f7c',icon:'note',shopId:2,shopName:'Văn phòng phẩm Bút Chì Xanh',status:'pending'}
+  ]);
+})();
 const DEF_PRODUCTS=[
   {id:1,name:'Bộ SGK lớp 6 - Kết nối tri thức',cat:'Sách',price:187000,stock:340,sold:1200,c:'#2f6ca5'},
   {id:2,name:'Dế Mèn phiêu lưu ký',cat:'Sách',price:45000,stock:88,sold:5400,c:'#3a7a52'},
@@ -247,8 +260,30 @@ function render(){
   else if(view==='orders')c.innerHTML=orders();
   else if(view==='users')c.innerHTML=users();
   else if(view==='promos')c.innerHTML=promos();
+  else if(view==='sellers')c.innerHTML=sellers();
+  else if(view==='review')c.innerHTML=review();
   else c.innerHTML=settings();
 }
+const SST={active:['Đang hoạt động','b-done'],pending:['Chờ duyệt','b-wait'],rejected:['Đã từ chối','b-cancel']};
+function sellers(){
+  const list=MK.get('sellers',[]);
+  return '<div class="panel" style="padding:6px 8px"><table><thead><tr><th>Gian hàng</th><th>Người phụ trách</th><th>Liên hệ</th><th>Trạng thái</th><th></th></tr></thead><tbody>'+
+  list.map(s=>'<tr><td style="font-weight:500">'+s.name+'<div style="font-size:11.5px;color:var(--text-soft)">'+(s.addr||'')+'</div></td><td>'+(s.owner||'—')+'</td><td>'+s.phone+(s.email?'<div style="font-size:11.5px;color:var(--text-soft)">'+s.email+'</div>':'')+'</td><td><span class="badge '+SST[s.status][1]+'">'+SST[s.status][0]+'</span></td><td style="white-space:nowrap">'+(s.status==='pending'?'<button class="act-btn" onclick="approveSeller('+s.id+')">Duyệt</button><button class="del-btn" onclick="rejectSeller('+s.id+')">Từ chối</button>':'<button class="act-btn" onclick="toast(\'Xem gian hàng: '+s.name.replace(/\x27/g,"")+'\')">Xem</button>')+'</td></tr>').join('')+
+  (list.length?'':'<tr><td colspan="5" style="text-align:center;color:var(--text-soft);padding:30px">Chưa có gian hàng nào.</td></tr>')+
+  '</tbody></table></div>';
+}
+function approveSeller(id){const l=MK.get('sellers',[]);const s=l.find(x=>x.id===id);if(s){s.status='active';MK.set('sellers',l);toast('Đã duyệt gian hàng '+s.name);render();}}
+function rejectSeller(id){const l=MK.get('sellers',[]);const s=l.find(x=>x.id===id);if(s){s.status='rejected';MK.set('sellers',l);toast('Đã từ chối '+s.name);render();}}
+function review(){
+  const list=MK.get('products',[]).filter(p=>p.status==='pending');
+  return '<div class="toolbar"><span style="font-size:13.5px;color:var(--text-soft)"><b>'+list.length+'</b> sản phẩm chờ kiểm duyệt</span></div>'+
+  '<div class="panel" style="padding:6px 8px"><table><thead><tr><th>Sản phẩm</th><th>Gian hàng</th><th>Danh mục</th><th>Giá</th><th></th></tr></thead><tbody>'+
+  (list.length?list.map(p=>'<tr><td><div class="prod-cell"><div class="cover-sm">'+cover(p)+'</div><span class="nm">'+p.name+'</span></div></td><td>'+(p.shopName||'—')+'</td><td>'+p.cat+'</td><td style="font-weight:600">'+fmt(p.price)+'</td><td style="white-space:nowrap"><button class="act-btn" onclick="approveProd('+p.id+')">Duyệt</button><button class="del-btn" onclick="rejectProd('+p.id+')">Từ chối</button></td></tr>').join('')
+   :'<tr><td colspan="5" style="text-align:center;color:var(--text-soft);padding:30px">Không có sản phẩm chờ duyệt.</td></tr>')+
+  '</tbody></table></div>';
+}
+function approveProd(id){const l=MK.get('products',[]);const p=l.find(x=>x.id===id);if(p){p.status='active';MK.set('products',l);toast('Đã duyệt: '+p.name);render();}}
+function rejectProd(id){const l=MK.get('products',[]);const p=l.find(x=>x.id===id);if(p){p.status='rejected';MK.set('products',l);toast('Đã từ chối: '+p.name);render();}}
 
 function overview(){
   const rev=[42,55,38,61,72,49,86]; const days=['T2','T3','T4','T5','T6','T7','CN']; const max=Math.max(...rev);

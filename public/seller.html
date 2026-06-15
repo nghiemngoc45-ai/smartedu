@@ -129,6 +129,28 @@
 
   @media (max-width:900px){.shell{grid-template-columns:1fr;}.side{position:static;height:auto;}.kpis,.fin-cards,.promo-grid{grid-template-columns:1fr 1fr;}.grid2{grid-template-columns:1fr;}.form-row,.modal .mrow{grid-template-columns:1fr;}}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+
+  /* Auth screen */
+  .auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--paper);padding:20px;}
+  .auth-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:30px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(20,52,42,.12);}
+  .auth-logo{display:flex;align-items:center;gap:10px;font-family:'Lora',serif;font-weight:600;font-size:18px;color:var(--ink-deep);margin-bottom:18px;}
+  .auth-logo .amark{width:34px;height:34px;border-radius:9px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+  .auth-tabs{display:flex;gap:8px;margin-bottom:18px;}
+  .auth-tabs button{flex:1;padding:10px;border-radius:10px;font-weight:600;font-size:14px;color:var(--text-soft);background:var(--paper);border:1px solid var(--line);}
+  .auth-tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .af{margin-bottom:13px;}
+  .af label{display:block;font-size:12.5px;font-weight:500;margin-bottom:5px;color:var(--text);}
+  .af input{width:100%;font-family:inherit;font-size:14px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;background:var(--paper);color:var(--text);}
+  .af input:focus{border-color:var(--ink);}
+  .arow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .auth-btn{width:100%;background:var(--ink);color:#fff;font-weight:600;font-size:14.5px;padding:12px;border-radius:10px;margin-top:6px;}
+  .auth-btn:hover{background:var(--ink-deep);}
+  .auth-hint{font-size:12.5px;color:var(--text-soft);margin:12px 0 0;text-align:center;}
+  .auth-done{text-align:center;padding:14px 0;}
+  .auth-done .ic{width:54px;height:54px;border-radius:50%;background:#e3f4ea;color:var(--ink);font-size:26px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
+  .auth-done h3{font-family:'Lora',serif;font-size:19px;color:var(--ink-deep);margin:0 0 8px;}
+  .auth-done p{font-size:14px;color:var(--text-soft);margin:0;}
+  @media (max-width:560px){.arow{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -146,6 +168,7 @@
     <button class="nav-item" data-v="finance" onclick="nav('finance',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Tài chính</button>
     <button class="nav-item" data-v="shop" onclick="nav('shop',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1-5h16l1 5M5 9v11h14V9M3 9h18"/></svg>Hồ sơ gian hàng</button>
     <a href="./" class="nav-item" style="margin-top:auto"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>Về trang mua sắm</a>
+    <button class="nav-item" onclick="sellerLogout()" style="color:#ff9a8a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Đăng xuất</button>
   </aside>
 
   <div class="main">
@@ -197,18 +220,26 @@ const DEF_FIN={balance:8420000,pending:1240000,withdrawn:46500000,txs:[
   {d:'01/06/2026',t:'Đối soát kỳ T5/2026',a:7800000}
 ]};
 
-let PRODUCTS=SLS.get('products',DEF_PRODUCTS);
+// Kho chung giữa Kênh người bán và Admin (gian hàng + sản phẩm chờ duyệt)
+const MK={get(k,d){try{const v=localStorage.getItem('edumart_mk_'+k);return v===null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem('edumart_mk_'+k,JSON.stringify(v));}catch(e){}}};
+(function seedMK(){
+  if(MK.get('sellers',null)===null)MK.set('sellers',[{id:1,name:'Nhà sách Tri Thức',owner:'Trần Trí',phone:'0901112233',email:'trithuc@edu.vn',license:'0312xxxxxx',addr:'12 Nguyễn Huệ, Q.1, TP.HCM',status:'active'}]);
+  if(MK.get('products',null)===null)MK.set('products',DEF_PRODUCTS.map(p=>({...p,shopId:1,shopName:'Nhà sách Tri Thức',status:'active'})));
+})();
+let SESSION=SLS.get('session',null);                 // shopId đang đăng nhập
+function sellers(){return MK.get('sellers',[]);}
+function curShop(){return sellers().find(s=>s.id===SESSION)||null;}
+function myProducts(){return MK.get('products',[]).filter(p=>p.shopId===SESSION);}
+const PSTATUS={pending:['Chờ duyệt','b-wait'],active:['Đang bán','b-stock'],rejected:['Bị từ chối','b-cancel']};
 let ORDERS=SLS.get('orders',DEF_ORDERS);
 let PROMOS=SLS.get('promos',DEF_PROMOS);
 let REVIEWS=SLS.get('reviews',DEF_REVIEWS);
-let SHOP=SLS.get('shop',DEF_SHOP);
 let FIN=SLS.get('fin',DEF_FIN);
-function saveP(){SLS.set('products',PRODUCTS);}
 function saveO(){SLS.set('orders',ORDERS);}
 function savePr(){SLS.set('promos',PROMOS);}
 function saveRv(){SLS.set('reviews',REVIEWS);}
-function saveShop(){SLS.set('shop',SHOP);}
 function saveFin(){SLS.set('fin',FIN);}
+function val(id){const e=document.getElementById(id);return e?e.value.trim():'';}
 
 const ICONS={pen:'<path d="M5 19l1-4L17 4l3 3L9 18l-4 1Z"/>',note:'<rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 7h6M9 11h6"/>'};
 function cover(p){
@@ -239,6 +270,7 @@ function kpi(bg,fg,icon,v,l,trend,trtext){
   return '<div class="kpi"><div class="ic" style="background:'+bg+';color:'+fg+'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="'+icon+'"/></svg></div><div class="v">'+v+'</div><div class="l">'+l+'</div><div class="tr '+trend+'">'+trtext+'</div></div>';
 }
 function overview(){
+  const PRODUCTS=myProducts();
   const rev=[18,24,16,29,33,21,38];const days=['T2','T3','T4','T5','T6','T7','CN'];const max=Math.max(...rev);
   const bars=rev.map((v,i)=>'<div class="bar-wrap"><div class="bar" data-v="'+v+' triệu" style="height:'+(v/max*100)+'%"></div><span class="bar-lbl">'+days[i]+'</span></div>').join('');
   const recent=ORDERS.slice(0,5).map(o=>'<div class="row"><div style="flex:1"><div style="font-weight:500">#'+o.id+' · '+o.cust+'</div><div style="font-size:12px;color:var(--text-soft)">'+o.items+' sản phẩm · '+o.date+'</div></div><div style="font-weight:600;margin-right:10px">'+fmt(o.total)+'</div><span class="badge '+STATUS[o.status][1]+'">'+STATUS[o.status][0]+'</span></div>').join('');
@@ -256,28 +288,30 @@ function overview(){
 }
 
 function products(){
-  return '<div class="toolbar"><button class="add" onclick="openProd()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>Thêm sản phẩm</button><button class="act-btn" onclick="toast(\'Tải lên file Excel\')">Đăng hàng loạt (Excel)</button><div class="sp"></div></div>'+
-  '<div class="panel" style="padding:6px 8px"><table><thead><tr><th>Sản phẩm</th><th>Danh mục</th><th>Giá</th><th>Tồn kho</th><th>Đã bán</th><th></th></tr></thead><tbody>'+
-  PRODUCTS.map(p=>'<tr><td><div class="prod-cell"><div class="cover-sm">'+cover(p)+'</div><span class="nm">'+p.name+'</span></div></td><td>'+p.cat+'</td><td style="font-weight:600">'+fmt(p.price)+'</td><td>'+stockBadge(p)+'</td><td>'+p.sold.toLocaleString('vi-VN')+'</td><td style="white-space:nowrap"><button class="act-btn" onclick="openProd('+p.id+')">Sửa</button><button class="del-btn" onclick="delProd('+p.id+')">Xóa</button></td></tr>').join('')+
+  const list=myProducts();
+  return '<div class="toolbar"><button class="add" onclick="openProd()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>Thêm sản phẩm</button><button class="act-btn" onclick="toast(\'Tải lên file Excel\')">Đăng hàng loạt (Excel)</button><div class="sp"></div><span style="font-size:12.5px;color:var(--text-soft)">Sản phẩm mới sẽ chờ EduMart duyệt trước khi lên sàn.</span></div>'+
+  '<div class="panel" style="padding:6px 8px"><table><thead><tr><th>Sản phẩm</th><th>Danh mục</th><th>Giá</th><th>Tồn kho</th><th>Kiểm duyệt</th><th>Đã bán</th><th></th></tr></thead><tbody>'+
+  (list.length?list.map(p=>{const st=PSTATUS[p.status||'active'];return '<tr><td><div class="prod-cell"><div class="cover-sm">'+cover(p)+'</div><span class="nm">'+p.name+'</span></div></td><td>'+p.cat+'</td><td style="font-weight:600">'+fmt(p.price)+'</td><td>'+stockBadge(p)+'</td><td><span class="badge '+st[1]+'">'+st[0]+'</span></td><td>'+p.sold.toLocaleString('vi-VN')+'</td><td style="white-space:nowrap"><button class="act-btn" onclick="openProd('+p.id+')">Sửa</button><button class="del-btn" onclick="delProd('+p.id+')">Xóa</button></td></tr>';}).join('')
+    :'<tr><td colspan="7" style="text-align:center;color:var(--text-soft);padding:30px">Chưa có sản phẩm. Bấm “Thêm sản phẩm” để đăng bán.</td></tr>')+
   '</tbody></table></div>';
 }
 function openProd(id){
-  const p=id?PRODUCTS.find(x=>x.id===id):{name:'',cat:'Sách',price:0,stock:0};
+  const p=id?MK.get('products',[]).find(x=>x.id===id):{name:'',cat:'Sách',price:0,stock:0};
   openModal('<h2>'+(id?'Sửa sản phẩm':'Thêm sản phẩm')+'</h2>'+
-   '<label>Tên sản phẩm</label><input id="mName" value="'+p.name.replace(/"/g,'&quot;')+'">'+
+   '<label>Tên sản phẩm</label><input id="mName" value="'+(p.name||'').replace(/"/g,'&quot;')+'">'+
    '<label>Danh mục</label><select id="mCat"><option'+(p.cat==='Sách'?' selected':'')+'>Sách</option><option'+(p.cat==='Ebook'?' selected':'')+'>Ebook</option><option'+(p.cat==='Sách nói'?' selected':'')+'>Sách nói</option><option'+(p.cat==='Văn phòng phẩm'?' selected':'')+'>Văn phòng phẩm</option><option'+(p.cat==='Thiết bị giáo dục'?' selected':'')+'>Thiết bị giáo dục</option></select>'+
-   '<div class="mrow"><div><label>Giá (đ)</label><input id="mPrice" type="number" value="'+p.price+'"></div><div><label>Tồn kho</label><input id="mStock" type="number" value="'+p.stock+'"></div></div>'+
+   '<div class="mrow"><div><label>Giá (đ)</label><input id="mPrice" type="number" value="'+(p.price||0)+'"></div><div><label>Tồn kho</label><input id="mStock" type="number" value="'+(p.stock||0)+'"></div></div>'+
    '<div class="mact"><button class="act-btn" onclick="closeModal()">Hủy</button><button class="add" onclick="saveProd('+(id||0)+')">Lưu</button></div>');
 }
 function saveProd(id){
   const name=document.getElementById('mName').value.trim();if(!name){toast('Nhập tên sản phẩm');return;}
   const cat=document.getElementById('mCat').value,price=+document.getElementById('mPrice').value||0,stock=+document.getElementById('mStock').value||0;
   const digital=cat==='Ebook'||cat==='Sách nói';
-  if(id){Object.assign(PRODUCTS.find(x=>x.id===id),{name,cat,price,stock,digital});}
-  else{const nid=Math.max(0,...PRODUCTS.map(x=>x.id))+1;PRODUCTS.unshift({id:nid,name,cat,price,stock,sold:0,c:'#2f6ca5',digital,icon:(cat==='Sách'||cat==='Ebook'||cat==='Sách nói')?undefined:'note'});}
-  saveP();closeModal();toast('Đã lưu sản phẩm');render();
+  const all=MK.get('products',[]);
+  if(id){const p=all.find(x=>x.id===id);if(p){Object.assign(p,{name,cat,price,stock,digital,status:'pending'});}MK.set('products',all);closeModal();toast('Đã lưu — gửi lại chờ duyệt');render();}
+  else{const nid=Math.max(100,...all.map(x=>x.id))+1;all.push({id:nid,shopId:SESSION,shopName:(curShop()||{}).name||'',name,cat,price,stock,sold:0,c:'#2f6ca5',digital,status:'pending',icon:(cat==='Sách'||cat==='Ebook'||cat==='Sách nói')?undefined:'note'});MK.set('products',all);closeModal();toast('Đã gửi sản phẩm — chờ EduMart duyệt');render();}
 }
-function delProd(id){PRODUCTS=PRODUCTS.filter(x=>x.id!==id);saveP();toast('Đã xóa sản phẩm');render();}
+function delProd(id){MK.set('products',MK.get('products',[]).filter(x=>x.id!==id));toast('Đã xóa sản phẩm');render();}
 
 let oFilter='all';
 function orders(){
@@ -319,18 +353,65 @@ function openWithdraw(){openModal('<h2>Yêu cầu rút tiền</h2><div style="fo
 function doWithdraw(){const a=+document.getElementById('mAmt').value||0;if(a<=0||a>FIN.balance){toast('Số tiền không hợp lệ');return;}FIN.balance-=a;FIN.txs.unshift({d:new Date().getDate()+'/'+(new Date().getMonth()+1)+'/'+new Date().getFullYear(),t:'Yêu cầu rút tiền (đang xử lý)',a:-a});saveFin();closeModal();toast('Đã gửi yêu cầu rút '+fmt(a));render();}
 
 function shop(){
-  return '<div class="panel" style="max-width:620px"><div class="ph"><h2>Hồ sơ gian hàng</h2><span class="badge b-done">✔ Đã xác thực doanh nghiệp</span></div>'+
-  '<div class="form-field"><label>Tên gian hàng</label><input id="sName" value="'+SHOP.name.replace(/"/g,'&quot;')+'"></div>'+
-  '<div class="form-row"><div class="form-field"><label>Mã số thuế / GPKD</label><input id="sLicense" value="'+SHOP.license+'"></div><div class="form-field"><label>Hotline</label><input id="sHotline" value="'+SHOP.hotline+'"></div></div>'+
-  '<div class="form-field"><label>Địa chỉ kho / cửa hàng</label><input id="sAddr" value="'+SHOP.addr.replace(/"/g,'&quot;')+'"></div>'+
+  const s=curShop()||{};
+  return '<div class="panel" style="max-width:640px"><div class="ph"><h2>Hồ sơ gian hàng</h2><span class="badge b-done">✔ Đã xác thực doanh nghiệp</span></div>'+
+  '<div class="form-row"><div class="form-field"><label>Tên gian hàng</label><input id="sName" value="'+(s.name||'').replace(/"/g,'&quot;')+'"></div><div class="form-field"><label>Người phụ trách</label><input id="sOwner" value="'+(s.owner||'').replace(/"/g,'&quot;')+'"></div></div>'+
+  '<div class="form-row"><div class="form-field"><label>Số điện thoại</label><input id="sPhone" value="'+(s.phone||'')+'"></div><div class="form-field"><label>Email</label><input id="sEmail" value="'+(s.email||'')+'"></div></div>'+
+  '<div class="form-row"><div class="form-field"><label>Mã số thuế / GPKD</label><input id="sLicense" value="'+(s.license||'')+'"></div><div class="form-field"><label>Địa chỉ kho/cửa hàng</label><input id="sAddr" value="'+(s.addr||'').replace(/"/g,'&quot;')+'"></div></div>'+
   '<button class="btn-primary" onclick="saveShopInfo()">Lưu thay đổi</button>'+
-  '<div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line)"><div style="font-weight:600;font-size:14px;margin-bottom:6px">Giấy tờ xác thực</div><p style="font-size:13.5px;color:var(--text-soft);margin:0 0 10px">Giấy phép kinh doanh, giấy ủy quyền phát hành đã được duyệt.</p><button class="act-btn" onclick="toast(\'Đã mở cửa sổ tải giấy tờ\')">Cập nhật giấy tờ</button></div></div>';
+  '<div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line)"><div style="font-weight:600;font-size:14px;margin-bottom:6px">Giấy tờ xác thực</div><p style="font-size:13.5px;color:var(--text-soft);margin:0 0 10px">Giấy phép kinh doanh & giấy ủy quyền phát hành đã được duyệt.</p><button class="act-btn" onclick="toast(\'Đã mở cửa sổ tải giấy tờ\')">Cập nhật giấy tờ</button></div></div>';
 }
-function saveShopInfo(){SHOP.name=document.getElementById('sName').value.trim()||SHOP.name;SHOP.license=document.getElementById('sLicense').value.trim();SHOP.hotline=document.getElementById('sHotline').value.trim();SHOP.addr=document.getElementById('sAddr').value.trim();saveShop();document.getElementById('shopName').textContent=SHOP.name;document.getElementById('shopAv').textContent=SHOP.name.charAt(0).toUpperCase();toast('Đã lưu hồ sơ gian hàng');}
+function saveShopInfo(){
+  const list=sellers();const s=list.find(x=>x.id===SESSION);if(!s)return;
+  s.name=val('sName')||s.name;s.owner=val('sOwner');s.phone=val('sPhone');s.email=val('sEmail');s.license=val('sLicense');s.addr=val('sAddr');
+  MK.set('sellers',list);
+  document.getElementById('shopName').textContent=s.name;document.getElementById('shopAv').textContent=s.name.charAt(0).toUpperCase();
+  toast('Đã lưu hồ sơ gian hàng');
+}
 
-document.getElementById('shopName').textContent=SHOP.name;
-document.getElementById('shopAv').textContent=SHOP.name.charAt(0).toUpperCase();
-render();
+/* ---- Đăng nhập / đăng ký / phiên ---- */
+function sellerLogout(){SLS.set('session',null);location.reload();}
+function renderAuth(){
+  document.body.innerHTML=
+   '<div class="auth-screen"><div class="auth-card">'+
+     '<div class="auth-logo"><span class="amark">EM</span> EduMart · Kênh người bán</div>'+
+     '<div class="auth-tabs"><button class="on" id="taLogin" onclick="authTab(1)">Đăng nhập</button><button id="taReg" onclick="authTab(0)">Mở gian hàng</button></div>'+
+     '<div id="authBody"></div>'+
+   '</div></div><div class="toast" id="toast"></div>';
+  authTab(1);
+}
+function authTab(login){
+  document.getElementById('taLogin').classList.toggle('on',!!login);
+  document.getElementById('taReg').classList.toggle('on',!login);
+  const b=document.getElementById('authBody');
+  if(login)b.innerHTML='<div class="af"><label>Số điện thoại gian hàng</label><input id="lgPhone" placeholder="VD: 0901112233"></div><div class="af"><label>Mật khẩu</label><input type="password" placeholder="••••••••"></div><button class="auth-btn" onclick="doSellerLogin()">Đăng nhập</button><p class="auth-hint">Demo: đăng nhập với SĐT <b>0901112233</b> (gian hàng mẫu đã duyệt).</p>';
+  else b.innerHTML='<div class="arow"><div class="af"><label>Tên gian hàng</label><input id="rgName" placeholder="Nhà sách ABC"></div><div class="af"><label>Người phụ trách</label><input id="rgOwner" placeholder="Họ và tên"></div></div><div class="arow"><div class="af"><label>Số điện thoại</label><input id="rgPhone" placeholder="09xx xxx xxx"></div><div class="af"><label>Email</label><input id="rgEmail" placeholder="shop@email.com"></div></div><div class="af"><label>Mã số thuế / GPKD</label><input id="rgLicense" placeholder="03xxxxxxxx"></div><div class="af"><label>Địa chỉ kho/cửa hàng</label><input id="rgAddr" placeholder="Số nhà, đường, quận, tỉnh"></div><button class="auth-btn" onclick="doSellerRegister()">Gửi đăng ký mở gian hàng</button><p class="auth-hint">Gian hàng sẽ hoạt động sau khi được EduMart duyệt.</p>';
+}
+function doSellerLogin(){
+  const phone=val('lgPhone');const s=sellers().find(x=>x.phone===phone);
+  if(!s){toast('Không tìm thấy gian hàng với SĐT này');return;}
+  if(s.status==='pending'){toast('Gian hàng đang chờ EduMart duyệt');return;}
+  if(s.status==='rejected'){toast('Đăng ký gian hàng đã bị từ chối');return;}
+  SLS.set('session',s.id);location.reload();
+}
+function doSellerRegister(){
+  const name=val('rgName'),phone=val('rgPhone');
+  if(!name||!phone){toast('Nhập tên gian hàng và số điện thoại');return;}
+  const list=sellers();
+  if(list.some(x=>x.phone===phone)){toast('SĐT này đã được đăng ký');return;}
+  const id=Math.max(0,...list.map(x=>x.id))+1;
+  list.push({id,name,owner:val('rgOwner'),phone,email:val('rgEmail'),license:val('rgLicense'),addr:val('rgAddr'),status:'pending'});
+  MK.set('sellers',list);
+  document.getElementById('authBody').innerHTML='<div class="auth-done"><div class="ic">✓</div><h3>Đã gửi đăng ký!</h3><p>Gian hàng <b>'+name+'</b> đang chờ EduMart duyệt. Bạn sẽ đăng nhập được sau khi được phê duyệt.</p></div>';
+}
+function boot(){
+  const s=curShop();
+  if(!SESSION||!s||s.status!=='active'){renderAuth();return;}
+  document.getElementById('shopName').textContent=s.name;
+  document.getElementById('shopAv').textContent=s.name.charAt(0).toUpperCase();
+  render();
+}
+boot();
 </script>
 </body>
 </html>

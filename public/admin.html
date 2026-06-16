@@ -336,10 +336,54 @@ function orders(){
   '</tbody></table></div>';
 }
 
+const ROLE_MAP={'Học sinh':'b-proc','Học sinh / Sinh viên':'b-proc','Sinh viên':'b-ship','Giáo viên ✔':'b-done','Giáo viên':'b-wait','Phụ huynh':'b-stock','Trường học':'b-cancel'};
+let uFilter='all';
 function users(){
-  return '<div class="panel" style="padding:6px 8px"><table><thead><tr><th>Tên</th><th>Vai trò</th><th>Liên hệ</th><th>Đơn hàng</th><th>Điểm</th><th></th></tr></thead><tbody>'+
-  USERS.map(u=>'<tr><td style="font-weight:500">'+u.name+'</td><td>'+u.role+'</td><td>'+u.contact+'</td><td>'+u.orders+'</td><td>'+u.points.toLocaleString('vi-VN')+'</td><td><button class="act-btn" onclick="toast(\'Xem hồ sơ: '+u.name+'\')">Xem</button></td></tr>').join('')+
+  const allU=ALS.get('extraUsers',USERS);
+  const roles=[...new Set(allU.map(u=>u.role.replace(' ✔','').trim()))];
+  const list=uFilter==='all'?allU:allU.filter(u=>u.role.includes(uFilter));
+  const chips=[['all','Tất cả'],...roles.map(r=>[r,r])];
+  return '<div class="toolbar">'+chips.map(c=>'<button class="fchip '+(uFilter===c[0]?'on':'')+'" onclick="uFilter=\''+c[0].replace(/'/g,"\\'")+'\'  ;render()">'+c[1]+'</button>').join('')+
+    '<div class="sp"></div><span style="font-size:13px;color:var(--text-soft)"><b>'+list.length+'</b> người dùng</span></div>'+
+  '<div class="panel" style="padding:6px 8px"><table><thead><tr><th>Tên</th><th>Vai trò</th><th>Liên hệ</th><th>Đơn hàng</th><th>Điểm</th><th>Trạng thái</th><th></th></tr></thead><tbody>'+
+  list.map((u,i)=>'<tr><td style="font-weight:500">'+u.name+'</td>'+
+    '<td><span class="badge '+(ROLE_MAP[u.role]||'b-wait')+'">'+u.role+'</span></td>'+
+    '<td style="font-size:13px;color:var(--text-soft)">'+u.contact+'</td>'+
+    '<td style="font-weight:600">'+u.orders+'</td>'+
+    '<td>'+u.points.toLocaleString('vi-VN')+'</td>'+
+    '<td>'+(u.banned?'<span class="badge b-cancel">Đã cấm</span>':'<span class="badge b-done">Hoạt động</span>')+'</td>'+
+    '<td style="white-space:nowrap">'+
+      '<button class="act-btn" onclick="viewUser('+i+')">Xem</button>'+
+      '<button class="del-btn" onclick="toggleBan('+i+')">'+(u.banned?'Bỏ cấm':'Cấm')+'</button>'+
+    '</td></tr>').join('')+
+  (list.length?'':'<tr><td colspan="7" style="text-align:center;color:var(--text-soft);padding:30px">Không có người dùng.</td></tr>')+
   '</tbody></table></div>';
+}
+function toggleBan(idx){
+  const list=ALS.get('extraUsers',USERS);
+  list[idx].banned=!list[idx].banned;
+  ALS.set('extraUsers',list);
+  toast(list[idx].banned?'Đã cấm người dùng '+list[idx].name:'Đã bỏ cấm '+list[idx].name);
+  render();
+}
+function viewUser(idx){
+  const list=ALS.get('extraUsers',USERS);
+  const u=list[idx];
+  openModal('<h2>'+u.name+'</h2>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">'+
+      '<div style="background:var(--paper);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--ink-deep)">'+u.orders+'</div><div style="font-size:12px;color:var(--text-soft)">Đơn hàng</div></div>'+
+      '<div style="background:var(--paper);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--ink-deep)">'+u.points.toLocaleString('vi-VN')+'</div><div style="font-size:12px;color:var(--text-soft)">Điểm thưởng</div></div>'+
+    '</div>'+
+    '<label>Vai trò</label><div style="margin-bottom:10px"><span class="badge '+(ROLE_MAP[u.role]||'b-wait')+'">'+u.role+'</span></div>'+
+    '<label>Liên hệ</label><input value="'+u.contact+'" readonly>'+
+    '<label>Trạng thái</label>'+
+    '<div style="margin-top:8px;display:flex;gap:10px">'+
+      '<span class="badge '+(u.banned?'b-cancel':'b-done')+'">'+(u.banned?'Đã cấm':'Đang hoạt động')+'</span>'+
+    '</div>'+
+    '<div class="mact">'+
+      '<button class="act-btn" onclick="closeModal()">Đóng</button>'+
+      '<button class="del-btn" onclick="toggleBan('+idx+');closeModal()">'+(u.banned?'Bỏ cấm':'Cấm tài khoản')+'</button>'+
+    '</div>');
 }
 
 function promos(){
@@ -347,11 +391,68 @@ function promos(){
   '<div class="promo-grid">'+PROMOS.map(p=>'<div class="promo"><div class="code">'+p.code+'</div><div class="d">'+p.d+'</div><div class="st"><span class="badge '+(p.on?'b-done':'b-wait')+'">'+(p.on?'Đang chạy':'Tạm tắt')+'</span></div><div style="margin-top:12px"><button class="act-btn" onclick="togglePromo(\''+p.code+'\')">'+(p.on?'Tắt':'Bật')+'</button></div></div>').join('')+'</div>';
 }
 
+function getCfg(){return ALS.get('cfg',{fee:5,sellerFee:10,payMomo:true,payZalo:true,payVnpay:true,payCod:true,payAtm:true,vatAuto:false,vatPrefix:'EDMT',freeShip:300000,maxPromo:30});}
+function saveCfg(cfg){ALS.set('cfg',cfg);toast('Đã lưu cài đặt');render();}
 function settings(){
-  return '<div class="panel" style="max-width:560px"><div class="ph"><h2>Cài đặt hệ thống</h2></div>'+
-  '<div style="display:flex;flex-direction:column;gap:14px;font-size:14px">'+
-  ['Phí sàn và hoa hồng người bán','Vùng giao hàng và đối tác vận chuyển','Cổng thanh toán (MoMo, ZaloPay, VNPay)','Cấu hình hóa đơn điện tử VAT','Phân quyền quản trị viên'].map(s=>'<div style="display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border:1px solid var(--line);border-radius:11px"><span>'+s+'</span><button class="act-btn" onclick="toast(\'Mở cấu hình\')">Cấu hình</button></div>').join('')+
-  '</div></div>';
+  const cfg=getCfg();
+  const cred=adminCred();
+  const row=(label,el)=>'<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line)"><span style="font-size:13.5px;min-width:220px">'+label+'</span>'+el+'</div>';
+  const tog=(key,val,lbl)=>'<label style="display:flex;align-items:center;gap:8px;font-size:13.5px;cursor:pointer"><input type="checkbox" '+(val?'checked':'')+' onchange="const c=getCfg();c.'+key+'=this.checked;saveCfg(c)"> '+lbl+'</label>';
+  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start">'+
+
+  /* Phí sàn */
+  '<div class="panel"><div class="ph"><h2>Phí sàn & hoa hồng</h2></div>'+
+  row('Phí sàn mặc định (% doanh thu)',
+    '<div style="display:flex;align-items:center;gap:8px">'+
+    '<input id="cfgFee" type="number" min="0" max="30" value="'+cfg.fee+'" style="width:70px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-family:inherit;font-size:14px">'+
+    '<span>%</span><button class="act-btn" onclick="const c=getCfg();c.fee=+document.getElementById(\'cfgFee\').value||0;saveCfg(c)">Lưu</button></div>')+
+  row('Phí cho người bán / NCC (%)',
+    '<div style="display:flex;align-items:center;gap:8px">'+
+    '<input id="cfgSFee" type="number" min="0" max="30" value="'+cfg.sellerFee+'" style="width:70px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-family:inherit;font-size:14px">'+
+    '<span>%</span><button class="act-btn" onclick="const c=getCfg();c.sellerFee=+document.getElementById(\'cfgSFee\').value||0;saveCfg(c)">Lưu</button></div>')+
+  row('Ngưỡng miễn phí vận chuyển (đ)',
+    '<div style="display:flex;align-items:center;gap:8px">'+
+    '<input id="cfgFS" type="number" min="0" value="'+cfg.freeShip+'" style="width:110px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-family:inherit;font-size:14px">'+
+    '<button class="act-btn" onclick="const c=getCfg();c.freeShip=+document.getElementById(\'cfgFS\').value||0;saveCfg(c)">Lưu</button></div>')+
+  row('Giảm giá tối đa một mã (%)','<div style="display:flex;align-items:center;gap:8px"><input id="cfgMP" type="number" min="0" max="100" value="'+cfg.maxPromo+'" style="width:70px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-family:inherit;font-size:14px"><span>%</span><button class="act-btn" onclick="const c=getCfg();c.maxPromo=+document.getElementById(\'cfgMP\').value||0;saveCfg(c)">Lưu</button></div>')+
+  '</div>'+
+
+  /* Cổng thanh toán */
+  '<div class="panel"><div class="ph"><h2>Cổng thanh toán</h2></div>'+
+  '<div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">'+
+  tog('payMomo',cfg.payMomo,'Ví MoMo')+
+  tog('payZalo',cfg.payZalo,'ZaloPay')+
+  tog('payVnpay',cfg.payVnpay,'VNPay')+
+  tog('payCod',cfg.payCod,'Thanh toán khi nhận hàng (COD)')+
+  tog('payAtm',cfg.payAtm,'Thẻ ATM / Visa / Mastercard')+
+  '</div></div>'+
+
+  /* VAT */
+  '<div class="panel"><div class="ph"><h2>Hóa đơn điện tử VAT</h2></div>'+
+  row('Tự động xuất hóa đơn VAT',tog('vatAuto',cfg.vatAuto,'Bật tự động phát hành'))+
+  row('Tiền tố số hóa đơn',
+    '<div style="display:flex;align-items:center;gap:8px">'+
+    '<input id="cfgVP" value="'+cfg.vatPrefix+'" style="width:90px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-family:inherit;font-size:14px">'+
+    '<button class="act-btn" onclick="const c=getCfg();c.vatPrefix=document.getElementById(\'cfgVP\').value||\'EDMT\';saveCfg(c)">Lưu</button></div>')+
+  '<p style="font-size:12px;color:var(--text-soft);margin:10px 0 0">Số hóa đơn có dạng: <b>'+(cfg.vatPrefix||'EDMT')+'</b>-2026-XXXXX</p>'+
+  '</div>'+
+
+  /* Phân quyền */
+  '<div class="panel"><div class="ph"><h2>Phân quyền quản trị viên</h2></div>'+
+  '<div style="font-size:13.5px;margin-bottom:14px">Tài khoản: <b>'+cred.user+'</b></div>'+
+  row('Tên đăng nhập mới','<input id="cfgNewUser" value="'+cred.user+'" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-family:inherit;font-size:14px">')+
+  row('Mật khẩu mới','<input id="cfgNewPass" type="password" placeholder="Mật khẩu mới" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-family:inherit;font-size:14px">')+
+  '<button class="add" style="margin-top:14px" onclick="saveAdminCred()">Đổi thông tin đăng nhập</button>'+
+  '</div>'+
+
+  '</div>';
+}
+function saveAdminCred(){
+  const u=(document.getElementById('cfgNewUser').value||'').trim();
+  const p=(document.getElementById('cfgNewPass').value||'').trim();
+  if(!u){toast('Tên đăng nhập không được để trống');return;}
+  ALS.set('cred',{user:u,pass:p||adminCred().pass});
+  toast('Đã cập nhật thông tin đăng nhập');render();
 }
 
 /* ---- Đăng nhập quản trị (có mật khẩu) ---- */

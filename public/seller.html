@@ -291,7 +291,7 @@ function products(){
   const list=myProducts();
   return '<div class="toolbar"><button class="add" onclick="openProd()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>Thêm sản phẩm</button><button class="act-btn" onclick="toast(\'Tải lên file Excel\')">Đăng hàng loạt (Excel)</button><div class="sp"></div><span style="font-size:12.5px;color:var(--text-soft)">Sản phẩm mới sẽ chờ EduMart duyệt trước khi lên sàn.</span></div>'+
   '<div class="panel" style="padding:6px 8px"><table><thead><tr><th>Sản phẩm</th><th>Danh mục</th><th>Giá</th><th>Tồn kho</th><th>Kiểm duyệt</th><th>Đã bán</th><th></th></tr></thead><tbody>'+
-  (list.length?list.map(p=>{const st=PSTATUS[p.status||'active'];return '<tr><td><div class="prod-cell"><div class="cover-sm">'+cover(p)+'</div><span class="nm">'+p.name+'</span></div></td><td>'+p.cat+'</td><td style="font-weight:600">'+fmt(p.price)+'</td><td>'+stockBadge(p)+'</td><td><span class="badge '+st[1]+'">'+st[0]+'</span></td><td>'+p.sold.toLocaleString('vi-VN')+'</td><td style="white-space:nowrap"><button class="act-btn" onclick="openProd('+p.id+')">Sửa</button><button class="del-btn" onclick="delProd('+p.id+')">Xóa</button></td></tr>';}).join('')
+  (list.length?list.map(p=>{const st=PSTATUS[p.status||'active'];return '<tr><td><div class="prod-cell"><div class="cover-sm">'+cover(p)+'</div><span class="nm">'+p.name+'</span></div></td><td>'+p.cat+'</td><td style="font-weight:600">'+fmt(p.price)+'</td><td>'+(!p.digital?'<div style="display:flex;align-items:center;gap:6px">'+stockBadge(p)+'<button class="act-btn" onclick="quickStock('+p.id+')" title="Cập nhật tồn kho">+</button></div>':stockBadge(p))+'</td><td><span class="badge '+st[1]+'">'+st[0]+'</span></td><td>'+p.sold.toLocaleString('vi-VN')+'</td><td style="white-space:nowrap"><button class="act-btn" onclick="openProd('+p.id+')">Sửa</button><button class="del-btn" onclick="delProd('+p.id+')">Xóa</button></td></tr>';}).join('')
     :'<tr><td colspan="7" style="text-align:center;color:var(--text-soft);padding:30px">Chưa có sản phẩm. Bấm “Thêm sản phẩm” để đăng bán.</td></tr>')+
   '</tbody></table></div>';
 }
@@ -312,14 +312,53 @@ function saveProd(id){
   else{const nid=Math.max(100,...all.map(x=>x.id))+1;all.push({id:nid,shopId:SESSION,shopName:(curShop()||{}).name||'',name,cat,price,stock,sold:0,c:'#2f6ca5',digital,status:'pending',icon:(cat==='Sách'||cat==='Ebook'||cat==='Sách nói')?undefined:'note'});MK.set('products',all);closeModal();toast('Đã gửi sản phẩm — chờ EduMart duyệt');render();}
 }
 function delProd(id){MK.set('products',MK.get('products',[]).filter(x=>x.id!==id));toast('Đã xóa sản phẩm');render();}
+function quickStock(id){
+  const p=MK.get('products',[]).find(x=>x.id===id);if(!p)return;
+  openModal('<h2>Cập nhật tồn kho</h2>'+
+    '<div style="font-size:13.5px;color:var(--text-soft);margin-bottom:12px">'+p.name+'<br>Tồn kho hiện tại: <b>'+p.stock+'</b></div>'+
+    '<label>Tồn kho mới</label><input id="qStock" type="number" value="'+p.stock+'" min="0">'+
+    '<div class="mact"><button class="act-btn" onclick="closeModal()">Hủy</button><button class="add" onclick="saveQuickStock('+id+')">Lưu</button></div>');
+}
+function saveQuickStock(id){
+  const s=+document.getElementById('qStock').value;
+  if(isNaN(s)||s<0){toast('Số lượng không hợp lệ');return;}
+  const all=MK.get('products',[]);
+  const p=all.find(x=>x.id===id);if(p){p.stock=s;}
+  MK.set('products',all);closeModal();toast('Đã cập nhật tồn kho → '+s);render();
+}
 
 let oFilter='all';
+const DEF_OITEMS={
+  '71204':[{name:'Mắt biếc',qty:1,price:88000},{name:'Combo bút bi Thiên Long',qty:1,price:48000,cat:'vpp'}],
+  '71201':[{name:'Bộ SGK lớp 6',qty:3,price:187000},{name:'Vở Campus 200 trang',qty:5,price:102000,cat:'vpp'}],
+  '71198':[{name:'Mắt biếc',qty:1,price:88000}],
+  '71190':[{name:'Dế Mèn phiêu lưu ký',qty:1,price:45000},{name:'Combo bút bi Thiên Long',qty:2,price:48000,cat:'vpp'}],
+  '71185':[{name:'Dế Mèn phiêu lưu ký',qty:1,price:45000}]
+};
+function openOrder(id){
+  const o=ORDERS.find(x=>x.id===id);if(!o)return;
+  const items=(DEF_OITEMS[id]||[{name:'Sản phẩm',qty:o.items,price:Math.round(o.total/o.items)}]);
+  openModal('<h2>Chi tiết đơn #'+id+'</h2>'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'+
+      '<div style="font-size:13.5px;color:var(--text-soft)">'+o.date+' · '+o.cust+'</div>'+
+      '<span class="badge '+STATUS[o.status][1]+'">'+STATUS[o.status][0]+'</span>'+
+    '</div>'+
+    '<table><thead><tr><th>Sản phẩm</th><th>SL</th><th style="text-align:right">Thành tiền</th></tr></thead><tbody>'+
+    items.map(it=>'<tr><td>'+it.name+'</td><td>'+it.qty+'</td><td style="text-align:right;font-weight:600">'+fmt(it.price*it.qty)+'</td></tr>').join('')+
+    '<tr style="border-top:2px solid var(--line)"><td colspan="2" style="font-weight:600">Tổng cộng</td><td style="text-align:right;font-weight:700;color:var(--ink-deep)">'+fmt(o.total)+'</td></tr>'+
+    '</tbody></table>'+
+    '<div class="mact">'+
+      '<button class="act-btn" onclick="closeModal()">Đóng</button>'+
+      (o.status!=='done'&&o.status!=='cancel'?'<button class="add" onclick="advO(\''+id+'\');closeModal()">Cập nhật trạng thái</button>':'')+
+    '</div>');
+}
 function orders(){
   const chips=[['all','Tất cả'],['wait','Chờ xác nhận'],['proc','Đang xử lý'],['ship','Đang giao'],['done','Hoàn thành'],['cancel','Đã hủy']];
   const list=oFilter==='all'?ORDERS:ORDERS.filter(o=>o.status===oFilter);
-  return '<div class="toolbar">'+chips.map(c=>'<button class="fchip '+(oFilter===c[0]?'on':'')+'" onclick="oFilter=\''+c[0]+'\';render()">'+c[1]+'</button>').join('')+'</div>'+
+  return '<div class="toolbar">'+chips.map(c=>'<button class="fchip '+(oFilter===c[0]?'on':'')+'" onclick="oFilter=\''+c[0]+'\';render()">'+c[1]+'</button>').join('')+
+    '<div class="sp"></div><span style="font-size:12.5px;color:var(--text-soft)"><b>'+list.length+'</b> đơn</span></div>'+
   '<div class="panel" style="padding:6px 8px"><table><thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Ngày</th><th>SL</th><th>Tổng tiền</th><th>Trạng thái</th><th></th></tr></thead><tbody>'+
-  list.map(o=>'<tr><td style="font-weight:600">#'+o.id+'</td><td>'+o.cust+'</td><td>'+o.date+'</td><td>'+o.items+'</td><td style="font-weight:600">'+fmt(o.total)+'</td><td><span class="badge '+STATUS[o.status][1]+'">'+STATUS[o.status][0]+'</span></td><td style="white-space:nowrap"><button class="act-btn" onclick="advO(\''+o.id+'\')">Cập nhật ›</button><button class="act-btn" onclick="toast(\'Đã in vận đơn #'+o.id+'\')">In vận đơn</button></td></tr>').join('')+
+  list.map(o=>'<tr><td><button style="font-weight:600;color:var(--ink);text-decoration:underline;background:none;border:none;cursor:pointer;font-size:13.5px" onclick="openOrder(\''+o.id+'\')">   #'+o.id+'</button></td><td>'+o.cust+'</td><td>'+o.date+'</td><td>'+o.items+'</td><td style="font-weight:600">'+fmt(o.total)+'</td><td><span class="badge '+STATUS[o.status][1]+'">'+STATUS[o.status][0]+'</span></td><td style="white-space:nowrap"><button class="act-btn" onclick="advO(\''+o.id+'\')">Cập nhật ›</button><button class="act-btn" onclick="toast(\'Đã in vận đơn #'+o.id+'\')">In vận đơn</button></td></tr>').join('')+
   (list.length?'':'<tr><td colspan="7" style="text-align:center;color:var(--text-soft);padding:30px">Không có đơn ở trạng thái này.</td></tr>')+
   '</tbody></table></div>';
 }

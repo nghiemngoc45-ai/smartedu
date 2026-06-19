@@ -892,6 +892,7 @@ const ROLES=ROLE_GROUPS.flatMap(g=>g.roles.map(r=>({...r,kind:g.kind,to:g.to})))
 let lgRole='hocsinh', authView='login', authResetToken=null;
 let user=LS.get('user',null), orders=LS.get('orders',[]), acctTab='dashboard';
 let adminDays=30;
+let admUsersView='list', admUserSearch='', admUserRoleFilter='all', admUserStatusFilter='all', admSelectedUserId=null, admUserPage=0;
 let orderFilter='all';
 let libFilter='all';
 let vppSub='all';
@@ -1079,6 +1080,8 @@ function doLogin(){
   if(!pw){showAuthErr('lgErr','Vui lòng nhập mật khẩu');return;}
   const found=authUsers.find(u=>(u.email===email||u.phone===email)&&u.pwHash===hashPw(pw));
   if(!found){showAuthErr('lgErr','Email hoặc mật khẩu không đúng. <a class="auth-link" onclick="authTab(\'forgot\')">Quên mật khẩu?</a>');return;}
+  if(found.deletedAt){showAuthErr('lgErr','Tài khoản này đã bị xóa. Vui lòng liên hệ hỗ trợ.');return;}
+  if(found.status==='locked'){showAuthErr('lgErr','Tài khoản đã bị khóa: <b>'+escHtml(found.lockedReason||'Vi phạm điều khoản')+'</b>. Vui lòng liên hệ hỗ trợ.');return;}
   LS.set('rememberMe',!!document.getElementById('lgRemember')?.checked);
   user={...found};saveUser();
   toast('Đăng nhập thành công · '+ROLELBL[user.role]);acctTab='dashboard';go('account');
@@ -1516,12 +1519,14 @@ const ADM={
     {tp:'order',text:'#EDU-28461 · NXB Giáo dục VN · 890.000đ',               t:'3 giờ'}
   ]
 };
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function _admLevelLbl(l){return {super:'Toàn quyền',readonly:'Chỉ xem',content:'Nội dung'}[l]||l;}
 function fmtMil(n){if(n>=1e9)return (n/1e9).toFixed(1).replace('.',',')+'B';if(n>=1e6)return Math.round(n/1e6)+'M';return n.toLocaleString('vi-VN');}
 function fmtBig(n){return Number(n).toLocaleString('vi-VN');}
 function admGrowth(g){const up=g>=0;return '<span class="adm-growth '+(up?'up':'dn')+'">'+(up?'▲':'▼')+Math.abs(g)+'%</span>';}
 
 function adminContent(){
-  if(acctTab==='adm-users')   return '<div class="acct-card"><h3>Quản lý người dùng</h3><p class="wip-note">Đang phát triển — sẽ ra mắt trong phiên bản tới</p></div>';
+  if(acctTab==='adm-users')   return adminUsers();
   if(acctTab==='adm-products')return '<div class="acct-card"><h3>Quản lý sản phẩm</h3><p class="wip-note">Đang phát triển — sẽ ra mắt trong phiên bản tới</p></div>';
   if(acctTab==='adm-orders')  return '<div class="acct-card"><h3>Quản lý đơn hàng</h3><p class="wip-note">Đang phát triển — sẽ ra mắt trong phiên bản tới</p></div>';
   if(acctTab==='adm-shops')   return '<div class="acct-card"><h3>Quản lý Shop / NCC</h3><p class="wip-note">Đang phát triển — sẽ ra mắt trong phiên bản tới</p></div>';
@@ -1622,6 +1627,262 @@ function adminOverview(){
         '</div>'+
       '</div>'+
     '</div>';
+}
+
+/* ── ADMIN USER MANAGEMENT ─────────────────────── */
+const ADM_ROLE_CLR={hocsinh:'#2980b9',sinhvien:'#8e44ad',parent:'#27ae60',school:'#e67e22',admin:'#c0392b',seller:'#795548'};
+const ADM_STATUS_BADGE={
+  active:'<span class="adm-badge green">Hoạt động</span>',
+  locked:'<span class="adm-badge red">Bị khóa</span>',
+  deleted:'<span class="adm-badge gray">Đã xóa</span>'
+};
+function _admStatus(u){return u.deletedAt?'deleted':(u.status||'active');}
+
+function adminUsers(){
+  if(admUsersView==='detail'&&admSelectedUserId)return adminUserDetail(admSelectedUserId);
+  if(admUsersView==='new-admin')return adminNewAdminForm();
+  return adminUserList();
+}
+
+function _admFiltered(){
+  const q=(admUserSearch||'').toLowerCase().trim();
+  return authUsers.filter(u=>{
+    const st=_admStatus(u);
+    if(admUserStatusFilter!=='all'&&st!==admUserStatusFilter)return false;
+    if(admUserRoleFilter!=='all'&&u.role!==admUserRoleFilter)return false;
+    if(q&&!(u.name||'').toLowerCase().includes(q)&&!(u.email||'').toLowerCase().includes(q))return false;
+    return true;
+  });
+}
+
+function adminUserList(){
+  const all=_admFiltered();
+  const PER=10, pages=Math.max(1,Math.ceil(all.length/PER));
+  if(admUserPage>=pages)admUserPage=pages-1;
+  const slice=all.slice(admUserPage*PER,(admUserPage+1)*PER);
+
+  const rows=slice.map(u=>{
+    const st=_admStatus(u);
+    const clr=ADM_ROLE_CLR[u.role]||'#888';
+    const av=u.name?.charAt(0)?.toUpperCase()||'?';
+    return '<tr class="adm-usr-row" onclick="admSelectedUserId=\''+u.id+'\';admUsersView=\'detail\';renderAccount()">'+
+      '<td><div class="adm-usr-av" style="background:'+clr+'18;color:'+clr+'">'+av+'</div></td>'+
+      '<td><div class="adm-usr-nm">'+escHtml(u.name||'—')+'</div><div class="adm-usr-em">'+escHtml(u.email||'—')+'</div></td>'+
+      '<td><span class="adm-badge" style="background:'+clr+'15;color:'+clr+'">'+escHtml(ROLELBL[u.role]||u.role)+'</span>'+
+        (u.adminLevel?' <span class="adm-badge gray">'+_admLevelLbl(u.adminLevel)+'</span>':'')+
+      '</td>'+
+      '<td>'+ADM_STATUS_BADGE[st]+'</td>'+
+      '<td class="adm-usr-date">'+(u.createdAt||'—')+'</td>'+
+      '<td onclick="event.stopPropagation()"><button class="adm-row-btn" onclick="admSelectedUserId=\''+u.id+'\';admUsersView=\'detail\';renderAccount()">Xem</button></td>'+
+    '</tr>';
+  }).join('');
+
+  const roleOpts=['all','admin','hocsinh','sinhvien','parent','school','seller'].map(k=>
+    '<option value="'+k+'"'+(admUserRoleFilter===k?' selected':'')+'>'+
+    (k==='all'?'Tất cả vai trò':(ROLELBL[k]||k))+'</option>').join('');
+  const stOpts=[['all','Tất cả trạng thái'],['active','Hoạt động'],['locked','Bị khóa'],['deleted','Đã xóa']].map(([v,l])=>
+    '<option value="'+v+'"'+(admUserStatusFilter===v?' selected':'')+'>'+l+'</option>').join('');
+
+  const pager='<div class="adm-pager">'+
+    '<button class="adm-pager-btn" '+(admUserPage===0?'disabled':'')+' onclick="admUserPage--;renderAccount()">← Trước</button>'+
+    '<span>Trang '+(admUserPage+1)+'/'+pages+' · <b>'+all.length+'</b> người dùng</span>'+
+    '<button class="adm-pager-btn" '+(admUserPage>=pages-1?'disabled':'')+' onclick="admUserPage++;renderAccount()">Tiếp →</button>'+
+  '</div>';
+
+  return '<div class="adm-sec-hd" style="margin-bottom:14px">'+
+      '<h3 style="margin:0;font-size:17px;font-family:\'Lora\',serif;color:var(--ink-deep)">Quản lý người dùng</h3>'+
+      '<button class="btn-primary" style="padding:8px 16px;font-size:13px" onclick="admUsersView=\'new-admin\';admSelectedUserId=null;renderAccount()">+ Tạo Admin mới</button>'+
+    '</div>'+
+    '<div class="adm-usr-toolbar">'+
+      '<input class="adm-usr-search" placeholder="Tìm theo tên hoặc email..." value="'+escHtml(admUserSearch)+'" oninput="admUserSearch=this.value;admUserPage=0;renderAccount()">'+
+      '<select class="adm-usr-filter" onchange="admUserRoleFilter=this.value;admUserPage=0;renderAccount()">'+roleOpts+'</select>'+
+      '<select class="adm-usr-filter" onchange="admUserStatusFilter=this.value;admUserPage=0;renderAccount()">'+stOpts+'</select>'+
+      '<button class="adm-row-btn" onclick="admUserSearch=\'\';admUserRoleFilter=\'all\';admUserStatusFilter=\'all\';admUserPage=0;renderAccount()">Xóa lọc</button>'+
+    '</div>'+
+    '<div class="adm-table-wrap"><table class="adm-usr-table">'+
+      '<thead><tr><th></th><th>Người dùng</th><th>Vai trò</th><th>Trạng thái</th><th>Ngày tạo</th><th></th></tr></thead>'+
+      '<tbody>'+rows+'</tbody>'+
+    '</table></div>'+
+    pager;
+}
+
+function adminUserDetail(uid){
+  const u=authUsers.find(x=>x.id===uid);
+  if(!u)return '<p>Không tìm thấy người dùng.</p>';
+  const st=_admStatus(u);
+  const clr=ADM_ROLE_CLR[u.role]||'#888';
+  const av=u.name?.charAt(0)?.toUpperCase()||'?';
+  const isMe=user&&u.id===user.id;
+  const isDeleted=st==='deleted', isLocked=st==='locked';
+
+  const statusBadge=isDeleted
+    ?ADM_STATUS_BADGE.deleted
+    :isLocked
+    ?'<span class="adm-badge red">Bị khóa — '+escHtml(u.lockedReason||'')+'</span>'
+    :ADM_STATUS_BADGE.active;
+
+  const roleSelect='<select id="admChangeRole" class="adm-usr-filter">'+
+    ['hocsinh','sinhvien','parent','school','admin'].map(k=>
+      '<option value="'+k+'"'+(u.role===k?' selected':'')+'>'+ROLELBL[k]+'</option>'
+    ).join('')+'</select>';
+
+  const levelSection=u.role==='admin'
+    ?'<div class="adm-detail-section">'+
+        '<div class="adm-detail-label">Cấp quyền Admin</div>'+
+        '<div class="adm-level-row">'+
+          [['super','Toàn quyền'],['readonly','Chỉ xem'],['content','Nội dung']].map(([v,l])=>
+            '<button class="adm-level-btn'+(( u.adminLevel||'super')===v?' on':'')+'" onclick="doAdminSetLevel(\''+uid+'\',\''+v+'\')">'+l+'</button>'
+          ).join('')+
+        '</div>'+
+      '</div>'
+    :'';
+
+  const lockBtn=isDeleted?'':isLocked
+    ?'<button class="adm-act-btn green" onclick="doAdminUnlock(\''+uid+'\')">Mở khóa tài khoản</button>'
+    :(isMe?'':'<button class="adm-act-btn red" onclick="doAdminLock(\''+uid+'\')">Khóa tài khoản</button>');
+  const deleteBtn=isDeleted||isMe?'':'<button class="adm-act-btn red-outline" onclick="doAdminDelete(\''+uid+'\')">Xóa mềm</button>';
+  const restoreBtn=isDeleted?'<button class="adm-act-btn green" onclick="doAdminRestore(\''+uid+'\')">Khôi phục</button>':'';
+
+  return '<button class="adm-back-btn" onclick="admUsersView=\'list\';renderAccount()">← Danh sách người dùng</button>'+
+    '<div class="adm-detail-card">'+
+      '<div class="adm-detail-head">'+
+        '<div class="adm-detail-av" style="background:'+clr+'18;color:'+clr+'">'+av+'</div>'+
+        '<div style="flex:1">'+
+          '<div class="adm-detail-name">'+escHtml(u.name||'—')+
+            (isMe?' <span style="font-size:12px;color:var(--text-soft)">(bạn)</span>':'')+
+          '</div>'+
+          '<div class="adm-detail-email">'+escHtml(u.email||'—')+'</div>'+
+          '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">'+
+            '<span class="adm-badge" style="background:'+clr+'15;color:'+clr+'">'+escHtml(ROLELBL[u.role]||u.role)+'</span>'+
+            (u.adminLevel?'<span class="adm-badge gray">'+_admLevelLbl(u.adminLevel)+'</span>':'')+
+            statusBadge+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="adm-detail-grid">'+
+        '<div class="adm-detail-item"><div class="adm-detail-label">Ngày tạo</div><div class="adm-detail-val">'+(u.createdAt||'—')+'</div></div>'+
+        '<div class="adm-detail-item"><div class="adm-detail-label">Điểm thưởng</div><div class="adm-detail-val">'+(u.points||0).toLocaleString('vi-VN')+'</div></div>'+
+        '<div class="adm-detail-item"><div class="adm-detail-label">Số điện thoại</div><div class="adm-detail-val">'+(u.phone||'—')+'</div></div>'+
+        '<div class="adm-detail-item"><div class="adm-detail-label">Mã giới thiệu</div><div class="adm-detail-val">'+(u.ref||'—')+'</div></div>'+
+        '<div class="adm-detail-item"><div class="adm-detail-label">Đăng nhập qua</div><div class="adm-detail-val">'+(u.provider?u.provider.charAt(0).toUpperCase()+u.provider.slice(1):'Email & Mật khẩu')+'</div></div>'+
+        (u.lockHistory?'<div class="adm-detail-item"><div class="adm-detail-label">Lần bị khóa</div><div class="adm-detail-val">'+u.lockHistory+' lần</div></div>':'')+
+        (u.lockedAt?'<div class="adm-detail-item"><div class="adm-detail-label">Khóa lúc</div><div class="adm-detail-val">'+u.lockedAt+'</div></div>':'')+
+        (u.deletedAt?'<div class="adm-detail-item"><div class="adm-detail-label">Xóa lúc</div><div class="adm-detail-val">'+u.deletedAt+'</div></div>':'')+
+      '</div>'+
+      levelSection+
+      '<div class="adm-detail-section">'+
+        '<div class="adm-detail-label">Đổi vai trò</div>'+
+        '<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center">'+
+          roleSelect+
+          '<button class="adm-act-btn" onclick="doAdminChangeRole(\''+uid+'\')">Áp dụng</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="adm-detail-actions">'+
+        '<button class="adm-act-btn" onclick="doAdminResetPw(\''+uid+'\')">Reset mật khẩu</button>'+
+        lockBtn+deleteBtn+restoreBtn+
+      '</div>'+
+    '</div>';
+}
+
+function adminNewAdminForm(){
+  return '<button class="adm-back-btn" onclick="admUsersView=\'list\';renderAccount()">← Danh sách người dùng</button>'+
+    '<div class="adm-detail-card">'+
+      '<h3 style="margin:0 0 20px;font-family:\'Lora\',serif;color:var(--ink-deep)">Tạo tài khoản Admin mới</h3>'+
+      '<div class="form-row">'+
+        '<div class="form-field"><label>Họ và tên</label><input id="naName" placeholder="Nguyễn Văn Admin"></div>'+
+        '<div class="form-field"><label>Email</label><input id="naEmail" type="email" placeholder="admin@edumart.vn"></div>'+
+      '</div>'+
+      '<div class="form-row">'+
+        '<div class="form-field"><label>Mật khẩu</label><input id="naPw" type="password" placeholder="Tối thiểu 8 ký tự"></div>'+
+        '<div class="form-field"><label>Xác nhận mật khẩu</label><input id="naPw2" type="password" placeholder="Nhập lại"></div>'+
+      '</div>'+
+      '<div class="form-field"><label>Cấp quyền Admin</label>'+
+        '<div class="adm-level-cards" id="naLevelGroup">'+
+          [['super','Toàn quyền','Truy cập và chỉnh sửa mọi tính năng, bao gồm quản lý admin khác'],
+           ['readonly','Chỉ xem','Xem báo cáo và dữ liệu, không thể thay đổi'],
+           ['content','Quản lý nội dung','Duyệt sản phẩm, shop, nội dung — không thể quản lý tài khoản']].map(([v,l,d],i)=>
+            '<label class="adm-level-card'+(i===0?' on':'')+'" onclick="document.querySelectorAll(\'.adm-level-card\').forEach(x=>x.classList.remove(\'on\'));this.classList.add(\'on\')">'+
+              '<input type="radio" name="naLevel" value="'+v+'"'+(i===0?' checked':'')+' style="display:none" onchange="">'+
+              '<div class="adm-level-lbl">'+l+'</div>'+
+              '<div class="adm-level-desc">'+d+'</div>'+
+            '</label>'
+          ).join('')+
+        '</div>'+
+      '</div>'+
+      '<div id="naErr" class="field-error" style="margin-top:10px"></div>'+
+      '<div style="display:flex;gap:10px;margin-top:20px">'+
+        '<button class="btn-primary" onclick="doCreateAdmin()">Tạo tài khoản</button>'+
+        '<button class="btn-ghost" onclick="admUsersView=\'list\';renderAccount()">Hủy</button>'+
+      '</div>'+
+    '</div>';
+}
+
+/* Admin user actions */
+function doAdminLock(uid){
+  const reason=prompt('Lý do khóa tài khoản:\n(VD: Vi phạm điều khoản, Gian lận...)','');
+  if(reason===null)return;
+  const idx=authUsers.findIndex(u=>u.id===uid);if(idx===-1)return;
+  authUsers[idx].status='locked';
+  authUsers[idx].lockedReason=reason.trim()||'Vi phạm điều khoản sử dụng';
+  authUsers[idx].lockedAt=todayStr();
+  authUsers[idx].lockHistory=(authUsers[idx].lockHistory||0)+1;
+  saveAuthUsers();
+  toast('Đã khóa: '+authUsers[idx].name);renderAccount();
+}
+function doAdminUnlock(uid){
+  const idx=authUsers.findIndex(u=>u.id===uid);if(idx===-1)return;
+  authUsers[idx].status='active';
+  delete authUsers[idx].lockedReason;delete authUsers[idx].lockedAt;
+  saveAuthUsers();toast('Đã mở khóa: '+authUsers[idx].name);renderAccount();
+}
+function doAdminDelete(uid){
+  const u=authUsers.find(x=>x.id===uid);if(!u)return;
+  if(!confirm('Xóa mềm tài khoản "'+u.name+'"?\n\nTài khoản bị vô hiệu hóa nhưng lịch sử đơn hàng vẫn giữ lại.'))return;
+  const idx=authUsers.findIndex(x=>x.id===uid);
+  authUsers[idx].deletedAt=todayStr();authUsers[idx].status='deleted';
+  saveAuthUsers();toast('Đã xóa: '+u.name);admUsersView='list';renderAccount();
+}
+function doAdminRestore(uid){
+  const idx=authUsers.findIndex(u=>u.id===uid);if(idx===-1)return;
+  delete authUsers[idx].deletedAt;authUsers[idx].status='active';
+  saveAuthUsers();toast('Đã khôi phục: '+authUsers[idx].name);renderAccount();
+}
+function doAdminResetPw(uid){
+  const u=authUsers.find(x=>x.id===uid);if(!u)return;
+  const newPw='Edu@'+Math.random().toString(36).slice(2,7).toUpperCase();
+  const idx=authUsers.findIndex(x=>x.id===uid);
+  authUsers[idx].pwHash=hashPw(newPw);saveAuthUsers();
+  alert('Mật khẩu mới của '+u.name+':\n\n'+newPw+'\n\nGửi mật khẩu này cho người dùng qua email.');
+}
+function doAdminChangeRole(uid){
+  const sel=document.getElementById('admChangeRole');if(!sel||!sel.value)return;
+  const idx=authUsers.findIndex(u=>u.id===uid);if(idx===-1)return;
+  const old=authUsers[idx].role;
+  authUsers[idx].role=sel.value;
+  if(sel.value==='admin'&&!authUsers[idx].adminLevel)authUsers[idx].adminLevel='readonly';
+  if(sel.value!=='admin')delete authUsers[idx].adminLevel;
+  saveAuthUsers();
+  toast('Đổi vai trò: '+ROLELBL[old]+' → '+ROLELBL[sel.value]);renderAccount();
+}
+function doAdminSetLevel(uid,level){
+  const idx=authUsers.findIndex(u=>u.id===uid);if(idx===-1)return;
+  authUsers[idx].adminLevel=level;saveAuthUsers();
+  const LBLS={super:'Toàn quyền',readonly:'Chỉ xem',content:'Quản lý nội dung'};
+  toast('Cập nhật cấp quyền: '+LBLS[level]);renderAccount();
+}
+function doCreateAdmin(){
+  const name=val('naName'),email=val('naEmail').toLowerCase().trim();
+  const pw=val('naPw'),pw2=val('naPw2');
+  const level=document.querySelector('input[name="naLevel"]:checked')?.value||'readonly';
+  if(!name){showAuthErr('naErr','Vui lòng nhập họ tên');return;}
+  if(!validEmail(email)){showAuthErr('naErr','Email không hợp lệ');return;}
+  if(!pw||pw.length<8){showAuthErr('naErr','Mật khẩu phải từ 8 ký tự trở lên');return;}
+  if(pw!==pw2){showAuthErr('naErr','Mật khẩu xác nhận không khớp');return;}
+  if(authUsers.find(u=>u.email===email)){showAuthErr('naErr','Email này đã được sử dụng');return;}
+  const nu={id:'adm'+Date.now().toString(36),name,email,pwHash:hashPw(pw),role:'admin',adminLevel:level,
+    points:0,phone:'',ref:refCode(name),checkin:null,streak:0,createdAt:todayStr(),status:'active'};
+  authUsers.push(nu);saveAuthUsers();
+  toast('Đã tạo Admin: '+name);admUsersView='list';renderAccount();
 }
 
 function navForRole(r){
@@ -2448,17 +2709,46 @@ document.addEventListener('click',e=>{if(!e.target.closest('.has-menu'))closeNav
 // Seed demo accounts (chỉ tạo nếu chưa tồn tại)
 (function(){
   const SEEDS=[
-    {id:'demo-admin', name:'Admin EduMart',          email:'admin@edumart.vn',  pw:'admin123',role:'admin'},
-    {id:'demo-hs',    name:'Nguyễn Học Sinh',         email:'hocsinh@demo.vn',   pw:'demo123', role:'hocsinh'},
-    {id:'demo-sv',    name:'Trần Sinh Viên',           email:'sinhvien@demo.vn',  pw:'demo123', role:'sinhvien'},
-    {id:'demo-ph',    name:'Lê Phụ Huynh',             email:'phuhuynh@demo.vn',  pw:'demo123', role:'parent'},
-    {id:'demo-th',    name:'Trường THPT Demo',          email:'truonghoc@demo.vn', pw:'demo123', role:'school'},
+    {id:'demo-admin',name:'Admin EduMart',     email:'admin@edumart.vn',  pw:'admin123',role:'admin',  adminLevel:'super'},
+    {id:'demo-hs',   name:'Nguyễn Học Sinh',   email:'hocsinh@demo.vn',   pw:'demo123', role:'hocsinh'},
+    {id:'demo-sv',   name:'Trần Sinh Viên',     email:'sinhvien@demo.vn',  pw:'demo123', role:'sinhvien'},
+    {id:'demo-ph',   name:'Lê Phụ Huynh',       email:'phuhuynh@demo.vn',  pw:'demo123', role:'parent'},
+    {id:'demo-th',   name:'Trường THPT Demo',   email:'truonghoc@demo.vn', pw:'demo123', role:'school'},
+  ];
+  const MOCKS=[
+    {id:'mock-01',name:'Nguyễn Văn An',    email:'nva001@gmail.com',     pw:'mock123',role:'hocsinh', status:'active',  createdAt:'15/03/2025',points:240,ref:'EDU4812'},
+    {id:'mock-02',name:'Trần Thị Bình',    email:'ttbinh@yahoo.com',     pw:'mock123',role:'sinhvien',status:'active',  createdAt:'22/03/2025',points:180,ref:'EDU3300'},
+    {id:'mock-03',name:'Lê Hồng Phúc',     email:'lhphuc@gmail.com',     pw:'mock123',role:'parent',  status:'active',  createdAt:'01/04/2025',points:95, ref:'EDU7721'},
+    {id:'mock-04',name:'Phạm Minh Tuấn',   email:'pmtuan@edu.vn',        pw:'mock123',role:'school',  status:'active',  createdAt:'10/04/2025',points:0,  ref:'EDU5544'},
+    {id:'mock-05',name:'Hoàng Thị Mai',    email:'htmai@gmail.com',      pw:'mock123',role:'hocsinh', status:'locked',  createdAt:'18/04/2025',points:60, ref:'EDU9002',lockedReason:'Đăng sản phẩm giả mạo',lockedAt:'02/06/2025',lockHistory:1},
+    {id:'mock-06',name:'Vũ Quốc Bảo',      email:'vqbao@gmail.com',      pw:'mock123',role:'sinhvien',status:'active',  createdAt:'25/04/2025',points:315,ref:'EDU2288'},
+    {id:'mock-07',name:'Đặng Thu Hà',      email:'dtha@gmail.com',       pw:'mock123',role:'parent',  status:'active',  createdAt:'05/05/2025',points:120,ref:'EDU6601'},
+    {id:'mock-08',name:'Ngô Văn Hải',      email:'nvhai@outlook.com',    pw:'mock123',role:'hocsinh', status:'active',  createdAt:'12/05/2025',points:200,ref:'EDU4400'},
+    {id:'mock-09',name:'Bùi Thị Lan',      email:'btlan@gmail.com',      pw:'mock123',role:'sinhvien',status:'deleted', createdAt:'20/05/2025',points:0,  ref:'EDU8811',deletedAt:'01/06/2025'},
+    {id:'mock-10',name:'Trương Quang Nam', email:'tqnam@gmail.com',      pw:'mock123',role:'school',  status:'active',  createdAt:'28/05/2025',points:0,  ref:'EDU1199'},
+    {id:'mock-11',name:'Lý Thị Kim',       email:'ltkim@gmail.com',      pw:'mock123',role:'hocsinh', status:'active',  createdAt:'03/06/2025',points:145,ref:'EDU3377'},
+    {id:'mock-12',name:'Đinh Văn Mạnh',    email:'dvmanh@edu.vn',        pw:'mock123',role:'parent',  status:'locked',  createdAt:'08/06/2025',points:0,  ref:'EDU5566',lockedReason:'Gian lận điểm thưởng',lockedAt:'10/06/2025',lockHistory:2},
+    {id:'mock-13',name:'Cao Thị Nhung',    email:'ctnhung@gmail.com',    pw:'mock123',role:'sinhvien',status:'active',  createdAt:'11/06/2025',points:88, ref:'EDU7733'},
+    {id:'mock-14',name:'Phan Văn Lợi',     email:'pvloi@gmail.com',      pw:'mock123',role:'hocsinh', status:'active',  createdAt:'14/06/2025',points:175,ref:'EDU2244'},
+    {id:'mock-15',name:'Đỗ Minh Quân',     email:'dmquan@admin.edumart', pw:'mock123',role:'admin',   status:'active',  createdAt:'01/02/2025',points:0,  ref:'EDU9988',adminLevel:'content'},
+    {id:'mock-16',name:'Vương Thị Hoa',    email:'vthoa@gmail.com',      pw:'mock123',role:'hocsinh', status:'active',  createdAt:'15/06/2025',points:55, ref:'EDU4466'},
+    {id:'mock-17',name:'Trịnh Công Sơn',   email:'tcson@music.vn',       pw:'mock123',role:'parent',  status:'active',  createdAt:'16/06/2025',points:210,ref:'EDU3355'},
+    {id:'mock-18',name:'Nguyễn Thu Trang', email:'nttrang@sinhvien.vn',  pw:'mock123',role:'sinhvien',status:'active',  createdAt:'17/06/2025',points:130,ref:'EDU8822'},
   ];
   let changed=false;
   SEEDS.forEach(s=>{
     if(!authUsers.find(u=>u.email===s.email)){
       authUsers.push({id:s.id,name:s.name,email:s.email,pwHash:hashPw(s.pw),role:s.role,
-        points:s.role==='admin'?0:120,phone:'',ref:'EDUDEMO',checkin:null,streak:0,createdAt:'01/01/2025'});
+        adminLevel:s.adminLevel||undefined,
+        points:s.role==='admin'?0:120,phone:'',ref:'EDUDEMO',checkin:null,streak:0,
+        createdAt:'01/01/2025',status:'active'});
+      changed=true;
+    }
+  });
+  MOCKS.forEach(m=>{
+    if(!authUsers.find(u=>u.email===m.email)){
+      const {pw,...rest}=m;
+      authUsers.push({...rest,pwHash:hashPw(pw),phone:'',checkin:null,streak:0});
       changed=true;
     }
   });

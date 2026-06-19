@@ -960,25 +960,39 @@ function _rolePicker(){
         '<div class="role-grid rg-cols-'+g.roles.length+'">'+cards+'</div></div>';
     }).join('')+'</div>';
 }
-const DEMO_HINTS={
-  admin:  {email:'admin@edumart.vn',  pw:'admin123'},
-  hocsinh:{email:'hocsinh@demo.vn',  pw:'demo123'},
-  sinhvien:{email:'sinhvien@demo.vn', pw:'demo123'},
-};
+const DEMO_ACCOUNTS=[
+  {role:'admin',   label:'Quản trị viên', email:'admin@edumart.vn',  pw:'admin123'},
+  {role:'hocsinh', label:'Học sinh',       email:'hocsinh@demo.vn',  pw:'demo123'},
+  {role:'sinhvien',label:'Sinh viên',      email:'sinhvien@demo.vn', pw:'demo123'},
+];
+function demoFill(role,email,pw){
+  lgRole=role;
+  const eEl=document.getElementById('lgEmail');
+  const pEl=document.getElementById('lgPw');
+  if(eEl)eEl.value=email;
+  if(pEl)pEl.value=pw;
+  document.querySelectorAll('.demo-pill').forEach(x=>x.classList.remove('on'));
+  const active=document.querySelector('.demo-pill[data-role="'+role+'"]');
+  if(active)active.classList.add('on');
+  renderAuthBody();
+}
+function _demoPanel(){
+  const pills=DEMO_ACCOUNTS.map(a=>
+    '<button class="demo-pill'+(lgRole===a.role?' on':'')+'" data-role="'+a.role+'" onclick="demoFill(\''+a.role+'\',\''+a.email+'\',\''+a.pw+'\')">'+a.label+'</button>'
+  ).join('');
+  return '<div class="demo-panel"><span class="demo-panel-label">Demo nhanh</span>'+pills+'</div>';
+}
 function _loginForm(sel){
   const rem=LS.get('rememberMe',false);
-  const hint=DEMO_HINTS[sel.k];
-  const hintHtml=hint
-    ?'<div class="demo-hint" onclick="document.getElementById(\'lgEmail\').value=\''+hint.email+'\';document.getElementById(\'lgPw\').value=\''+hint.pw+'\'">'+
-      '<span class="demo-hint-label">Demo</span> '+hint.email+' / '+hint.pw+
-      ' <span class="demo-hint-fill">Điền tự động ›</span></div>'
-    :'';
-  return hintHtml+
+  const prefill=DEMO_ACCOUNTS.find(a=>a.role===sel.k);
+  const emailVal=prefill?prefill.email:'';
+  const pwVal=prefill?prefill.pw:'';
+  return _demoPanel()+
     '<div class="form-field"><label>Email</label>'+
-    '<input id="lgEmail" type="email" placeholder="ten@email.com" autocomplete="email"></div>'+
+    '<input id="lgEmail" type="email" placeholder="ten@email.com" autocomplete="email" value="'+emailVal+'"></div>'+
     '<div class="form-field"><div class="auth-label-row"><label>Mật khẩu</label>'+
     '<a class="auth-link" onclick="authTab(\'forgot\')">Quên mật khẩu?</a></div>'+
-    '<input id="lgPw" type="password" placeholder="Tối thiểu 6 ký tự" autocomplete="current-password" onkeydown="if(event.key===\'Enter\')doLogin()"></div>'+
+    '<input id="lgPw" type="password" placeholder="Tối thiểu 6 ký tự" autocomplete="current-password" value="'+pwVal+'" onkeydown="if(event.key===\'Enter\')doLogin()"></div>'+
     '<div class="auth-check-row"><label class="auth-check"><input type="checkbox" id="lgRemember"'+(rem?' checked':'')+'>'+
     '<span>Ghi nhớ đăng nhập</span></label></div>'+
     '<div id="lgErr" class="field-error"></div>'+

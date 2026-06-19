@@ -16,14 +16,45 @@ const P = [
   {id:4,name:'Mắt biếc',by:'Nguyễn Nhật Ánh',cat:'sach',aud:['thpt'],nxb:'NXB Trẻ',price:88000,old:110000,rate:5.0,sold:8100,c:'#c1572f'},
   {id:5,name:'Atomic Habits - Thay đổi tí hon',by:'James Clear',cat:'sach',aud:['sinhvien','thpt'],nxb:'Thế Giới',price:145000,old:180000,rate:4.9,sold:6700,c:'#1f6e6e'},
   {id:6,name:'Luyện thi THPT QG môn Toán',by:'NXB ĐHQG Hà Nội',cat:'sach',aud:['thpt'],nxb:'ĐHQG',price:95000,old:120000,rate:4.6,sold:3300,c:'#384c9c'},
-  {id:7,name:'Combo bút bi Thiên Long 20 cây',by:'Thiên Long',cat:'vpp',aud:['thcs','thpt','sinhvien'],nxb:'Thiên Long',price:48000,old:80000,rate:5.0,sold:9200,c:'#2563a8',icon:'pen'},
-  {id:8,name:'Vở Campus 200 trang (lốc 10)',by:'Campus',cat:'vpp',aud:['thcs','thpt'],nxb:'Campus',price:102000,old:120000,rate:4.9,sold:5600,c:'#e08a2e',icon:'note'},
-  {id:9,name:'Bộ bút màu Colokit 24 màu',by:'Colokit',cat:'vpp',aud:['tieuhoc'],nxb:'Colokit',price:65000,old:85000,rate:4.8,sold:4100,c:'#c94f7c',icon:'palette'},
-  {id:10,name:'Balo chống gù Hami',by:'Hami',cat:'vpp',aud:['tieuhoc','thcs'],nxb:'Hami',price:320000,old:420000,rate:4.7,sold:2200,c:'#3d6e9c',icon:'bag'},
-  {id:11,name:'Máy tính Casio fx-580VN X',by:'Casio',cat:'tbgd',aud:['thpt','sinhvien'],nxb:'Casio',price:490000,old:599000,rate:4.8,sold:3400,c:'#2b3a4a',icon:'calc'},
-  {id:12,name:'Bộ dụng cụ thí nghiệm Vật lý 12',by:'Thiết bị GD',cat:'tbgd',aud:['thpt'],nxb:'Thiết bị GD',price:360000,old:450000,rate:4.6,sold:980,c:'#1f6e6e',icon:'flask'},
-  {id:13,name:'Địa cầu phát sáng 25cm',by:'EduGlobe',cat:'tbgd',aud:['tieuhoc','thcs'],nxb:'EduGlobe',price:210000,old:280000,rate:4.9,sold:1600,c:'#2f6ca5',icon:'globe'},
-  {id:14,name:'Bộ dạy học giáo viên - bảng & phấn',by:'EduPro',cat:'tbgd',aud:['giaovien'],nxb:'EduPro',price:175000,old:230000,rate:4.7,sold:1100,c:'#7a4a8c',icon:'board'},
+  {id:7,name:'Combo bút bi Thiên Long 20 cây',by:'Thiên Long',cat:'vpp',sub:'but',aud:['thcs','thpt','sinhvien'],nxb:'Thiên Long',price:48000,old:80000,rate:5.0,sold:9200,c:'#2563a8',icon:'pen'},
+  {id:8,name:'Vở Campus 200 trang (lốc 10)',by:'Campus',cat:'vpp',sub:'vo',aud:['thcs','thpt'],nxb:'Campus',price:102000,old:120000,rate:4.9,sold:5600,c:'#e08a2e',icon:'note'},
+  {id:9,name:'Bộ bút màu Colokit 24 màu',by:'Colokit',cat:'vpp',sub:'hoapham',aud:['tieuhoc'],nxb:'Colokit',price:65000,old:85000,rate:4.8,sold:4100,c:'#c94f7c',icon:'palette'},
+  {id:10,name:'Balo chống gù Hami',by:'Hami',cat:'vpp',sub:'balo',aud:['tieuhoc','thcs'],nxb:'Hami',price:320000,old:420000,rate:4.7,sold:2200,c:'#3d6e9c',icon:'bag'},
+  /* ===== Văn phòng phẩm mở rộng ===== */
+  {id:44,name:'Bút chì 2B Hồng Hà (hộp 12 cây)',by:'Hồng Hà',cat:'vpp',sub:'but',aud:['tieuhoc','thcs'],nxb:'Hồng Hà',price:32000,old:45000,rate:4.7,sold:6800,c:'#8a6020',icon:'pen'},
+  {id:45,name:'Bút dạ quang Stabilo Boss (8 màu)',by:'Stabilo',cat:'vpp',sub:'but',aud:['thcs','thpt','sinhvien'],nxb:'Stabilo',price:78000,old:98000,rate:4.9,sold:4200,c:'#d4b200',tag:'hot',icon:'pen'},
+  {id:46,name:'Bộ bút gel Thiên Long G-03 (10 cây)',by:'Thiên Long',cat:'vpp',sub:'but',aud:['thcs','thpt','sinhvien'],nxb:'Thiên Long',price:52000,old:72000,rate:4.8,sold:7300,c:'#1e4d8c',icon:'pen'},
+  {id:47,name:'Vở kẻ ngang Hồng Hà A5 200 trang (lốc 10)',by:'Hồng Hà',cat:'vpp',sub:'vo',aud:['tieuhoc','thcs','thpt'],nxb:'Hồng Hà',price:78000,old:98000,rate:4.8,sold:8900,c:'#c85a00',icon:'note'},
+  {id:48,name:'Sổ tay bìa cứng Kraft A5 (192 trang)',by:'Artbox',cat:'vpp',sub:'vo',aud:['thpt','sinhvien'],nxb:'Artbox',price:95000,old:130000,rate:4.7,sold:2300,c:'#7a5c3a',tag:'new',icon:'note'},
+  {id:49,name:'Giấy in A4 Double A 80gsm (ream 500 tờ)',by:'Double A',cat:'vpp',sub:'vo',aud:['sinhvien','giaovien'],nxb:'Double A',price:108000,old:138000,rate:4.9,sold:5400,c:'#4a6ea8',icon:'note'},
+  {id:50,name:'Bộ dụng cụ học toán (thước, compa, eke)',by:'DELI',cat:'vpp',sub:'dungcu',aud:['thcs','thpt'],nxb:'DELI',price:45000,old:65000,rate:4.6,sold:3800,c:'#2a7a2a',icon:'ruler'},
+  {id:51,name:'Máy tính Casio fx-580VN X',by:'Casio',cat:'vpp',sub:'dungcu',aud:['thpt','sinhvien'],nxb:'Casio',price:480000,old:580000,rate:4.9,sold:12000,c:'#1a1a4a',tag:'hot',icon:'calc'},
+  {id:52,name:'Bộ kéo + băng dán + ghim văn phòng DELI',by:'DELI',cat:'vpp',sub:'dungcu',aud:['giaovien','school'],nxb:'DELI',price:62000,old:82000,rate:4.5,sold:1800,c:'#5a3a1a',icon:'tool'},
+  {id:53,name:'Màu nước Sakura 24 màu + 3 cọ',by:'Sakura',cat:'vpp',sub:'hoapham',aud:['tieuhoc','thcs'],nxb:'Sakura',price:125000,old:165000,rate:4.8,sold:2100,c:'#c04060',tag:'new',icon:'palette'},
+  {id:54,name:'Màu sáp dầu Crayola 32 màu',by:'Crayola',cat:'vpp',sub:'hoapham',aud:['tieuhoc'],nxb:'Crayola',price:95000,old:125000,rate:4.9,sold:3400,c:'#d04000',icon:'palette'},
+  {id:55,name:'Sổ vẽ Artbook A4 120g (50 tờ)',by:'Artbox',cat:'vpp',sub:'hoapham',aud:['tieuhoc','thcs','thpt'],nxb:'Artbox',price:68000,old:88000,rate:4.7,sold:1800,c:'#3a6a4a',icon:'note'},
+  {id:56,name:'Balo học sinh chống gù Haras 18L',by:'Haras',cat:'vpp',sub:'balo',aud:['tieuhoc','thcs'],nxb:'Haras',price:395000,old:520000,rate:4.8,sold:3600,c:'#1e5f8a',tag:'hot',icon:'bag'},
+  {id:57,name:'Túi đựng bút canvas 3 ngăn',by:'Artbox',cat:'vpp',sub:'balo',aud:['thcs','thpt','sinhvien'],nxb:'Artbox',price:65000,old:88000,rate:4.7,sold:2800,c:'#6a4a2a',icon:'bag'},
+  {id:58,name:'Hộp đựng đồ bàn học DELI 5 ngăn',by:'DELI',cat:'vpp',sub:'dungcu',aud:['tieuhoc','thcs','thpt','sinhvien'],nxb:'DELI',price:82000,old:110000,rate:4.6,sold:1500,c:'#4a8a4a',icon:'tool'},
+  {id:11,name:'Máy tính Casio fx-580VN X',by:'Casio',cat:'tbgd',sub:'mtinh',aud:['thpt','sinhvien'],nxb:'Casio',price:490000,old:599000,rate:4.8,sold:3400,c:'#2b3a4a',icon:'calc'},
+  {id:12,name:'Bộ dụng cụ thí nghiệm Vật lý 12',by:'Thiết bị GD',cat:'tbgd',sub:'tn',aud:['thpt'],nxb:'Thiết bị GD',price:360000,old:450000,rate:4.6,sold:980,c:'#1f6e6e',icon:'flask'},
+  {id:13,name:'Địa cầu phát sáng 25cm',by:'EduGlobe',cat:'tbgd',sub:'bando',aud:['tieuhoc','thcs'],nxb:'EduGlobe',price:210000,old:280000,rate:4.9,sold:1600,c:'#2f6ca5',icon:'globe'},
+  {id:14,name:'Bộ dạy học giáo viên - bảng & phấn',by:'EduPro',cat:'tbgd',sub:'dayho',aud:['giaovien'],nxb:'EduPro',price:175000,old:230000,rate:4.7,sold:1100,c:'#7a4a8c',icon:'board'},
+  /* ===== Thiết bị giáo dục mở rộng ===== */
+  {id:59,name:'Máy tính Casio fx-991EX Classwiz',by:'Casio',cat:'tbgd',sub:'mtinh',aud:['thpt','sinhvien'],nxb:'Casio',price:295000,old:380000,rate:4.9,sold:8700,c:'#1a2a4a',tag:'hot',icon:'calc'},
+  {id:60,name:'Máy tính đồ thị Casio fx-CG50',by:'Casio',cat:'tbgd',sub:'mtinh',aud:['sinhvien'],nxb:'Casio',price:1850000,old:2200000,rate:4.8,sold:1200,c:'#2a1a4a',icon:'calc'},
+  {id:61,name:'Kính hiển vi học sinh 400x – 1000x',by:'Optima Lab',cat:'tbgd',sub:'tn',aud:['thcs','thpt'],nxb:'Optima Lab',price:680000,old:890000,rate:4.7,sold:840,c:'#1a4a2a',tag:'hot',icon:'micro'},
+  {id:62,name:'Bộ thí nghiệm Hóa học THCS (25 dụng cụ)',by:'EduLab',cat:'tbgd',sub:'tn',aud:['thcs'],nxb:'EduLab',price:450000,old:580000,rate:4.5,sold:620,c:'#4a1a2a',icon:'flask'},
+  {id:63,name:'Mô hình cấu trúc DNA 3D tháo lắp',by:'BioModel',cat:'tbgd',sub:'tn',aud:['thpt','sinhvien'],nxb:'BioModel',price:380000,old:490000,rate:4.7,sold:510,c:'#1a4a4a',tag:'new',icon:'flask'},
+  {id:64,name:'Bản đồ Việt Nam treo tường 80×120cm',by:'EduMap',cat:'tbgd',sub:'bando',aud:['tieuhoc','thcs'],nxb:'EduMap',price:178000,old:245000,rate:4.6,sold:2300,c:'#3a5a1a',icon:'globe'},
+  {id:65,name:'Địa cầu chính trị 30cm có đèn LED',by:'EduGlobe',cat:'tbgd',sub:'bando',aud:['thcs','thpt'],nxb:'EduGlobe',price:310000,old:420000,rate:4.8,sold:1450,c:'#1a3a6a',icon:'globe'},
+  {id:66,name:'Bảng trắng từ tính 80×120cm khung nhôm',by:'EduPro',cat:'tbgd',sub:'dayho',aud:['giaovien','school'],nxb:'EduPro',price:470000,old:620000,rate:4.8,sold:1820,c:'#3a1a5a',tag:'hot',icon:'board'},
+  {id:67,name:'Bộ thẻ học từ vựng Tiếng Anh 500 thẻ',by:'EduCard',cat:'tbgd',sub:'dayho',aud:['tieuhoc','thcs'],nxb:'EduCard',price:88000,old:120000,rate:4.7,sold:3400,c:'#5a3a1a',tag:'new',icon:'note'},
+  {id:68,name:'Đèn học LED chống cận EduLight',by:'EduLight',cat:'tbgd',sub:'dayho',aud:['tieuhoc','thcs','thpt'],nxb:'EduLight',price:278000,old:360000,rate:4.9,sold:4200,c:'#4a4a1a',icon:'lamp'},
+  {id:69,name:'Máy chiếu mini EduPro 3000 Lumen',by:'EduPro',cat:'tbgd',sub:'cntt',aud:['giaovien','school'],nxb:'EduPro',price:3200000,old:4200000,rate:4.7,sold:680,c:'#1a3a5a',tag:'hot',icon:'screen'},
+  {id:70,name:'Máy đọc sách EduReader 6" E-Ink',by:'EduMart Tech',cat:'tbgd',sub:'cntt',aud:['sinhvien','giaovien'],nxb:'EduMart Tech',price:1290000,old:1680000,rate:4.6,sold:920,c:'#2a2a4a',tag:'new',icon:'note'},
+  {id:71,name:'Camera tài liệu IPEVO V4K 4K',by:'IPEVO',cat:'tbgd',sub:'cntt',aud:['giaovien','school'],nxb:'IPEVO',price:2450000,old:3100000,rate:4.8,sold:460,c:'#1a4a3a',icon:'cam'},
+  {id:72,name:'Màn chiếu gập EduScreen 120"',by:'EduPro',cat:'tbgd',sub:'cntt',aud:['giaovien','school'],nxb:'EduPro',price:890000,old:1200000,rate:4.5,sold:380,c:'#3a3a1a',icon:'screen'},
   {id:26,name:'Sách giáo viên Ngữ văn lớp 10 - Kết nối tri thức',by:'NXB Giáo Dục Việt Nam',cat:'sach',aud:['giaovien'],nxb:'Giáo Dục',price:62000,old:82000,rate:4.8,sold:890,c:'#384c9c'},
   {id:27,name:'Hướng dẫn dạy học theo phương pháp tích cực',by:'Trường ĐHSP Hà Nội',cat:'sach',aud:['giaovien'],nxb:'ĐHSP',price:118000,old:155000,rate:4.7,sold:620,c:'#2a5a5a'},
   {id:28,name:'Kế hoạch bài dạy 4.0 - Mẫu soạn giáo án chuẩn mới',by:'EduPro Digital',cat:'ebook',aud:['giaovien'],nxb:'EduMart Digital',price:85000,old:120000,rate:4.9,sold:480,c:'#7a4400',ebook:true,format:'PDF',pages:240,size:6.2},
@@ -35,6 +66,16 @@ const P = [
   {id:20,name:'Đắc Nhân Tâm (sách nói)',by:'Dale Carnegie',cat:'audiobook',aud:['sinhvien'],nxb:'EduMart Audio',price:69000,old:99000,rate:4.9,sold:5200,c:'#c1572f',audio:true,narrator:'Minh Quân',duration:372,format:'MP3'},
   {id:21,name:'Tư duy nhanh và chậm (sách nói)',by:'Daniel Kahneman',cat:'audiobook',aud:['sinhvien'],nxb:'EduMart Audio',price:89000,old:129000,rate:4.7,sold:2400,c:'#7a4a8c',audio:true,narrator:'Thu Hà',duration:540,format:'MP3'},
   {id:22,name:'Luyện nghe Tiếng Anh mỗi ngày (sách nói)',by:'Lê Hằng',cat:'audiobook',aud:['thpt','sinhvien'],nxb:'EduMart Audio',price:55000,old:85000,rate:4.8,sold:3100,c:'#2f6ca5',audio:true,narrator:'David Le',duration:248,format:'MP3'},
+  /* ===== Ebook & Sách nói mở rộng ===== */
+  {id:35,name:'Ngữ văn 12 – Phân tích tác phẩm trọng tâm',by:'Nguyễn Thị Lan',cat:'ebook',aud:['thpt'],nxb:'EduMart Digital',price:75000,old:110000,rate:4.7,sold:940,c:'#6a1a3a',tag:'hot',ebook:true,format:'PDF · EPUB',pages:288,size:7.4},
+  {id:36,name:'Hóa học cơ bản THCS – Lý thuyết & bài tập',by:'Trần Minh Đức',cat:'ebook',aud:['thcs'],nxb:'EduMart Digital',price:55000,old:80000,rate:4.5,sold:620,c:'#1a5a3a',ebook:true,format:'PDF',pages:220,size:5.8},
+  {id:37,name:'Kỹ năng học tập thông minh cho sinh viên',by:'Phạm Anh Tuấn',cat:'ebook',aud:['sinhvien'],nxb:'EduMart Digital',price:69000,old:95000,rate:4.6,sold:380,c:'#1e3a5a',tag:'new',ebook:true,format:'PDF · EPUB',pages:192,size:4.9},
+  {id:38,name:'Toán 5 – Bộ đề luyện thi cuối cấp',by:'Đội ngũ EduMart',cat:'ebook',aud:['tieuhoc'],nxb:'EduMart Digital',price:45000,old:65000,rate:4.4,sold:510,c:'#2d5a2d',ebook:true,format:'PDF',pages:180,size:4.5},
+  {id:39,name:'Python từ số 0 đến dự án thực tế',by:'Lê Hải Nam',cat:'ebook',aud:['sinhvien'],nxb:'EduMart Digital',price:89000,old:135000,rate:4.8,sold:1270,c:'#1f5577',tag:'new',ebook:true,format:'PDF · EPUB',pages:356,size:9.2},
+  {id:40,name:'IELTS Foundation – Lộ trình 3 tháng',by:'Trung tâm EduMart',cat:'ebook',aud:['thpt','sinhvien'],nxb:'EduMart Digital',price:119000,old:180000,rate:4.9,sold:2030,c:'#7a4400',tag:'hot',ebook:true,format:'PDF · EPUB',pages:480,size:14.1},
+  {id:41,name:'Mindset – Tâm thế thành công (sách nói)',by:'Carol S. Dweck',cat:'audiobook',aud:['sinhvien','giaovien'],nxb:'EduMart Audio',price:75000,old:110000,rate:4.8,sold:1560,c:'#4a1e7a',audio:true,narrator:'Lan Anh',duration:320,format:'MP3'},
+  {id:42,name:'Atomic Habits – Thói quen nguyên tử (sách nói)',by:'James Clear',cat:'audiobook',aud:['sinhvien','giaovien'],nxb:'EduMart Audio',price:85000,old:125000,rate:4.9,sold:3120,c:'#c1572f',tag:'hot',audio:true,narrator:'Minh Khoa',duration:410,format:'MP3'},
+  {id:43,name:'The Power of Now – Sức mạnh hiện tại (sách nói)',by:'Eckhart Tolle',cat:'audiobook',aud:['sinhvien'],nxb:'EduMart Audio',price:79000,old:115000,rate:4.7,sold:890,c:'#1a5a5a',audio:true,narrator:'Thu Giang',duration:295,format:'MP3'},
   {id:23,name:'Tắt đèn',by:'Ngô Tất Tố',cat:'sach',aud:['thpt'],nxb:'NXB Văn Học',price:72000,old:95000,rate:4.7,sold:2100,c:'#5a3a2a'},
   {id:24,name:'Cây chuối non đi giày xanh',by:'Nguyễn Nhật Ánh',cat:'sach',aud:['thcs','thpt'],nxb:'NXB Trẻ',price:110000,old:135000,rate:4.9,sold:4300,c:'#2f8f6a'},
   {id:25,name:'Bộ SGK lớp 1 - Cánh Diều',by:'NXB ĐH Sư Phạm',cat:'sach',aud:['tieuhoc'],nxb:'Cánh Diều',price:165000,old:210000,rate:4.8,sold:1800,c:'#c1572f'}
@@ -50,20 +91,47 @@ const GENREDESC={
   kynang:'Phát triển bản thân, tư duy và thói quen tốt cho học sinh, sinh viên.',
   ngoaingu:'Sách học tiếng Anh và ngoại ngữ: từ vựng, giao tiếp, luyện thi.'
 };
-const GENRE_MAP={1:'sgk',2:'thieunhi',3:'kynang',4:'vanhoc',5:'kynang',6:'thamkhao',15:'kynang',16:'ngoaingu',17:'kynang',18:'thamkhao',19:'thamkhao',20:'kynang',21:'kynang',22:'ngoaingu',23:'vanhoc',24:'thieunhi',25:'sgk'};
+const GENRE_MAP={1:'sgk',2:'thieunhi',3:'kynang',4:'vanhoc',5:'kynang',6:'thamkhao',15:'kynang',16:'ngoaingu',17:'kynang',18:'thamkhao',19:'thamkhao',20:'kynang',21:'kynang',22:'ngoaingu',23:'vanhoc',24:'thieunhi',25:'sgk',35:'vanhoc',36:'thamkhao',37:'kynang',38:'sgk',39:'kynang',40:'ngoaingu',41:'kynang',42:'kynang',43:'kynang'};
 P.forEach(p=>{if(GENRE_MAP[p.id])p.genre=GENRE_MAP[p.id];});
+
+/* Mục lục (TOC) cho từng ebook, danh sách track cho audiobook */
+const EBOOK_TOC={
+  15:['Lập trình là gì & tại sao học JavaScript?','Biến, kiểu dữ liệu và toán tử','Cấu trúc điều khiển & vòng lặp','Hàm, closure và scope','DOM, sự kiện và dự án thực tế'],
+  16:['Vượt rào ngại ngùng khi nói tiếng Anh','Phát âm chuẩn & ngữ điệu tự nhiên','Mẫu câu giao tiếp thiết yếu','Từ vựng theo tình huống hàng ngày','Luyện tập & tự tin hội thoại'],
+  17:['Tư duy phản biện là gì & vì sao cần?','Nhận diện lỗi lập luận phổ biến','Đặt câu hỏi đúng — kỹ năng cốt lõi','Phân tích thông tin và nguồn tin','Ứng dụng trong học tập & cuộc sống'],
+  18:['Tổng quan cấu trúc đề thi THPTQG','Ngữ văn: lý thuyết & luyện đề thực chiến','Toán học: công thức & bài tập chọn lọc','Tiếng Anh: ngữ pháp & từ vựng trọng điểm','Chiến lược ôn thi & quản lý thời gian hiệu quả'],
+  19:['Số học thú vị qua câu chuyện','Hình học & không gian qua trò chơi','Tư duy logic & sáng tạo','Cộng trừ nhân chia theo hình ảnh','Ôn luyện vui cùng bài tập minh họa'],
+  28:['Thiết kế bài dạy theo chuẩn năng lực 4.0','Mục tiêu & chuẩn đầu ra theo thang Bloom','Hoạt động học tập chủ động & hợp tác','Đánh giá quá trình và phản hồi hiệu quả','Mẫu giáo án & hồ sơ dạy học hoàn chỉnh'],
+  35:['Tổng quan cấu trúc đề Ngữ văn THPTQG','Nam Cao & Nguyễn Tuân: phân tích chuyên sâu','Thơ Tố Hữu, Xuân Quỳnh & thơ kháng chiến','Văn bản nghị luận: kỹ thuật phân tích đề','Mẫu dàn ý & bài văn mẫu đạt điểm cao'],
+  36:['Nguyên tử, phân tử & cấu trúc chất','Bảng tuần hoàn & tính chất các nguyên tố','Phản ứng hóa học & cân bằng phương trình','Hóa hữu cơ cơ bản & bài tập thực hành','Đề ôn luyện có đáp án giải chi tiết'],
+  37:['Biết cách học — nền tảng thành công','Quản lý thời gian & lịch học tập hiệu quả','Đọc chủ động, ghi chú & ghi nhớ lâu dài','Kỹ năng viết báo cáo & thuyết trình','Học nhóm, ôn thi & vượt áp lực'],
+  38:['Số học & phép tính: ôn luyện toàn diện','Phân số, tỉ số và bài toán đố','Hình học phẳng — diện tích & chu vi','Thống kê và biểu đồ đơn giản','Bộ đề thi thử cuối năm có lời giải'],
+  39:['Cài đặt Python & làm quen môi trường','Kiểu dữ liệu, biến và cấu trúc điều khiển','Hàm, module và lập trình hướng đối tượng','Xử lý file, API & thư viện phổ biến','Dự án thực tế: web scraper & data dashboard'],
+  40:['Tổng quan IELTS & lộ trình học 3 tháng','Listening: chiến thuật & bài luyện theo band','Reading: kỹ thuật skimming/scanning & đề thật','Writing Task 1 & 2: cấu trúc & mẫu câu band 7+','Speaking: giao tiếp tự nhiên & mock test'],
+};
+const AUDIO_TRACKS={
+  20:[{t:'Phần 1: Kỹ thuật cơ bản về xử lý người',d:72},{t:'Phần 2: Sáu cách lấy lòng người',d:85},{t:'Phần 3: Mười hai cách thu phục cảm tình',d:91},{t:'Phần 4: Chín cách thuyết phục người khác',d:78},{t:'Phần 5: Viết thư & nghệ thuật giao tiếp',d:46}],
+  21:[{t:'Phần 1: Hai hệ thống tư duy',d:110},{t:'Phần 2: Heuristics & thiên kiến nhận thức',d:108},{t:'Phần 3: Sự tự tin thái quá',d:95},{t:'Phần 4: Lựa chọn, giá trị & kết quả',d:120},{t:'Phần 5: Kinh nghiệm và ký ức',d:107}],
+  22:[{t:'Ngày 1–10: Phát âm nền tảng',d:52},{t:'Ngày 11–20: Hội thoại hàng ngày',d:58},{t:'Ngày 21–30: Tình huống công sở',d:55},{t:'Ngày 31–40: Du lịch & mua sắm',d:48},{t:'Ngày 41–50: Nâng cao & luyện thi',d:35}],
+  41:[{t:'Phần 1: Hai tư duy — Cố định và Phát triển',d:68},{t:'Phần 2: Tư duy trong học đường & thể thao',d:72},{t:'Phần 3: Tư duy trong kinh doanh & lãnh đạo',d:65},{t:'Phần 4: Các mối quan hệ & tư duy Phát triển',d:70},{t:'Phần 5: Hành trình thay đổi tư duy',d:45}],
+  42:[{t:'Phần 1: Nền tảng — Tại sao thói quen quan trọng',d:82},{t:'Phần 2: Quy luật 1 & 2: Rõ ràng & Hấp dẫn',d:88},{t:'Phần 3: Quy luật 3 & 4: Dễ dàng & Thỏa mãn',d:90},{t:'Phần 4: Thói quen nâng cao & vượt giới hạn',d:85},{t:'Phần 5: Xây dựng hệ thống sống tốt hơn',d:65}],
+  43:[{t:'Phần 1: Bạn không phải là tâm trí của bạn',d:58},{t:'Phần 2: Ý thức — Vượt qua đau khổ',d:62},{t:'Phần 3: Đi sâu vào thời khắc hiện tại',d:60},{t:'Phần 4: Chiến lược tâm trí & cảm xúc',d:55},{t:'Phần 5: Sống với sự thức tỉnh',d:60}],
+};
+P.forEach(p=>{if(EBOOK_TOC[p.id])p.toc=EBOOK_TOC[p.id];if(AUDIO_TRACKS[p.id])p.tracks=AUDIO_TRACKS[p.id];});
 
 /* ---------------- Ebook: nội dung, sở hữu, tiến độ đọc ---------------- */
 function ebookChapters(p){
-  const titles=['Lời mở đầu','Nền tảng cốt lõi','Thực hành & ví dụ','Nâng cao và mở rộng','Tổng kết & lộ trình'];
+  const titles=p.toc||['Lời mở đầu','Nền tảng cốt lõi','Thực hành & ví dụ','Nâng cao và mở rộng','Tổng kết & lộ trình'];
+  const pagesPerCh=Math.round((p.pages||200)/titles.length);
   return titles.map((t,i)=>({
-    t:'Chương '+(i+1)+': '+t,
-    body:'<p>Đây là nội dung minh họa của ebook <b>“'+p.name+'”</b> do '+p.by+' biên soạn, phát hành bởi '+p.nxb+'.</p>'+
+    t:t,
+    pages:pagesPerCh,
+    body:'<p>Đây là nội dung minh họa của ebook <b>"'+p.name+'"</b> do '+p.by+' biên soạn, phát hành bởi '+p.nxb+'.</p>'+
       '<p>'+(i===0
-        ? 'Chương mở đầu giới thiệu mục tiêu, đối tượng phù hợp và cách học hiệu quả nhất với cuốn sách. Bạn đang đọc bản xem thử — hãy sở hữu ebook để mở khóa toàn bộ '+p.pages+' trang.'
-        : 'Chương '+(i+1)+' đi sâu vào chủ đề với các ví dụ thực tế, bài tập áp dụng và lưu ý quan trọng. Nội dung được trình bày mạch lạc, dễ theo dõi cho người tự học.')+'</p>'+
-      '<p>“Mỗi trang sách hôm nay là một bước tiến của ngày mai.” Hãy đọc đều đặn mỗi ngày để đạt kết quả tốt nhất. Tiến độ đọc của bạn được lưu tự động trên thiết bị này.</p>'+
-      '<p>— Hết phần minh họa của '+('Chương '+(i+1))+' —</p>'
+        ? 'Chương mở đầu giới thiệu mục tiêu, đối tượng phù hợp và cách học hiệu quả nhất. Bạn đang đọc bản xem thử — hãy sở hữu ebook để mở khóa toàn bộ '+p.pages+' trang.'
+        : 'Chương này đi sâu vào chủ đề: <em>'+t+'</em>. Nội dung được trình bày mạch lạc với ví dụ thực tế, bài tập áp dụng và lưu ý quan trọng cho người tự học.')+'</p>'+
+      '<p>Tiến độ đọc được lưu tự động. Bạn có thể đánh dấu trang, thêm ghi chú và đổi giao diện bằng thanh công cụ phía trên.</p>'+
+      '<p style="color:var(--text-soft);font-size:13px;border-top:1px solid var(--line);padding-top:14px;margin-top:22px">— Nội dung minh họa · '+t+' · ~'+pagesPerCh+' trang —</p>'
   }));
 }
 let library = LS.get('library',[]);          // ebook/audiobook id đã sở hữu vĩnh viễn
@@ -84,7 +152,7 @@ let bookmarks = LS.get('bookmarks',{});       // {id:[chương đã đánh dấu
 let notesStore = LS.get('notes',{});          // {id:[{ch,text}]}
 function isBookmarked(id,ch){return (bookmarks[Number(id)]||[]).includes(ch);}
 function toggleBookmark(id){id=Number(id);const arr=bookmarks[id]||[];const i=arr.indexOf(readerCh);if(i>=0)arr.splice(i,1);else arr.push(readerCh);bookmarks[id]=arr;LS.set('bookmarks',bookmarks);toast(i>=0?'Đã bỏ đánh dấu':'Đã đánh dấu chương này');renderReader();}
-function addReaderNote(id){id=Number(id);const t=val('noteInput');if(!t){toast('Nhập nội dung ghi chú nhé');return;}(notesStore[id]=notesStore[id]||[]).push({ch:readerCh,text:t});LS.set('notes',notesStore);toast('Đã lưu ghi chú');renderReader();}
+function addReaderNote(id){id=Number(id);const t=val('noteInput');if(!t){toast('Nhập nội dung ghi chú nhé');return;}(notesStore[id]=notesStore[id]||[]).push({ch:readerCh,text:t,ts:todayStr()});LS.set('notes',notesStore);toast('Đã lưu ghi chú');renderReader();}
 function delReaderNote(id,idx){notesStore[Number(id)].splice(idx,1);LS.set('notes',notesStore);renderReader();}
 
 /* Audiobook: thời lượng, vị trí nghe */
@@ -98,9 +166,15 @@ const ICONS = {
   palette:'<circle cx="12" cy="12" r="9"/><circle cx="8" cy="9" r="1"/><circle cx="12" cy="7" r="1"/><circle cx="16" cy="9" r="1"/>',
   bag:'<path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8a3 3 0 0 1 6 0"/>',
   calc:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2"/>',
+  ruler:'<path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M8 7v4M12 7v6M16 7v4"/>',
+  tool:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3-3a1 1 0 0 0 0-1.4l-1.6-1.6a1 1 0 0 0-1.4 0l-3 3Z"/><path d="M5 21l9.4-9.4M3 3l3.4 3.4M2 8l4-4M8 2l-4 4"/>',
   flask:'<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/>',
   globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
-  board:'<rect x="3" y="4" width="18" height="13" rx="1"/><path d="M12 17v4M8 21h8"/>'
+  board:'<rect x="3" y="4" width="18" height="13" rx="1"/><path d="M12 17v4M8 21h8"/>',
+  micro:'<circle cx="10" cy="14" r="5"/><path d="M10 9V3M7 5h6M10 19v2M5 14H3M17 14h1"/>',
+  screen:'<rect x="2" y="3" width="20" height="13" rx="2"/><path d="M8 21h8M12 16v5"/>',
+  lamp:'<path d="M9 21h6M12 3a6 6 0 0 1 5 9.47L15 17H9l-2-4.53A6 6 0 0 1 12 3Z"/><path d="M9 17h6"/>',
+  cam:'<rect x="2" y="8" width="20" height="12" rx="2"/><circle cx="12" cy="14" r="3"/><path d="M9 8V6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>'
 };
 
 function cover(p,scale){
@@ -142,7 +216,7 @@ function inWish(id){return wishlist.includes(Number(id));}
 function toggleWish(id){
   id=Number(id);
   if(inWish(id)){wishlist=wishlist.filter(x=>x!==id);toast('Đã bỏ khỏi yêu thích');}
-  else{wishlist.push(id);toast('Đã lưu vào yêu thích');addNotif('Đã thêm “'+P.find(p=>p.id===id).name+'” vào danh sách yêu thích');}
+  else{wishlist.push(id);toast('Đã lưu vào yêu thích');addNotif('Đã thêm "'+P.find(p=>p.id===id).name+'" vào danh sách yêu thích');}
   LS.set('wishlist',wishlist); updateWishCount();
   if(view==='wishlist')renderWishlist();
   // cập nhật icon tim đang hiển thị
@@ -215,6 +289,9 @@ function render(){
   else if(view==='reader')renderReader();
   else if(view==='library')renderLibrary();
   else if(view==='player')renderPlayer();
+  else if(view==='ebooks')renderEbookStore();
+  else if(view==='stationery')renderVPPStore();
+  else if(view==='equipment')renderTBGDStore();
 }
 
 /* ---------------- Cards ---------------- */
@@ -341,6 +418,7 @@ function renderHome(){
         '<div class="qk"><span>Phổ biến:</span>'+
           '<button onclick="go(\'listing\',\'thcs\')">SGK lớp 6</button>'+
           '<button onclick="go(\'listing\',\'thpt\')">Luyện thi THPT</button>'+
+          '<button onclick="go(\'ebooks\')">📚 Ebook & Sách nói</button>'+
           '<button onclick="go(\'listing\',\'vpp\')">Văn phòng phẩm</button>'+
           '<button onclick="go(\'huyenhoc\')">Quẻ sách</button>'+
         '</div>'+
@@ -401,15 +479,61 @@ function renderHome(){
   '<div class="hm-grid g5">'+bestSach.map(p=>hmCard(p)).join('')+'</div>'+
 
   /* Stationery */
-  hmHead('Văn phòng phẩm','Mới cập nhật','vpp')+
-  '<div class="hm-grid g4">'+vpp.map(p=>hmCard(p)).join('')+'</div>'+
+  '<div class="vpp-banner">'+
+    '<div class="vpb-l">'+
+      '<div class="vpb-eyebrow">✏ Cửa hàng VPP EduMart</div>'+
+      '<h2 class="vpb-h">Văn phòng phẩm<br>&amp; Dụng cụ học tập</h2>'+
+      '<p class="vpb-sub">'+P.filter(p=>p.cat==='vpp').length+' sản phẩm · Từ bút bi đến máy tính Casio</p>'+
+      '<div class="vpb-chips">'+
+        Object.values(VPP_SUBS).slice(0,5).map(v=>'<span>'+v.icon+' '+v.lbl+'</span>').join('')+
+      '</div>'+
+    '</div>'+
+    '<div class="vpb-r">'+
+      '<button class="vpb-cta" onclick="event.stopPropagation();go(\'stationery\')">Vào cửa hàng VPP ›</button>'+
+    '</div>'+
+  '</div>'+
+  hmHead('Bán chạy nhất','Văn phòng phẩm','vpp')+
+  '<div class="hm-grid g4">'+P.filter(p=>p.cat==='vpp').slice().sort((a,b)=>b.sold-a.sold).slice(0,4).map(p=>hmCard(p)).join('')+'</div>'+
 
   /* Equipment */
-  hmHead('Thiết bị giáo dục','Được yêu thích','tbgd')+
-  '<div class="hm-grid g4">'+tb.map(p=>hmCard(p)).join('')+'</div>'+
+  '<div class="tbgd-banner">'+
+    '<div class="tbb-l">'+
+      '<div class="tbb-eyebrow">🏫 Thiết bị giáo dục EduMart</div>'+
+      '<h2 class="tbb-h">Thiết bị &amp;<br>Công nghệ lớp học</h2>'+
+      '<p class="tbb-sub">'+P.filter(p=>p.cat==='tbgd').length+' sản phẩm · Máy tính, kính hiển vi, máy chiếu</p>'+
+      '<div class="tbb-chips">'+Object.values(TBGD_SUBS).map(v=>'<span>'+v.icon+' '+v.lbl+'</span>').join('')+'</div>'+
+    '</div>'+
+    '<div class="tbb-r">'+
+      '<button class="tbb-cta" onclick="event.stopPropagation();go(\'equipment\')">Vào cửa hàng ›</button>'+
+    '</div>'+
+  '</div>'+
+  hmHead('Được yêu thích','Thiết bị giáo dục','tbgd')+
+  '<div class="hm-grid g4">'+P.filter(p=>p.cat==='tbgd').slice().sort((a,b)=>b.sold-a.sold).slice(0,4).map(p=>hmCard(p)).join('')+'</div>'+
 
   /* Ebook & Audiobook */
-  hmHead('Ebook & Sách nói','Sách số · Đọc/Nghe ngay','ebook')+
+  '<div class="eb-banner" onclick="go(\'ebooks\')">'+
+    '<div class="eb-ban-l">'+
+      '<div class="eb-ban-eyebrow">📚 Tủ sách số EduMart</div>'+
+      '<h2 class="eb-ban-h">Ebook & Sách nói</h2>'+
+      '<p class="eb-ban-sub">'+P.filter(p=>p.ebook||p.audio).length+' đầu sách số · Đọc/Nghe ngay sau thanh toán · Sở hữu vĩnh viễn</p>'+
+      '<div class="eb-ban-chips">'+
+        '<span>📖 Ebook PDF/EPUB</span>'+
+        '<span>🎧 Sách nói MP3</span>'+
+        '<span>📐 Học sinh</span>'+
+        '<span>🎓 Sinh viên</span>'+
+        '<span>👨‍🏫 Giáo viên</span>'+
+      '</div>'+
+    '</div>'+
+    '<div class="eb-ban-r">'+
+      '<button class="eb-ban-cta">Xem tất cả ebook ›</button>'+
+      '<div class="eb-ban-stat">'+
+        '<div><b>'+P.filter(p=>p.ebook&&!p.audio).length+'</b><span>Ebook</span></div>'+
+        '<div><b>'+P.filter(p=>p.audio).length+'</b><span>Sách nói</span></div>'+
+        '<div><b>30%</b><span>Giảm thuê</span></div>'+
+      '</div>'+
+    '</div>'+
+  '</div>'+
+  hmHead('Nổi bật tháng này','Sách số EduMart','ebook')+
   '<div class="hm-grid g5">'+ebs.map(p=>hmCard(p)).join('')+'</div>'+
 
   /* Articles */
@@ -446,8 +570,8 @@ const CATDESC={
   sach:'Sách giáo khoa, tham khảo, văn học và kỹ năng từ các nhà xuất bản uy tín.',
   ebook:'Sách số đọc ngay trên mọi thiết bị — mua hoặc thuê tiết kiệm.',
   audiobook:'Sách nói chất lượng cao, nghe mọi lúc mọi nơi, tự lưu vị trí.',
-  vpp:'Bút, vở, dụng cụ và văn phòng phẩm thiết yếu cho học tập.',
-  tbgd:'Máy tính cầm tay, thiết bị thí nghiệm và đồ dùng dạy học.'
+  vpp:'Bút viết, vở, dụng cụ học tập, họa phẩm và túi balo — đầy đủ văn phòng phẩm cho mọi cấp học.',
+  tbgd:'Máy tính khoa học, kính hiển vi, bản đồ, thiết bị thí nghiệm và công nghệ lớp học hiện đại.'
 };
 const PRICE_LBL={all:'Tất cả',lo:'Dưới 100.000đ',mid:'100.000 – 300.000đ',hi:'Trên 300.000đ'};
 const AUDDESC={
@@ -462,12 +586,22 @@ function clearFilter(k){if(k==='price')filt.price='all';else if(k==='rating')fil
 function resetFilters(){filt.aud=null;filt.brand=null;filt.fmt=null;filt.price='all';filt.rating=false;filt.sale=false;filt.q='';renderListing();}
 function setSearchQ(v){filt.q=(v||'').trim();renderListing();}
 function renderListing(){
-  let title='Tất cả sản phẩm', base=P.slice(), ctxKey='all', catKey=null, heroDesc='', audKey=null;
+  let title='Tất cả sản phẩm', base=P.slice(), ctxKey='all', catKey=null, heroDesc='', audKey=null, ebSubTab=null, isVpp=false, isTbgd=false;
   if(typeof arg==='string'){
-    if(AUD[arg]){title=AUD[arg];base=P.filter(p=>(p.aud&&p.aud.includes(arg))||arg==='school');ctxKey='aud:'+arg;audKey=arg;heroDesc=AUDDESC[arg]||'';}
+    if(arg==='ebook'||arg==='audiobook'){
+      const isAudio=arg==='audiobook';
+      title=isAudio?'Sách nói':'Ebook & Sách nói';
+      base=P.filter(p=>p.ebook||p.audio);
+      catKey=arg; ctxKey='cat:'+arg;
+      heroDesc=isAudio?'Nghe sách mọi lúc mọi nơi — gần 10 tựa sách nói từ bestseller đến chuyên môn.':'Kho ebook và sách nói số EduMart — nhận ngay sau thanh toán, đọc/nghe trên mọi thiết bị.';
+      ebSubTab=isAudio?'audio':'all';
+    }
+    else if(AUD[arg]){title=AUD[arg];base=P.filter(p=>(p.aud&&p.aud.includes(arg))||arg==='school');ctxKey='aud:'+arg;audKey=arg;heroDesc=AUDDESC[arg]||'';}
+    else if(arg==='vpp'){title='Văn phòng phẩm';base=P.filter(p=>p.cat==='vpp');ctxKey='cat:vpp';catKey='vpp';isVpp=true;heroDesc=CATDESC['vpp']||'';if(vppSub!=='all')base=base.filter(p=>p.sub===vppSub);}
+    else if(arg==='tbgd'){title='Thiết bị giáo dục';base=P.filter(p=>p.cat==='tbgd');ctxKey='cat:tbgd';catKey='tbgd';isTbgd=true;heroDesc=CATDESC['tbgd']||'';if(tbgdSub!=='all')base=base.filter(p=>p.sub===tbgdSub);}
     else if(CATLBL[arg]){title=CATLBL[arg];base=P.filter(p=>p.cat===arg);ctxKey='cat:'+arg;catKey=arg;heroDesc=CATDESC[arg]||'';}
     else if(GENRE[arg]){title=GENRE[arg];base=P.filter(p=>p.genre===arg);ctxKey='genre:'+arg;heroDesc=GENREDESC[arg]||'';}
-  } else if(arg&&arg.q){title='Kết quả cho “'+arg.q+'”';const q=arg.q.toLowerCase();base=P.filter(p=>p.name.toLowerCase().includes(q)||p.by.toLowerCase().includes(q));ctxKey='q:'+arg.q;}
+  } else if(arg&&arg.q){title='Kết quả cho "'+arg.q+'"';const q=arg.q.toLowerCase();base=P.filter(p=>p.name.toLowerCase().includes(q)||p.by.toLowerCase().includes(q));ctxKey='q:'+arg.q;}
   if(_listCtx!==ctxKey){_listCtx=ctxKey;filt.aud=null;filt.brand=null;filt.fmt=null;filt.price='all';filt.rating=false;filt.sale=false;filt.q='';}
 
   const isBookCat=!catKey||catKey==='sach'||catKey==='ebook'||catKey==='audiobook';
@@ -497,7 +631,7 @@ function renderListing(){
   const sortOpts=[['sold','Bán chạy'],['rate','Đánh giá cao'],['priceAsc','Giá thấp đến cao'],['priceDesc','Giá cao đến thấp']].map(([k,v])=>'<option value="'+k+'"'+(filt.sort===k?' selected':'')+'>'+v+'</option>').join('');
 
   const chips=[];
-  if(filt.q)chips.push(['q','Tìm: “'+filt.q+'”']);
+  if(filt.q)chips.push(['q','Tìm: "'+filt.q+'"']);
   if(filt.aud)chips.push(['aud',AUD[filt.aud]]);
   if(filt.brand)chips.push(['brand',filt.brand]);
   if(filt.fmt)chips.push(['fmt',filt.fmt]);
@@ -520,6 +654,22 @@ function renderListing(){
     '</aside>'+
     '<div>'+
       (heroDesc?'<div class="cat-hero"><h1>'+title+'</h1><p>'+heroDesc+'</p></div>':'')+
+      (ebSubTab!==null?'<div class="eb-subtabs">'+
+        ['all','ebook','audio'].map(k=>({all:'Tất cả',ebook:'📖 Ebook',audio:'🎧 Sách nói'})[k]).map((lbl,i)=>{const k=['all','ebook','audio'][i];return '<button class="eb-stab'+(ebSubTab===k?' active':'')+'" onclick="go(\'listing\','+(k==='all'?'\'ebook\'':k==='audio'?'\'audiobook\'':'\'ebook\'')+')">'+lbl+'</button>';}).join('')+
+        '<a class="eb-lib-link" onclick="go(\'library\')">📚 Tủ sách của tôi</a>'+
+      '</div>':'')+
+      (isVpp?'<div class="eb-subtabs">'+
+        [['all','Tất cả'],['but','🖊 Bút viết'],['vo','📓 Vở & giấy'],['dungcu','📐 Dụng cụ'],['hoapham','🎨 Họa phẩm'],['balo','🎒 Túi & balo']].map(([k,lbl])=>
+          '<button class="eb-stab'+(vppSub===k?' active':'')+'" onclick="vppSub=\''+k+'\';go(\'listing\',\'vpp\')">'+lbl+(k!=='all'?' <span class="vst-cnt">('+P.filter(p=>p.cat==='vpp'&&p.sub===k).length+')</span>':'')+'</button>'
+        ).join('')+
+        '<a class="eb-lib-link" onclick="go(\'stationery\')">🛒 Cửa hàng VPP</a>'+
+      '</div>':'')+
+      (isTbgd?'<div class="eb-subtabs">'+
+        [['all','Tất cả'],['mtinh','🔢 Máy tính'],['tn','🔬 Thí nghiệm'],['bando','🌍 Bản đồ'],['dayho','📋 Dạy học'],['cntt','💻 Công nghệ']].map(([k,lbl])=>
+          '<button class="eb-stab'+(tbgdSub===k?' active':'')+'" onclick="tbgdSub=\''+k+'\';go(\'listing\',\'tbgd\')">'+lbl+(k!=='all'?' <span class="vst-cnt">('+P.filter(p=>p.cat==='tbgd'&&p.sub===k).length+')</span>':'')+'</button>'
+        ).join('')+
+        '<a class="eb-lib-link" onclick="go(\'equipment\')">🏫 Cửa hàng TBGD</a>'+
+      '</div>':'')+
       chipHtml+
       '<div class="list-top"><span class="cnt"><b>'+list.length+'</b> sản phẩm</span>'+
         '<select onchange="filt.sort=this.value;renderListing()">'+sortOpts+'</select></div>'+
@@ -658,7 +808,7 @@ function showQue(name,num,tt,luan,chant,ai){
     '<div class="mseal"><div class="num">'+num+'</div><div><div class="tt">'+name+' — '+tt+(ai?'<span class="ai-badge">✦ Gợi ý bằng AI</span>':'')+'</div><div class="ss">Số chủ đạo · '+num+'</div></div></div>'+
     '<div class="mluan">'+luan+'</div>'+
     '<div class="mbooks">'+books.map(p=>'<div class="mbook">'+cover(p)+'<div class="mb-t">'+p.name+'</div><div class="mb-w">'+p.by+' — '+fmt(p.price)+'</div><button class="add" style="background:var(--coral)" onclick="addToCart('+p.id+')">Thêm vào giỏ</button></div>').join('')+'</div>'+
-    '<div class="mchant">“'+chant+'”</div>';
+    '<div class="mchant">"'+chant+'"</div>';
   el.classList.add('show');
 }
 function renderHuyenHoc(){
@@ -700,19 +850,51 @@ async function gieoQue(){
 }
 
 /* ---------------- Account / Auth ---------------- */
-const ROLELBL={hocsinh:'Học sinh',sinhvien:'Sinh viên',teacher:'Giáo viên',parent:'Phụ huynh',school:'Trường học / Tổ chức',student:'Học sinh / Sinh viên'};
-const ROLES=[
-  {k:'hocsinh',name:'Học sinh',desc:'SGK, dụng cụ học tập, sách tham khảo',ic:'<path d="M9 3 4 6v12l5 3 6-3 5 3V6l-5-3-6 3Z"/>',kind:'buyer'},
-  {k:'sinhvien',name:'Sinh viên',desc:'Giáo trình, sách kỹ năng, ebook',ic:'<path d="M3 9l9-5 9 5-9 5-9-5Z M7 11v5a5 3 0 0 0 10 0v-5"/>',kind:'buyer'},
-  {k:'teacher',name:'Giáo viên',desc:'Ưu đãi đến 15%, mua sỉ cho lớp',ic:'<rect x="3" y="4" width="18" height="13" rx="1"/><path d="M12 17v4M8 21h8"/>',kind:'buyer'},
-  {k:'parent',name:'Phụ huynh',desc:'Mua cho con, theo dõi đơn hàng',ic:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/>',kind:'buyer'},
-  {k:'school',name:'Trường học / Tổ chức',desc:'Mua sỉ, yêu cầu báo giá (RFQ)',ic:'<path d="M3 21h18M3 10l9-7 9 7M9 21V14h6v7"/>',kind:'buyer'},
-  {k:'seller',name:'Người bán / NCC',desc:'Quản lý gian hàng, đơn, tồn kho',ic:'<path d="M3 9l1-5h16l1 5M5 9v11h14V9"/>',kind:'redirect',to:'seller.html'},
-  {k:'admin',name:'Quản trị viên',desc:'Vận hành toàn sàn',ic:'<circle cx="12" cy="12" r="3"/><path d="M19.4 13a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7 19.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.7 7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 19 4.7l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V10a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/>',kind:'redirect',to:'admin.html'}
+/* Phân hệ: Người mua · Trường học / Tổ chức · Người bán / NCC · Quản trị viên */
+const ROLELBL={hocsinh:'Học sinh',sinhvien:'Sinh viên',parent:'Phụ huynh',school:'Trường học / Tổ chức',seller:'Người bán / NCC',admin:'Quản trị viên'};
+const ROLE_GROUPS=[
+  {
+    group:'Người mua',
+    desc:'Học sinh · Sinh viên · Phụ huynh',
+    roles:[
+      {k:'hocsinh',name:'Học sinh',desc:'SGK, dụng cụ học tập, sách tham khảo',ic:'<path d="M9 3 4 6v12l5 3 6-3 5 3V6l-5-3-6 3Z"/>'},
+      {k:'sinhvien',name:'Sinh viên',desc:'Giáo trình, sách kỹ năng, ebook',ic:'<path d="M3 9l9-5 9 5-9 5-9-5Z M7 11v5a5 3 0 0 0 10 0v-5"/>'},
+      {k:'parent',name:'Phụ huynh',desc:'Mua cho con, theo dõi học tập',ic:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/>'},
+    ],
+    kind:'nguoimua'
+  },
+  {
+    group:'Trường học / Tổ chức',
+    desc:'Mua sỉ · Báo giá · Thư viện số trường',
+    roles:[
+      {k:'school',name:'Trường học / Tổ chức',desc:'Mua sỉ, yêu cầu báo giá, thư viện số',ic:'<path d="M3 21h18M3 10l9-7 9 7M9 21V14h6v7"/>'},
+    ],
+    kind:'truonghoc'
+  },
+  {
+    group:'Người bán / NCC',
+    desc:'Nhà xuất bản · Nhà cung cấp · Đại lý',
+    roles:[
+      {k:'seller',name:'Người bán / NCC',desc:'Quản lý gian hàng, đơn, tồn kho',ic:'<path d="M3 9l1-5h16l1 5M5 9v11h14V9"/>'},
+    ],
+    kind:'redirect',to:'seller.html'
+  },
+  {
+    group:'Quản trị viên',
+    desc:'Vận hành & giám sát toàn sàn',
+    roles:[
+      {k:'admin',name:'Quản trị viên',desc:'Vận hành toàn sàn',ic:'<circle cx="12" cy="12" r="3"/><path d="M19.4 13a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7 19.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.7 7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 19 4.7l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V10a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/>'},
+    ],
+    kind:'redirect',to:'admin.html'
+  }
 ];
-let lgRole='hocsinh', authMode=1;
+const ROLES=ROLE_GROUPS.flatMap(g=>g.roles.map(r=>({...r,kind:g.kind,to:g.to})));
+let lgRole='hocsinh', authView='login', authResetToken=null;
 let user=LS.get('user',null), orders=LS.get('orders',[]), acctTab='dashboard';
 let orderFilter='all';
+let libFilter='all';
+let vppSub='all';
+let tbgdSub='all';
 let returns=LS.get('returns',[]);
 function saveReturns(){LS.set('returns',returns);}
 let pointsLog=LS.get('pointsLog',[]);
@@ -721,8 +903,19 @@ function saveUser(){LS.set('user',user);}
 function saveOrders(){LS.set('orders',orders);}
 let children=LS.get('children',[]);                 // hồ sơ con (phụ huynh)
 function saveChildren(){LS.set('children',children);}
-let addresses=LS.get('addresses',[]);               // sổ địa chỉ
+let addresses=LS.get('addresses',[]);
 function saveAddresses(){LS.set('addresses',addresses);}
+// Auth users DB & tokens
+let authUsers=LS.get('authUsers',[]);
+function saveAuthUsers(){LS.set('authUsers',authUsers);}
+let resetTokens=LS.get('resetTokens',{});
+function saveResetTokens(){LS.set('resetTokens',resetTokens);}
+// Auth helpers
+function hashPw(pw){let h=0;for(let i=0;i<pw.length;i++){h=((h<<5)-h)+pw.charCodeAt(i);h|=0;}return 'h'+Math.abs(h).toString(36);}
+function genToken(){return Math.random().toString(36).slice(2,10)+Math.random().toString(36).slice(2,10);}
+function validEmail(s){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);}
+function validPw(s){return s&&s.length>=6;}
+function showAuthErr(id,msg){const el=document.getElementById(id);if(el){el.innerHTML=msg;el.style.display=msg?'':'none';}}
 function addAddress(){
   const name=val('adName'),phone=val('adPhone'),addr=val('adAddr');
   if(!addr){toast('Nhập địa chỉ');return;}
@@ -735,40 +928,219 @@ function gradeAud(g){const n=parseInt((g||'').replace(/\D/g,''))||6;return n<=5?
 function addChild(){const name=val('chName');if(!name){toast('Nhập tên của con');return;}children.push({name,grade:document.getElementById('chGrade').value});saveChildren();toast('Đã thêm hồ sơ con');renderAccount();}
 function removeChild(i){children.splice(i,1);saveChildren();renderAccount();}
 
-function pickRole(k){lgRole=k;authTab(authMode);}
-function renderLogin(){
+function refCode(n){return 'EDU'+String((n||'EDUMART').split('').reduce((a,c)=>a+c.charCodeAt(0),0)%9000+1000);}
+function pickRole(k){lgRole=k;renderAuthBody();}
+// authTab: backward compat (1→login, 0→register) + new string views
+function authTab(v){
+  if(v===1||v==='login')authView='login';
+  else if(v===0||v==='register')authView='register';
+  else authView=v||'login';
+  renderAuthBody();
+}
+function renderLogin(view){
+  authView=view||'login';
   document.getElementById('app').innerHTML=
-  '<div class="auth-wrap wide"><div class="auth-tabs"><button class="on" id="tabLogin" onclick="authTab(1)">Đăng nhập</button><button id="tabReg" onclick="authTab(0)">Đăng ký</button></div><div class="form-card" id="authBody"></div></div>';
-  authTab(1);
+    '<div class="auth-wrap wide">'+
+    '<div class="auth-tabs" id="authTabsBar">'+
+    '<button id="tabLogin" onclick="authTab(\'login\')">Đăng nhập</button>'+
+    '<button id="tabReg" onclick="authTab(\'register\')">Đăng ký</button>'+
+    '</div>'+
+    '<div class="form-card" id="authBody"></div></div>';
+  renderAuthBody();
 }
-function authTab(login){
-  authMode=login;
+function _rolePicker(){
+  return '<div class="form-label">Chọn phân hệ của bạn</div>'+
+    '<div class="role-groups">'+ROLE_GROUPS.map(g=>{
+      const cards=g.roles.map(r=>'<button class="role-card'+(r.k===lgRole?' on':'')+(g.kind==='redirect'?' redirect':'')+'" onclick="pickRole(\''+r.k+'\')">'+
+        '<span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">'+r.ic+'</svg></span>'+
+        '<span class="rt">'+r.name+'</span><span class="rd">'+r.desc+'</span></button>').join('');
+      return '<div class="role-group'+(g.roles.some(r=>r.k===lgRole)?' active-group':'')+'">'+
+        '<div class="rg-label">'+g.group+'</div>'+
+        '<div class="role-grid rg-cols-'+g.roles.length+'">'+cards+'</div></div>';
+    }).join('')+'</div>';
+}
+function _loginForm(sel){
+  const rem=LS.get('rememberMe',false);
+  return '<div class="form-field"><label>Email</label>'+
+    '<input id="lgEmail" type="email" placeholder="ten@email.com" autocomplete="email"></div>'+
+    '<div class="form-field"><div class="auth-label-row"><label>Mật khẩu</label>'+
+    '<a class="auth-link" onclick="authTab(\'forgot\')">Quên mật khẩu?</a></div>'+
+    '<input id="lgPw" type="password" placeholder="Tối thiểu 6 ký tự" autocomplete="current-password" onkeydown="if(event.key===\'Enter\')doLogin()"></div>'+
+    '<div class="auth-check-row"><label class="auth-check"><input type="checkbox" id="lgRemember"'+(rem?' checked':'')+'>'+
+    '<span>Ghi nhớ đăng nhập</span></label></div>'+
+    '<div id="lgErr" class="field-error"></div>'+
+    '<button class="btn-primary" style="width:100%;margin-top:6px" onclick="doLogin()">Đăng nhập — '+sel.name+'</button>'+
+    '<div class="auth-sep">hoặc tiếp tục với</div>'+
+    '<div class="social-btns">'+
+    '<button class="sb-google" onclick="doSocialAuth(\'google\')">Google</button>'+
+    '<button class="sb-fb" onclick="doSocialAuth(\'facebook\')">Facebook</button>'+
+    '</div>'+
+    '<p class="auth-switch">Chưa có tài khoản? <a class="auth-link" onclick="authTab(\'register\')">Đăng ký ngay</a></p>';
+}
+function _registerForm(sel){
+  return '<div class="form-field"><label>Họ và tên</label>'+
+    '<input id="rgName" placeholder="Nguyễn Văn An" autocomplete="name"></div>'+
+    '<div class="form-field"><label>Email</label>'+
+    '<input id="rgEmail" type="email" placeholder="ten@email.com" autocomplete="email"></div>'+
+    '<div class="form-row">'+
+    '<div class="form-field"><label>Mật khẩu</label><input id="rgPw" type="password" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password"></div>'+
+    '<div class="form-field"><label>Xác nhận</label><input id="rgPw2" type="password" placeholder="Nhập lại" autocomplete="new-password" onkeydown="if(event.key===\'Enter\')doRegister()"></div>'+
+    '</div>'+
+    '<div id="rgErr" class="field-error"></div>'+
+    '<button class="btn-primary" style="width:100%;margin-top:6px" onclick="doRegister()">Tạo tài khoản — '+sel.name+'</button>'+
+    '<div class="auth-sep">hoặc tiếp tục với</div>'+
+    '<div class="social-btns">'+
+    '<button class="sb-google" onclick="doSocialAuth(\'google\')">Google</button>'+
+    '<button class="sb-fb" onclick="doSocialAuth(\'facebook\')">Facebook</button>'+
+    '</div>'+
+    '<p class="auth-switch">Đã có tài khoản? <a class="auth-link" onclick="authTab(\'login\')">Đăng nhập</a></p>';
+}
+function _forgotForm(){
+  return '<a class="auth-back" onclick="authTab(\'login\')">← Về đăng nhập</a>'+
+    '<h3 class="auth-view-title">Quên mật khẩu</h3>'+
+    '<p class="auth-view-sub">Nhập email đăng ký — chúng tôi sẽ gửi link đặt lại.</p>'+
+    '<div class="form-field"><label>Email tài khoản</label>'+
+    '<input id="fgEmail" type="email" placeholder="ten@email.com" autocomplete="email" onkeydown="if(event.key===\'Enter\')doForgotPw()"></div>'+
+    '<div id="fgErr" class="field-error"></div>'+
+    '<button class="btn-primary" style="width:100%;margin-top:6px" onclick="doForgotPw()">Gửi link đặt lại mật khẩu</button>';
+}
+function _resetForm(){
+  return '<a class="auth-back" onclick="authTab(\'login\')">← Về đăng nhập</a>'+
+    '<h3 class="auth-view-title">Đặt lại mật khẩu</h3>'+
+    '<p class="auth-view-sub">Nhập mật khẩu mới cho tài khoản của bạn.</p>'+
+    '<div class="form-field"><label>Token xác nhận</label>'+
+    '<input id="rtToken" placeholder="Dán token từ email" value="'+(authResetToken||'')+'" autocomplete="off"></div>'+
+    '<div class="form-row">'+
+    '<div class="form-field"><label>Mật khẩu mới</label><input id="rtPw" type="password" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password"></div>'+
+    '<div class="form-field"><label>Xác nhận</label><input id="rtPw2" type="password" placeholder="Nhập lại" autocomplete="new-password" onkeydown="if(event.key===\'Enter\')doResetPw()"></div>'+
+    '</div>'+
+    '<div id="rtErr" class="field-error"></div>'+
+    '<button class="btn-primary" style="width:100%;margin-top:6px" onclick="doResetPw()">Cập nhật mật khẩu</button>';
+}
+function renderAuthBody(){
+  const body=document.getElementById('authBody');
+  if(!body)return;
+  const bar=document.getElementById('authTabsBar');
+  const inForm=(authView==='forgot'||authView==='reset');
+  if(bar)bar.style.display=inForm?'none':'';
   const tl=document.getElementById('tabLogin'),tr=document.getElementById('tabReg');
-  if(tl)tl.classList.toggle('on',!!login); if(tr)tr.classList.toggle('on',!login);
+  if(tl)tl.classList.toggle('on',authView==='login');
+  if(tr)tr.classList.toggle('on',authView==='register');
   const sel=ROLES.find(r=>r.k===lgRole)||ROLES[0];
-  const roleGrid='<div class="role-grid">'+ROLES.map(r=>'<button class="role-card'+(r.k===lgRole?' on':'')+(r.kind==='redirect'?' redirect':'')+'" onclick="pickRole(\''+r.k+'\')"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">'+r.ic+'</svg></span><span class="rt">'+r.name+'</span><span class="rd">'+r.desc+'</span></button>').join('')+'</div>';
-  document.getElementById('authBody').innerHTML=
-    '<div class="form-label">Chọn vai trò của bạn</div>'+roleGrid+
-    (sel.kind==='redirect'
-      ? '<div class="role-note">Vai trò “'+sel.name+'” có khu vực làm việc riêng. Bấm nút bên dưới để vào cổng tương ứng.</div>'+
-        '<button class="btn-primary" style="width:100%" onclick="doLogin()">Vào cổng '+sel.name+' ›</button>'
-      : (login?'':'<div class="form-field"><label>Họ và tên</label><input id="lgName" placeholder="Nguyễn Văn An"></div>')+
-        '<div class="form-field"><label>Số điện thoại hoặc email</label><input placeholder="09xx xxx xxx"></div>'+
-        '<div class="form-field"><label>Mật khẩu</label><input type="password" placeholder="••••••••"></div>'+
-        '<button class="btn-primary" style="width:100%" onclick="doLogin()">'+(login?'Đăng nhập — '+sel.name:'Tạo tài khoản — '+sel.name)+'</button>'+
-        '<div style="text-align:center;font-size:12px;color:var(--text-soft);margin:14px 0 8px">hoặc tiếp tục với</div>'+
-        '<div class="social-btns"><button onclick="doLogin()">Zalo</button><button onclick="doLogin()">Google</button><button onclick="doLogin()">Facebook</button></div>');
+  const selGroup=ROLE_GROUPS.find(g=>g.roles.some(r=>r.k===lgRole))||ROLE_GROUPS[0];
+  const isRedirect=selGroup.kind==='redirect'&&!inForm;
+  let html='';
+  if(!inForm)html=_rolePicker();
+  if(authView==='forgot')html+=_forgotForm();
+  else if(authView==='reset')html+=_resetForm();
+  else if(isRedirect)html+='<div class="role-note">Phân hệ "<b>'+selGroup.group+'</b>" có cổng riêng.</div>'+
+    '<button class="btn-primary" style="width:100%" onclick="window.location.href=\''+selGroup.to+'\'">Vào cổng '+selGroup.group+' ›</button>';
+  else if(authView==='login')html+=_loginForm(sel);
+  else html+=_registerForm(sel);
+  body.innerHTML=html;
 }
-function refCode(name){return 'EDU'+String((name||'EDUMART').split('').reduce((a,c)=>a+c.charCodeAt(0),0)%9000+1000);}
+
+/* Auth actions */
 function doLogin(){
+  const email=(val('lgEmail')||'').trim().toLowerCase();
+  const pw=val('lgPw')||'';
   const sel=ROLES.find(r=>r.k===lgRole)||ROLES[0];
   if(sel.kind==='redirect'){window.location.href=sel.to;return;}
-  const nameEl=document.getElementById('lgName');
-  const name=nameEl?nameEl.value.trim():'';
-  user={name:name||(ROLELBL[sel.k]+' EduMart'),role:sel.k,points:120,phone:'09xx xxx xxx',ref:refCode(name),checkin:null,streak:0};
-  saveUser(); toast('Đăng nhập thành công · '+ROLELBL[sel.k]); acctTab='dashboard'; go('account');
+  if(!email){showAuthErr('lgErr','Vui lòng nhập email');return;}
+  if(!pw){showAuthErr('lgErr','Vui lòng nhập mật khẩu');return;}
+  const found=authUsers.find(u=>(u.email===email||u.phone===email)&&u.pwHash===hashPw(pw));
+  if(!found){showAuthErr('lgErr','Email hoặc mật khẩu không đúng. <a class="auth-link" onclick="authTab(\'forgot\')">Quên mật khẩu?</a>');return;}
+  LS.set('rememberMe',!!document.getElementById('lgRemember')?.checked);
+  user={...found};saveUser();
+  toast('Đăng nhập thành công · '+ROLELBL[user.role]);acctTab='dashboard';go('account');
 }
-function logout(){user=null;LS.set('user',null);acctTab='dashboard';toast('Đã đăng xuất');go('home');}
+function doRegister(){
+  const name=(val('rgName')||'').trim();
+  const email=(val('rgEmail')||'').trim().toLowerCase();
+  const pw=val('rgPw')||'',pw2=val('rgPw2')||'';
+  const sel=ROLES.find(r=>r.k===lgRole)||ROLES[0];
+  if(sel.kind==='redirect'){window.location.href=sel.to;return;}
+  if(!name){showAuthErr('rgErr','Vui lòng nhập họ tên');return;}
+  if(!validEmail(email)){showAuthErr('rgErr','Email không hợp lệ');return;}
+  if(!validPw(pw)){showAuthErr('rgErr','Mật khẩu phải từ 6 ký tự trở lên');return;}
+  if(pw!==pw2){showAuthErr('rgErr','Mật khẩu xác nhận không khớp');return;}
+  if(authUsers.find(u=>u.email===email)){
+    showAuthErr('rgErr','Email này đã được đăng ký. <a class="auth-link" onclick="authTab(\'login\')">Đăng nhập?</a>');return;
+  }
+  const nu={id:'u'+Date.now().toString(36),name,email,pwHash:hashPw(pw),role:lgRole,
+    points:0,phone:'',ref:refCode(name),checkin:null,streak:0,createdAt:todayStr()};
+  authUsers.push(nu);saveAuthUsers();
+  user={...nu};saveUser();
+  toast('Tạo tài khoản thành công · '+ROLELBL[lgRole]);acctTab='dashboard';go('account');
+}
+function doSocialAuth(provider){
+  const sel=ROLES.find(r=>r.k===lgRole)||ROLES[0];
+  if(sel.kind==='redirect'){window.location.href=sel.to;return;}
+  const pname=provider==='google'?'Google':'Facebook';
+  const fakeName=prompt('Giả lập đăng nhập qua '+pname+'\n\nNhập tên hiển thị:','');
+  if(fakeName===null)return;
+  const displayName=fakeName.trim()||pname+' User';
+  const fakeEmail=displayName.toLowerCase().replace(/\s+/g,'.')+'.'+provider+'@demo.local';
+  let found=authUsers.find(u=>u.email===fakeEmail);
+  if(!found){
+    found={id:'u'+Date.now().toString(36),name:displayName,email:fakeEmail,
+      pwHash:'__social__'+provider,role:lgRole,provider,
+      points:0,phone:'',ref:refCode(displayName),checkin:null,streak:0,createdAt:todayStr()};
+    authUsers.push(found);saveAuthUsers();
+    toast('Đăng ký qua '+pname+' thành công · '+ROLELBL[lgRole]);
+  } else {
+    toast('Đăng nhập qua '+pname+' · '+ROLELBL[found.role||lgRole]);
+  }
+  user={...found,role:found.role||lgRole};saveUser();
+  acctTab='dashboard';go('account');
+}
+function doForgotPw(){
+  const email=(val('fgEmail')||'').trim().toLowerCase();
+  if(!validEmail(email)){showAuthErr('fgErr','Vui lòng nhập đúng định dạng email');return;}
+  const found=authUsers.find(u=>u.email===email);
+  const token=genToken();
+  if(found){
+    const tk={...resetTokens};
+    Object.keys(tk).forEach(k=>{if(tk[k].expires<Date.now())delete tk[k];});
+    tk[token]={email,expires:Date.now()+3600000};
+    resetTokens=tk;saveResetTokens();
+  }
+  const tokenHtml=found
+    ?'<div class="auth-token-box">'+
+      '<div class="auth-token-label">TOKEN ĐỂ TEST (thay thế email thật):</div>'+
+      '<code class="auth-token-code">'+token+'</code>'+
+      '<button class="btn-ghost" style="width:100%;margin-top:10px" onclick="authResetToken=\''+token+'\';authTab(\'reset\')">Đặt lại mật khẩu ngay ›</button>'+
+      '</div>'
+    :'<p style="font-size:12.5px;color:var(--text-soft);margin-top:10px">Nếu email tồn tại, bạn sẽ nhận được link trong vài phút.</p>';
+  document.getElementById('authBody').innerHTML=
+    '<a class="auth-back" onclick="authTab(\'forgot\')">← Thử lại</a>'+
+    '<div class="auth-msg-success">'+
+    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>'+
+    '<div><b>Link đặt lại đã gửi!</b>'+
+    '<p style="margin:4px 0 0;font-size:12.5px;color:var(--text-soft)">Kiểm tra hộp thư <b>'+email+'</b>. Link có hiệu lực trong 1 giờ.</p></div></div>'+
+    tokenHtml;
+}
+function doResetPw(){
+  const token=(val('rtToken')||authResetToken||'').trim();
+  const pw=val('rtPw')||'',pw2=val('rtPw2')||'';
+  if(!token){showAuthErr('rtErr','Vui lòng nhập token xác nhận');return;}
+  if(!validPw(pw)){showAuthErr('rtErr','Mật khẩu phải từ 6 ký tự trở lên');return;}
+  if(pw!==pw2){showAuthErr('rtErr','Mật khẩu xác nhận không khớp');return;}
+  const td=resetTokens[token];
+  if(!td){showAuthErr('rtErr','Token không hợp lệ. Vui lòng yêu cầu lại.');return;}
+  if(td.expires<Date.now()){showAuthErr('rtErr','Token đã hết hạn. <a class="auth-link" onclick="authTab(\'forgot\')">Yêu cầu lại</a>');return;}
+  const idx=authUsers.findIndex(u=>u.email===td.email);
+  if(idx===-1){showAuthErr('rtErr','Không tìm thấy tài khoản');return;}
+  authUsers[idx].pwHash=hashPw(pw);saveAuthUsers();
+  const tk={...resetTokens};delete tk[token];resetTokens=tk;saveResetTokens();
+  authResetToken=null;
+  toast('Mật khẩu đã được cập nhật!');authTab('login');
+}
+function logout(){
+  user=null;LS.set('user',null);
+  if(!LS.get('rememberMe',false))LS.set('rememberMe',false);
+  acctTab='dashboard';toast('Đã đăng xuất');go('home');
+}
 function goOrders(){acctTab='orders';go('account');}
 
 function orderCard(o){
@@ -793,11 +1165,21 @@ function orderCardFull(o){
 }
 function acctContent(){
   if(acctTab==='dashboard'){
-    const tierPct=user.role==='teacher'?'15%':'5%';
+    const isTeacher=user.teacherVerified==='verified';
+    const tierPct=isTeacher?'15%':'5%';
     const stats=[['Đơn hàng',orders.length],['Điểm thưởng',user.points||0],['Yêu thích',wishlist.length],['Tủ sách',library.length]];
     let sc;
-    if(user.role==='teacher')sc=[['Xác thực giáo viên',"acctTab='teacher';renderAccount()"],['Sách & tài liệu giáo viên',"go('listing','giaovien')"],['Ưu đãi giáo viên ('+tierPct+')',"go('promo')"]];
-    else if(user.role==='school')sc=[['Yêu cầu báo giá (RFQ)',"go('rfq')"],['Mua theo danh sách lớp',"go('classlist')"],['Đơn báo giá của tôi',"acctTab='rfq';renderAccount()"]];
+    if(user.role==='school')sc=[
+      ['Yêu cầu báo giá (RFQ)',"go('rfq')"],
+      ['Mua theo danh sách lớp',"go('classlist')"],
+      ['Đơn báo giá của tôi',"acctTab='rfq';renderAccount()"],
+      ['Thiết bị giáo dục',"go('equipment')"]
+    ];
+    else if(isTeacher)sc=[
+      [user.teacherVerified==='pending'?'Đang xét duyệt GV ⏳':'Xác thực giáo viên',"acctTab='teacher';renderAccount()"],
+      ['Sách & tài liệu giáo viên',"go('listing','giaovien')"],
+      ['Ưu đãi giáo viên ('+tierPct+')',"go('promo')"]
+    ];
     else if(user.role==='parent'){const firstChildAud=children.length?gradeAud(children[0].grade):null;sc=[['Theo dõi học tập của con',"acctTab='children';renderAccount()"],(firstChildAud?['Sách cho '+children[0].name+' ('+AUD[firstChildAud]+')',"go('listing','"+firstChildAud+"');"]:['Mua theo đối tượng',"go('listing','tieuhoc');"]),['Mua theo danh sách lớp',"go('classlist')"]];}
     else if(user.role==='hocsinh'){
       const g=parseInt((user.grade||'').replace(/\D/g,''))||0;
@@ -818,8 +1200,9 @@ function acctContent(){
       ];
     }
     else sc=[['Ebook & Sách nói',"go('listing','ebook')"],['Mua theo đối tượng',"go('listing','thcs')"],['Trung tâm ưu đãi',"go('promo')"]];
+    const roleLbl=user.role==='school'?'Trường học / Tổ chức':(ROLELBL[user.role]||'Người mua');
     return '<div class="panel"><h3>Xin chào, '+user.name+'!</h3>'+
-      '<p style="color:var(--text-soft);margin:-6px 0 14px;font-size:13.5px">Bảng điều khiển dành cho <b>'+(ROLELBL[user.role]||'Bạn đọc')+'</b>.</p>'+
+      '<p style="color:var(--text-soft);margin:-6px 0 14px;font-size:13.5px">Bảng điều khiển — <b>'+roleLbl+'</b>'+(isTeacher?' · <span style="color:#7a4400;font-weight:600">Giáo viên xác thực ✓</span>':'')+'.</p>'+
       '<div class="stat-row">'+stats.map(s=>'<div class="stat-box"><div class="v">'+s[1]+'</div><div class="l">'+s[0]+'</div></div>').join('')+'</div>'+
       '<div style="font-weight:600;font-size:14px;margin:18px 0 10px">Lối tắt cho bạn</div>'+
       '<div class="dash-sc">'+sc.map(x=>'<button class="dash-card" onclick="'+x[1]+'">'+x[0]+' ›</button>').join('')+'</div>'+
@@ -970,11 +1353,14 @@ function acctContent(){
       '<div class="form-field"><label>Họ và tên</label><input id="pfName" value="'+user.name.replace(/"/g,'&quot;')+'"></div>'+
       '<div class="form-row"><div class="form-field"><label>Số điện thoại</label><input id="pfPhone" value="'+(user.phone||'')+'"></div><div class="form-field"><label>Email</label><input id="pfEmail" value="'+(user.email||'')+'" placeholder="ban@email.com"></div></div>'+
       '<div class="form-field"><label>Ngày sinh</label><input id="pfDob" type="date" value="'+(user.dob||'')+'"></div>'+
-      '<div class="form-field"><label>Vai trò</label><select id="pfRole">'+['hocsinh','sinhvien','teacher','parent','school'].map(k=>'<option value="'+k+'"'+(user.role===k?' selected':'')+'>'+ROLELBL[k]+'</option>').join('')+'</select></div>'+
+      '<div class="form-field"><label>Phân hệ & Vai trò</label>'+
+        '<div style="font-size:12px;color:var(--text-soft);margin-bottom:6px">Người mua: Học sinh / Sinh viên / Phụ huynh &nbsp;·&nbsp; Hoặc: Trường học / Tổ chức</div>'+
+        '<select id="pfRole">'+['hocsinh','sinhvien','parent','school'].map(k=>'<option value="'+k+'"'+(user.role===k?' selected':'')+'>'+ROLELBL[k]+'</option>').join('')+'</select>'+
+      '</div>'+
       (user.role==='hocsinh'?'<div class="form-field"><label>Lớp học hiện tại</label><select id="pfGrade">'+Array.from({length:12},(_,i)=>'<option'+(user.grade==='Lớp '+(i+1)?' selected':'')+'>Lớp '+(i+1)+'</option>').join('')+'</select></div>':'')+
       (user.role==='sinhvien'?'<div class="form-row"><div class="form-field"><label>Chuyên ngành</label><input id="pfMajor" value="'+(user.major||'').replace(/"/g,'&quot;')+'" placeholder="VD: Công nghệ thông tin, Kinh tế..."></div><div class="form-field"><label>Trường đại học / Cao đẳng</label><input id="pfUni" value="'+(user.university||'').replace(/"/g,'&quot;')+'" placeholder="VD: ĐH Bách Khoa Hà Nội..."></div></div>':'')+
+      (user.role==='school'?'<div class="form-row"><div class="form-field"><label>Tên tổ chức / Trường</label><input id="pfOrg" value="'+(user.orgName||'').replace(/"/g,'&quot;')+'" placeholder="VD: Trường THPT Nguyễn Huệ"></div><div class="form-field"><label>Mã số thuế (nếu có)</label><input id="pfTax" value="'+(user.taxCode||'')+'" placeholder="0100100000"></div></div>':'')+
       '<button class="btn-primary" onclick="saveProfile()">Lưu thay đổi</button>'+
-      (user.role==='teacher'?'<p style="font-size:12.5px;color:var(--text-soft);margin-top:10px">Để thay đổi vai trò khỏi Giáo viên, bạn cần xóa xác thực hiện tại.</p>':'')+
     '</div>';
   }
   if(acctTab==='address'){
@@ -999,7 +1385,7 @@ function acctContent(){
   if(acctTab==='points'){
     const logRows=pointsLog.length?pointsLog.map(l=>'<div class="oi" style="font-size:13.5px"><div style="flex:1"><b>'+l.desc+'</b><div style="font-size:12px;color:var(--text-soft)">'+l.date+'</div></div><div style="color:#1a7a4a;font-weight:700">+'+l.pts+' điểm</div></div>').join(''):'<p style="color:var(--text-soft);font-size:13.5px">Chưa có giao dịch điểm nào. Mua hàng để tích điểm!</p>';
     return '<div class="panel"><h3>Điểm thưởng</h3>'+
-      '<div class="stat-row"><div class="stat-box"><div class="v">'+user.points+'</div><div class="l">Điểm tích lũy</div></div><div class="stat-box"><div class="v">Vàng</div><div class="l">Hạng thành viên</div></div><div class="stat-box"><div class="v">'+(user.role==='teacher'?'15%':'5%')+'</div><div class="l">Ưu đãi của bạn</div></div></div>'+
+      '<div class="stat-row"><div class="stat-box"><div class="v">'+user.points+'</div><div class="l">Điểm tích lũy</div></div><div class="stat-box"><div class="v">Vàng</div><div class="l">Hạng thành viên</div></div><div class="stat-box"><div class="v">'+(user.teacherVerified==='verified'?'15%':user.role==='school'?'10%':'5%')+'</div><div class="l">Ưu đãi của bạn</div></div></div>'+
       '<p style="font-size:13px;color:var(--text-soft);margin-top:14px">Mỗi 1.000đ chi tiêu tích 1 điểm. Đổi điểm lấy voucher giảm giá ở mục khuyến mãi.</p>'+
       '<div class="acct-promo"><button class="btn-ghost" onclick="go(\'missions\')">Điểm danh</button><button class="btn-ghost" onclick="go(\'wheel\')">Vòng quay</button><button class="btn-ghost" onclick="go(\'referral\')">Giới thiệu bạn</button></div>'+
       '<div style="font-weight:600;font-size:14px;margin:20px 0 10px">Lịch sử tích điểm</div>'+
@@ -1041,12 +1427,15 @@ function saveProfile(){
   if(phone)user.phone=phone;
   user.email=email;
   if(dob)user.dob=dob;
-  if(role&&ROLELBL[role]&&!(user.role==='teacher'&&user.teacherVerified))user.role=role;
+  if(role&&ROLELBL[role])user.role=role;
   const grade=document.getElementById('pfGrade')?.value;
   const major=val('pfMajor'), uni=val('pfUni');
+  const orgName=val('pfOrg'), taxCode=val('pfTax');
   if(grade)user.grade=grade;
   if(major)user.major=major;
   if(uni)user.university=uni;
+  if(orgName)user.orgName=orgName;
+  if(taxCode)user.taxCode=taxCode;
   saveUser();
   document.querySelector('.acct-user .nm').textContent=user.name;
   toast('Đã lưu thay đổi hồ sơ');
@@ -1065,11 +1454,15 @@ function submitStudentVerify(){
 }
 function navForRole(r){
   const nav=[['dashboard','Tổng quan'],['orders','Đơn hàng của tôi'],['returns','Đổi / Trả hàng']];
+  /* Người mua — sub-types */
   if(r==='hocsinh')nav.push(['study','Học tập & Gợi ý sách']);
   if(r==='sinhvien')nav.push(['study','Tài liệu học phần'],['verify','Xác thực sinh viên']);
   if(r==='parent')nav.push(['children','Theo dõi học tập của con']);
-  if(r==='school')nav.push(['rfq','Yêu cầu báo giá']);
-  if(r==='teacher')nav.push(['teacher','Xác thực giáo viên'],['rfq','Yêu cầu báo giá']);
+  /* Trường học / Tổ chức */
+  if(r==='school')nav.push(['rfq','Yêu cầu báo giá'],['classlist','Danh sách lớp']);
+  /* Xác thực giáo viên — Người mua (không áp dụng Trường học) */
+  if(user&&r!=='school'&&(user.teacherVerified||r==='hocsinh'||r==='sinhvien'||r==='parent'))
+    nav.push(['teacher','Xác thực giáo viên']);
   nav.push(['profile','Hồ sơ'],['address','Sổ địa chỉ'],['points','Điểm thưởng']);
   return nav;
 }
@@ -1328,7 +1721,7 @@ function spinWheel(){
   setTimeout(()=>{
     const r=document.getElementById('wheelResult'); if(r)r.innerHTML='🎉 Bạn nhận được: <b>'+prize+'</b>';
     if(user&&prize.indexOf('điểm')>=0){user.points=(user.points||0)+parseInt(prize.replace(/\D/g,''))||0;saveUser();}
-    addNotif('Vòng quay may mắn: bạn nhận “'+prize+'”.');
+    addNotif('Vòng quay may mắn: bạn nhận "'+prize+'".');
     toast('Kết quả: '+prize);
   },1100);
 }
@@ -1368,7 +1761,7 @@ function renderReferral(){
 
 /* ---------------- Ebook: CTA, reader, library ---------------- */
 function rentPrice(p,days){const f=days<=7?0.3:0.5;return Math.round(p.price*f/1000)*1000;}
-function doRent(id,days){rentEbook(id,days);const p=P.find(x=>x.id===Number(id));addNotif('Đã thuê “'+p.name+'” '+days+' ngày — hết hạn sẽ tự thu hồi.');toast('Thuê thành công — bắt đầu ngay!');p.audio?openPlayer(id):openReader(id,false);}
+function doRent(id,days){rentEbook(id,days);const p=P.find(x=>x.id===Number(id));addNotif('Đã thuê "'+p.name+'" '+days+' ngày — hết hạn sẽ tự thu hồi.');toast('Thuê thành công — bắt đầu ngay!');p.audio?openPlayer(id):openReader(id,false);}
 function rentBox(p){
   return '<div class="rent-box"><div class="rb-h">Hoặc thuê '+(p.audio?'nghe':'đọc')+' tiết kiệm</div><div class="rent-opts">'+
     '<button onclick="doRent('+p.id+',7)"><b>Thuê 7 ngày</b><span>'+fmt(rentPrice(p,7))+'</span></button>'+
@@ -1377,23 +1770,47 @@ function rentBox(p){
 }
 function ebookCTA(p){
   const owned=isOwned(p.id), rented=rentalActive(p.id), access=owned||rented;
-  let h='<div class="eb-specs"><div class="ebs"><span class="k">Định dạng</span><b>'+(p.format||'PDF · EPUB')+'</b></div><div class="ebs"><span class="k">Số trang</span><b>'+(p.pages||'—')+'</b></div><div class="ebs"><span class="k">Dung lượng</span><b>'+(p.size||'—')+' MB</b></div></div>';
+  const chapters=ebookChapters(p);
+  const readMins=Math.round((p.pages||200)/250*60);
+  const readTime=readMins>=60?Math.floor(readMins/60)+'h '+String(readMins%60).padStart(2,'0')+'min':readMins+' phút';
+  let h='<div class="eb-specs">'+
+    '<div class="ebs"><span class="k">Định dạng</span><b>'+(p.format||'PDF · EPUB')+'</b></div>'+
+    '<div class="ebs"><span class="k">Số trang</span><b>'+(p.pages||'—')+'</b></div>'+
+    '<div class="ebs"><span class="k">Dung lượng</span><b>'+(p.size||'—')+' MB</b></div>'+
+    '<div class="ebs"><span class="k">Thời gian đọc</span><b>~'+readTime+'</b></div>'+
+  '</div>';
+  h+='<div class="toc-preview"><div class="toc-h">Nội dung sách <span class="free-tag">Chương 1 miễn phí</span></div>'+
+    '<ol class="toc-list">'+chapters.map((c,i)=>'<li class="'+(i===0?'toc-free':'')+'">'+c.t+
+      (i===0?'':(!access?' <span class="toc-lock">🔒</span>':''))+'</li>').join('')+'</ol></div>';
   if(access){
     h+='<div class="pdp-cta"><button class="buy-btn" onclick="openReader('+p.id+',true)">📖 Đọc ngay</button>'+(rented&&!owned?'<button class="cart-btn" onclick="addToCart('+p.id+');go(\'cart\')">Mua đứt</button>':'')+'</div>';
-    h+=owned?'<div class="eb-owned">✔ Bạn sở hữu vĩnh viễn — có trong <a onclick="go(\'library\')">Tủ sách</a>.</div>':'<div class="eb-owned">⏳ Đang thuê · còn '+rentDaysLeft(p.id)+' ngày — có trong <a onclick="go(\'library\')">Tủ sách</a>.</div>';
+    h+=owned?'<div class="eb-owned">✔ Bạn sở hữu vĩnh viễn — có trong <a onclick="go(\'library\')">Tủ sách</a>.</div>':'<div class="eb-owned">⏳ Đang thuê · còn '+rentDaysLeft(p.id)+' ngày — <a onclick="go(\'library\')">Tủ sách</a>.</div>';
   }else{
-    h+='<div class="pdp-cta"><button class="cart-btn" onclick="openReader('+p.id+',false)">Đọc thử</button><button class="buy-btn" onclick="addToCart('+p.id+');go(\'cart\')">Mua &amp; đọc ngay</button></div>'+rentBox(p);
+    h+='<div class="pdp-cta"><button class="cart-btn" onclick="openReader('+p.id+',false)">📖 Đọc thử Chương 1</button><button class="buy-btn" onclick="addToCart('+p.id+');go(\'cart\')">Mua &amp; đọc ngay</button></div>'+rentBox(p);
   }
   return h+'<div class="perks"><span>📱 Đọc trên mọi thiết bị</span><span>⚡ Nhận ngay sau thanh toán</span><span>♾ Sở hữu vĩnh viễn</span><span>🔖 Ghi chú &amp; đánh dấu trang</span></div>';
 }
 function audioCTA(p){
   const owned=isOwned(p.id), rented=rentalActive(p.id), access=owned||rented;
-  let h='<div class="eb-specs"><div class="ebs"><span class="k">Thời lượng</span><b>'+Math.floor(p.duration/60)+'h'+String(p.duration%60).padStart(2,'0')+'</b></div><div class="ebs"><span class="k">Người đọc</span><b>'+p.narrator+'</b></div><div class="ebs"><span class="k">Định dạng</span><b>'+p.format+'</b></div></div>';
+  const dh=Math.floor(p.duration/60), dm=p.duration%60;
+  const durLabel=dh>0?dh+'h '+String(dm).padStart(2,'0')+'min':dm+'min';
+  let h='<div class="eb-specs">'+
+    '<div class="ebs"><span class="k">Thời lượng</span><b>'+durLabel+'</b></div>'+
+    '<div class="ebs"><span class="k">Người đọc</span><b>'+p.narrator+'</b></div>'+
+    '<div class="ebs"><span class="k">Định dạng</span><b>'+p.format+'</b></div>'+
+    '<div class="ebs"><span class="k">Bản thử</span><b>2 phút miễn phí</b></div>'+
+  '</div>';
+  if(p.tracks){
+    h+='<div class="toc-preview"><div class="toc-h">Danh sách chương <span class="free-tag">Nghe thử 2 phút</span></div>'+
+      '<ol class="toc-list">'+p.tracks.map((tr,i)=>'<li class="'+(i===0?'toc-free':'')+'">'+tr.t+
+        ' <span style="color:var(--text-soft);font-size:12px">'+Math.floor(tr.d/60)+'\''+String(tr.d%60).padStart(2,'0')+'"</span>'+
+        (i>0&&!access?' <span class="toc-lock">🔒</span>':'')+'</li>').join('')+'</ol></div>';
+  }
   if(access){
     h+='<div class="pdp-cta"><button class="buy-btn" onclick="openPlayer('+p.id+')">🎧 Nghe ngay</button>'+(rented&&!owned?'<button class="cart-btn" onclick="addToCart('+p.id+');go(\'cart\')">Mua đứt</button>':'')+'</div>';
     h+=owned?'<div class="eb-owned">✔ Bạn sở hữu vĩnh viễn — có trong <a onclick="go(\'library\')">Tủ sách</a>.</div>':'<div class="eb-owned">⏳ Đang thuê · còn '+rentDaysLeft(p.id)+' ngày.</div>';
   }else{
-    h+='<div class="pdp-cta"><button class="cart-btn" onclick="openPlayer('+p.id+')">Nghe thử</button><button class="buy-btn" onclick="addToCart('+p.id+');go(\'cart\')">Mua &amp; nghe ngay</button></div>'+rentBox(p);
+    h+='<div class="pdp-cta"><button class="cart-btn" onclick="openPlayer('+p.id+')">🎧 Nghe thử 2 phút</button><button class="buy-btn" onclick="addToCart('+p.id+');go(\'cart\')">Mua &amp; nghe ngay</button></div>'+rentBox(p);
   }
   return h+'<div class="perks"><span>🎧 Nghe mọi lúc mọi nơi</span><span>⏩ Tua nhanh · chỉnh tốc độ</span><span>⚡ Nhận ngay sau thanh toán</span><span>🔖 Lưu vị trí nghe</span></div>';
 }
@@ -1404,13 +1821,15 @@ function renderReader(){
   if(!p||!p.ebook){go('home');return;}
   const access=hasAccess(p.id), owned=isOwned(p.id), rented=rentalActive(p.id);
   const chapters=ebookChapters(p);
-  const maxCh=access?chapters.length:1;            // chưa có quyền: chỉ đọc thử chương 1
+  const maxCh=access?chapters.length:1;
   if(readerCh>=maxCh)readerCh=maxCh-1; if(readerCh<0)readerCh=0;
   setReadProgress(p.id,readerCh);
   const ch=chapters[readerCh];
   const theme=LS.get('readerTheme','light'), font=LS.get('readerFont',18);
+  const pct=Math.round((readerCh+1)/chapters.length*100);
   const opts=chapters.map((c,i)=>'<option value="'+i+'"'+(i===readerCh?' selected':'')+(i>=maxCh?' disabled':'')+'>'+(isBookmarked(p.id,i)?'🔖 ':'')+c.t+(i>=maxCh?' 🔒':'')+'</option>').join('');
   const atSampleEnd=!access&&readerCh>=maxCh-1;
+  const isLastCh=access&&readerCh===chapters.length-1;
   const bm=(bookmarks[p.id]||[]).slice().sort((a,b)=>a-b), notes=notesStore[p.id]||[];
   document.getElementById('app').innerHTML=
    '<div class="reader theme-'+theme+'">'+
@@ -1425,21 +1844,24 @@ function renderReader(){
          '<button class="rb" title="Đổi nền" onclick="readerTheme()">🌓</button>'+
        '</div>'+
      '</div>'+
-     (rented&&!owned?'<div class="rent-banner">⏳ Bạn đang thuê — còn '+rentDaysLeft(p.id)+' ngày. <a onclick="addToCart('+p.id+');go(\'cart\')">Mua đứt để giữ vĩnh viễn ›</a></div>':'')+
+     '<div class="reader-progbar"><div class="rpb-fill" style="width:'+pct+'%"></div><span class="rpb-label">'+pct+'%</span></div>'+
+     (rented&&!owned?'<div class="rent-banner">⏳ Đang thuê — còn '+rentDaysLeft(p.id)+' ngày. <a onclick="addToCart('+p.id+');go(\'cart\')">Mua đứt để giữ vĩnh viễn ›</a></div>':'')+
      '<div class="reader-page" style="font-size:'+font+'px">'+
-       '<h2>'+ch.t+'</h2>'+ch.body+
+       '<div class="chapter-meta"><span class="ch-num">Chương '+(readerCh+1)+' / '+chapters.length+'</span></div>'+
+       '<h2 class="ch-title">'+ch.t+'</h2>'+ch.body+
        (atSampleEnd?'<div class="paywall"><div class="pw-ic">🔒</div><h3>Hết phần đọc thử</h3><p>Mua hoặc thuê để mở khóa toàn bộ '+chapters.length+' chương ('+p.pages+' trang).</p><div class="pw-acts"><button class="checkout" onclick="addToCart('+p.id+');go(\'cart\')">Mua '+fmt(p.price)+'</button><button class="btn-ghost" onclick="doRent('+p.id+',7)">Thuê 7 ngày · '+fmt(rentPrice(p,7))+'</button></div></div>':'')+
+       (isLastCh?'<div class="finish-card">🎉 <b>Bạn đã đọc xong!</b> Hãy để lại đánh giá để giúp độc giả tiếp theo.<br><button class="btn-primary" style="margin-top:12px" onclick="go(\'product\','+p.id+')">Viết nhận xét ›</button></div>':'')+
      '</div>'+
      '<div class="reader-nav">'+
        '<button class="btn-ghost" '+(readerCh<=0?'disabled':'')+' onclick="readerCh--;renderReader();window.scrollTo(0,0)">‹ Chương trước</button>'+
-       '<span>'+(readerCh+1)+' / '+chapters.length+'</span>'+
+       '<span class="nav-pos">'+(readerCh+1)+' / '+chapters.length+'</span>'+
        '<button class="btn-primary" '+(readerCh>=maxCh-1?'disabled':'')+' onclick="readerCh++;renderReader();window.scrollTo(0,0)">Chương sau ›</button>'+
      '</div>'+
      '<div class="reader-extra">'+
-       (bm.length?'<div class="rx-block"><h4>🔖 Đánh dấu</h4><div class="bm-chips">'+bm.map(i=>'<button class="bm-chip" onclick="readerCh='+i+';renderReader();window.scrollTo(0,0)">'+chapters[i].t+'</button>').join('')+'</div></div>':'')+
+       (bm.length?'<div class="rx-block"><h4>🔖 Đánh dấu trang</h4><div class="bm-chips">'+bm.map(i=>'<button class="bm-chip" onclick="readerCh='+i+';renderReader();window.scrollTo(0,0)">'+chapters[i].t+'</button>').join('')+'</div></div>':'')+
        '<div class="rx-block"><h4>📝 Ghi chú của bạn</h4>'+
-         '<div class="note-form"><textarea id="noteInput" placeholder="Ghi chú cho '+ch.t+'…"></textarea><button class="btn-primary" onclick="addReaderNote('+p.id+')">Thêm ghi chú</button></div>'+
-         (notes.length?'<div class="note-list">'+notes.map((n,idx)=>'<div class="note-item"><div class="ni-ch">'+chapters[n.ch].t+'</div><div class="ni-tx">'+n.text+'</div><button class="ni-del" title="Xóa" onclick="delReaderNote('+p.id+','+idx+')">✕</button></div>').join('')+'</div>':'<p class="note-empty">Chưa có ghi chú nào.</p>')+
+         '<div class="note-form"><textarea id="noteInput" placeholder="Ghi chú cho chương này…"></textarea><button class="btn-primary" onclick="addReaderNote('+p.id+')">Thêm ghi chú</button></div>'+
+         (notes.length?'<div class="note-list">'+notes.map((n,idx)=>'<div class="note-item"><div class="ni-ch">'+chapters[n.ch].t+(n.ts?'<span class="ni-ts">'+n.ts+'</span>':'')+'</div><div class="ni-tx">'+n.text+'</div><button class="ni-del" onclick="delReaderNote('+p.id+','+idx+')">✕</button></div>').join('')+'</div>':'<p class="note-empty">Chưa có ghi chú nào.</p>')+
        '</div>'+
      '</div>'+
    '</div>';
@@ -1458,27 +1880,52 @@ function openPlayer(id){
 function renderPlayer(){
   const p=P.find(x=>x.id==arg); if(!p||!p.audio){go('home');return;} audioId=p.id;
   const access=hasAccess(p.id),lim=audioLimit(p),total=p.duration*60;
+  const tracks=p.tracks||[];
+  // Chapter tick marks on seek bar
+  let tickHtml='',tc=0;
+  tracks.forEach((tr,i)=>{if(i>0){tickHtml+='<div class="pl-tick" style="left:'+(tc/total*100)+'%"></div>';}tc+=tr.d;});
+  // Track list with data attributes for active highlighting
+  let trackListHtml='', tc2=0;
+  if(tracks.length){
+    const rows=tracks.map((tr,i)=>{
+      const s=tc2; tc2+=tr.d;
+      const canPlay=access||(i===0);
+      const isActive=audioCur>=s&&audioCur<tc2;
+      return '<div class="pl-track'+(isActive?' active':'')+'" data-start="'+s+'" data-end="'+tc2+'" onclick="'+
+        (canPlay?'audioCur='+s+';setAudioPos('+p.id+','+s+');updateAudioUI();if(!audioPlaying)toggleAudio()':'addToCart('+p.id+');go(\'cart\')')+'">'+'<span class="pt-num">'+(i+1)+'</span>'+
+        '<span class="pt-title">'+tr.t+'</span>'+
+        '<span class="pt-dur">'+Math.floor(tr.d/60)+'\''+String(tr.d%60).padStart(2,'0')+'"</span>'+
+        (!canPlay?'<span class="pt-lock">🔒</span>':'')+
+      '</div>';
+    }).join('');
+    trackListHtml='<div class="pl-tracks"><div class="pt-hd">Danh sách chương</div>'+rows+'</div>';
+  }
   document.getElementById('app').innerHTML=
    '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <a onclick="go(\'product\','+p.id+')">'+p.name+'</a> › <b>Trình nghe</b></div>'+
    '<div class="player">'+
      '<div class="pl-cover">'+cover(p)+'</div>'+
      '<div class="pl-main">'+
        '<div class="pl-title">'+p.name+(access?'':' · <span style="color:var(--coral)">Nghe thử</span>')+'</div>'+
-       '<div class="pl-by">Người đọc: '+p.narrator+'</div>'+
-       '<div class="pl-seek" id="plSeek" onclick="seekAudio(event)"><div class="pl-fill" id="apFill"></div>'+(access?'':'<div class="pl-limit" style="left:'+(lim/total*100)+'%"></div>')+'</div>'+
-       '<div class="pl-time"><span id="apCur">'+fmtTime(audioCur)+'</span><span>'+fmtTime(total)+'</span></div>'+
-       '<div class="pl-ctrls"><button onclick="skipAudio(-15)">⏪15</button><button class="pl-play" id="apPlay" onclick="toggleAudio()">▶</button><button onclick="skipAudio(15)">15⏩</button><button class="pl-speed" id="apSpeed" onclick="cycleSpeed()">1x</button></div>'+
+       '<div class="pl-by">Người đọc: <b>'+p.narrator+'</b></div>'+
+       '<div class="pl-seek" id="plSeek" onclick="seekAudio(event)"><div class="pl-fill" id="apFill"></div>'+tickHtml+(access?'':'<div class="pl-limit" style="left:'+(lim/total*100)+'%"></div>')+'</div>'+
+       '<div class="pl-time"><span id="apCur">'+fmtTime(audioCur)+'</span><span id="apRem" style="color:var(--text-soft)">−'+fmtTime(total-audioCur)+'</span></div>'+
+       '<div class="pl-ctrls"><button onclick="skipAudio(-15)" title="Tua lùi 15s">⏪15</button><button class="pl-play" id="apPlay" onclick="toggleAudio()">▶</button><button onclick="skipAudio(15)" title="Tua tiếp 15s">15⏩</button><button class="pl-speed" id="apSpeed" onclick="cycleSpeed()">1×</button></div>'+
        (access?'':'<div class="pl-paywall">Bản nghe thử giới hạn '+fmtTime(lim)+'. <a onclick="addToCart('+p.id+');go(\'cart\')">Mua nghe trọn bộ ›</a></div>')+
      '</div>'+
-   '</div>';
+   '</div>'+
+   trackListHtml;
   updateAudioUI();
 }
 function updateAudioUI(){
   const p=P.find(x=>x.id===audioId); if(!p)return; const total=p.duration*60;
   const f=document.getElementById('apFill'); if(f)f.style.width=(audioCur/total*100)+'%';
   const c=document.getElementById('apCur'); if(c)c.textContent=fmtTime(audioCur);
+  const rem=document.getElementById('apRem'); if(rem)rem.textContent='−'+fmtTime(Math.max(0,total-audioCur));
   const pl=document.getElementById('apPlay'); if(pl)pl.textContent=audioPlaying?'❚❚':'▶';
-  const sp=document.getElementById('apSpeed'); if(sp)sp.textContent=audioSpeed+'x';
+  const sp=document.getElementById('apSpeed'); if(sp)sp.textContent=audioSpeed+'×';
+  document.querySelectorAll('.pl-track[data-start]').forEach(el=>{
+    el.classList.toggle('active',audioCur>=+el.dataset.start&&audioCur<+el.dataset.end);
+  });
 }
 function toggleAudio(){audioPlaying=!audioPlaying;clearInterval(audioTimer);if(audioPlaying)audioTimer=setInterval(audioTick,1000);updateAudioUI();}
 function audioTick(){
@@ -1491,23 +1938,329 @@ function skipAudio(d){const p=P.find(x=>x.id===audioId);if(!p)return;audioCur=Ma
 function seekAudio(e){const p=P.find(x=>x.id===audioId);if(!p)return;const r=document.getElementById('plSeek').getBoundingClientRect();const pct=(e.clientX-r.left)/r.width;audioCur=Math.max(0,Math.min(audioLimit(p),pct*p.duration*60));setAudioPos(audioId,Math.floor(audioCur));updateAudioUI();}
 function cycleSpeed(){const seq=[1,1.25,1.5,2];audioSpeed=seq[(seq.indexOf(audioSpeed)+1)%seq.length];updateAudioUI();}
 
+/* ---- Cửa hàng Thiết bị giáo dục ---- */
+const TBGD_SUBS={
+  mtinh:{lbl:'Máy tính',icon:'🔢',desc:'Máy tính khoa học, đồ thị từ Casio và các hãng uy tín'},
+  tn:{lbl:'Thí nghiệm',icon:'🔬',desc:'Kính hiển vi, bộ hóa học, mô hình sinh học & vật lý'},
+  bando:{lbl:'Bản đồ & Địa cầu',icon:'🌍',desc:'Bản đồ treo tường, địa cầu và atlas các loại'},
+  dayho:{lbl:'Dạy học',icon:'📋',desc:'Bảng trắng, đèn học, thẻ học và dụng cụ hỗ trợ giảng dạy'},
+  cntt:{lbl:'Công nghệ',icon:'💻',desc:'Máy chiếu, camera tài liệu, máy đọc sách và màn chiếu'},
+};
+function renderTBGDStore(){
+  const allTb=P.filter(p=>p.cat==='tbgd');
+  const bestsellers=allTb.slice().sort((a,b)=>b.sold-a.sold).slice(0,4);
+  const hotItems=allTb.filter(p=>p.tag==='hot');
+  const newItems=allTb.filter(p=>p.tag==='new');
+  const byAud={
+    k12:allTb.filter(p=>p.aud&&p.aud.some(a=>['tieuhoc','thcs','thpt'].includes(a))),
+    sv:allTb.filter(p=>p.aud&&p.aud.includes('sinhvien')),
+    gv:allTb.filter(p=>p.aud&&(p.aud.includes('giaovien')||p.aud.includes('school'))),
+  };
+  function tCard(p){
+    return '<div class="vpp-card" onclick="go(\'product\','+p.id+')">'+
+      '<div class="vpp-card-cov">'+cover(p)+
+        (p.tag?'<span class="eb-tag '+p.tag+'">'+(p.tag==='hot'?'🔥 Hot':'✨ Mới')+'</span>':'')+
+        (p.old>p.price?'<span class="vpp-disc">-'+discount(p)+'%</span>':'')+
+      '</div>'+
+      '<div class="vpp-card-body">'+
+        '<div class="vpp-card-nm">'+p.name+'</div>'+
+        '<div class="vpp-card-by">'+p.by+' · '+(TBGD_SUBS[p.sub]||{lbl:'Thiết bị'}).lbl+'</div>'+
+        (p.rate?'<div class="vpp-card-stars">'+('★'.repeat(Math.round(p.rate)))+'<span> '+p.rate+' ('+p.sold+')</span></div>':'')+
+        '<div class="vpp-card-price"><span class="vpp-p">'+fmt(p.price)+'</span>'+(p.old>p.price?'<span class="vpp-old">'+fmt(p.old)+'</span>':'')+'</div>'+
+      '</div>'+
+    '</div>';
+  }
+  document.getElementById('app').innerHTML=
+    '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <b>Thiết bị giáo dục</b></div>'+
+
+    '<div class="tbgd-hero">'+
+      '<div class="tbh-l">'+
+        '<div class="tbh-eyebrow">🏫 Thiết bị giáo dục EduMart</div>'+
+        '<h1 class="tbh-h">Thiết bị &amp;<br>Công nghệ lớp học</h1>'+
+        '<p class="tbh-sub">'+allTb.length+' sản phẩm · Máy tính, kính hiển vi, máy chiếu và thiết bị dạy học hiện đại</p>'+
+        '<div class="tbh-actions">'+
+          '<button class="btn-primary" onclick="go(\'listing\',\'tbgd\')">Xem tất cả thiết bị</button>'+
+          '<button class="btn-ghost tbh-ghost" onclick="go(\'rfq\')">📋 Báo giá trường học</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="tbh-stats">'+
+        Object.entries(TBGD_SUBS).map(([k,v])=>{const cnt=P.filter(p=>p.cat==='tbgd'&&p.sub===k).length;
+          return '<div class="tbhs" onclick="tbgdSub=\''+k+'\';go(\'listing\',\'tbgd\')"><div class="tbhs-ic">'+v.icon+'</div><div class="tbhs-nm">'+v.lbl+'</div><div class="tbhs-cnt">'+cnt+' sp</div></div>';
+        }).join('')+
+      '</div>'+
+    '</div>'+
+
+    '<h2 class="vpp-sec-h">📦 Danh mục</h2>'+
+    '<div class="tbgd-cats">'+Object.entries(TBGD_SUBS).map(([k,v])=>{
+      const items=P.filter(p=>p.cat==='tbgd'&&p.sub===k);
+      const cnt=items.length;
+      return '<div class="tbgd-cat" onclick="tbgdSub=\''+k+'\';go(\'listing\',\'tbgd\')">'+
+        '<div class="tbc-head"><span class="tbc-icon">'+v.icon+'</span><div><div class="tbc-nm">'+v.lbl+'</div><div class="tbc-cnt">'+cnt+' sản phẩm</div></div></div>'+
+        '<div class="tbc-desc">'+v.desc+'</div>'+
+        '<div class="tbc-items">'+items.slice(0,2).map(p=>'<div class="tbci-nm">'+p.name+'</div>').join('')+'</div>'+
+        '<div class="tbc-more">Xem tất cả ›</div>'+
+      '</div>';
+    }).join('')+'</div>'+
+
+    '<h2 class="vpp-sec-h">🔥 Bán chạy nhất</h2>'+
+    '<div class="vpp-grid">'+bestsellers.map(tCard).join('')+'</div>'+
+
+    (hotItems.length?'<h2 class="vpp-sec-h">⚡ Đang khuyến mãi</h2>'+
+    '<div class="vpp-grid">'+hotItems.map(tCard).join('')+'</div>':'')+
+
+    (newItems.length?'<h2 class="vpp-sec-h">✨ Hàng mới về</h2>'+
+    '<div class="vpp-grid">'+newItems.map(tCard).join('')+'</div>':'')+
+
+    '<h2 class="vpp-sec-h">💻 Công nghệ lớp học</h2>'+
+    '<div class="vpp-grid">'+P.filter(p=>p.cat==='tbgd'&&p.sub==='cntt').map(tCard).join('')+'</div>'+
+
+    '<div class="tbgd-aud-grid">'+
+      '<div class="tbgd-aud-col">'+
+        '<div class="tac-h">🏫 Học sinh K–12 <span>('+byAud.k12.length+' sp)</span></div>'+
+        byAud.k12.slice(0,4).map(p=>'<div class="tac-item" onclick="go(\'product\','+p.id+')">'+
+          '<div class="tac-cov">'+cover(p)+'</div>'+
+          '<div class="tac-info"><div class="tac-nm">'+p.name+'</div><div class="tac-pr">'+fmt(p.price)+'</div></div>'+
+        '</div>').join('')+
+        '<button class="elc-more btn-ghost" onclick="tbgdSub=\'all\';go(\'listing\',\'tbgd\')">Xem tất cả ›</button>'+
+      '</div>'+
+      '<div class="tbgd-aud-col">'+
+        '<div class="tac-h">🎓 Sinh viên &amp; Giáo viên <span>('+byAud.gv.length+' sp)</span></div>'+
+        byAud.gv.slice(0,4).map(p=>'<div class="tac-item" onclick="go(\'product\','+p.id+')">'+
+          '<div class="tac-cov">'+cover(p)+'</div>'+
+          '<div class="tac-info"><div class="tac-nm">'+p.name+'</div><div class="tac-pr">'+fmt(p.price)+'</div></div>'+
+        '</div>').join('')+
+        '<button class="elc-more btn-ghost" onclick="tbgdSub=\'all\';go(\'listing\',\'tbgd\')">Xem tất cả ›</button>'+
+      '</div>'+
+    '</div>'+
+
+    '<div class="vpp-cta-bar">'+
+      '<div>'+
+        '<div class="vcb-t">Mua thiết bị cho trường học?</div>'+
+        '<div class="vcb-s">Báo giá trang bị phòng học, phòng thí nghiệm theo số lượng lớn</div>'+
+      '</div>'+
+      '<button class="btn-primary" onclick="go(\'rfq\')">Yêu cầu báo giá ngay</button>'+
+    '</div>';
+}
+
+/* ---- Cửa hàng Văn phòng phẩm ---- */
+const VPP_SUBS={
+  but:{lbl:'Bút viết',icon:'🖊',desc:'Bút bi, bút gel, bút chì, bút dạ quang từ các thương hiệu uy tín'},
+  vo:{lbl:'Vở & giấy',icon:'📓',desc:'Vở học sinh, sổ tay, giấy in và các loại giấy văn phòng'},
+  dungcu:{lbl:'Dụng cụ',icon:'📐',desc:'Thước, compa, máy tính, kéo và các dụng cụ học tập'},
+  hoapham:{lbl:'Họa phẩm',icon:'🎨',desc:'Màu vẽ, cọ, sổ vẽ và dụng cụ mỹ thuật sáng tạo'},
+  balo:{lbl:'Túi & balo',icon:'🎒',desc:'Balo học sinh, túi đựng bút và phụ kiện đựng đồ'},
+};
+function renderVPPStore(){
+  const allVpp=P.filter(p=>p.cat==='vpp');
+  const bestsellers=allVpp.slice().sort((a,b)=>b.sold-a.sold).slice(0,4);
+  const hotItems=allVpp.filter(p=>p.tag==='hot');
+  const newItems=allVpp.filter(p=>p.tag==='new');
+  function vCard(p){
+    return '<div class="vpp-card" onclick="go(\'product\','+p.id+')">'+
+      '<div class="vpp-card-cov">'+cover(p)+
+        (p.tag?'<span class="eb-tag '+p.tag+'">'+(p.tag==='hot'?'🔥 Hot':'✨ Mới')+'</span>':'')+
+        (p.old>p.price?'<span class="vpp-disc">-'+discount(p)+'%</span>':'')+
+      '</div>'+
+      '<div class="vpp-card-body">'+
+        '<div class="vpp-card-nm">'+p.name+'</div>'+
+        '<div class="vpp-card-by">'+p.by+' · '+(VPP_SUBS[p.sub]||{lbl:'VPP'}).lbl+'</div>'+
+        (p.rate?'<div class="vpp-card-stars">'+('★'.repeat(Math.round(p.rate)))+'<span> '+p.rate+' ('+p.sold+')</span></div>':'')+
+        '<div class="vpp-card-price"><span class="vpp-p">'+fmt(p.price)+'</span>'+(p.old>p.price?'<span class="vpp-old">'+fmt(p.old)+'</span>':'')+'</div>'+
+      '</div>'+
+    '</div>';
+  }
+  document.getElementById('app').innerHTML=
+    '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <b>Văn phòng phẩm</b></div>'+
+    '<div class="vpp-hero">'+
+      '<div class="vph-l">'+
+        '<div class="vph-eyebrow">✏ Cửa hàng văn phòng phẩm EduMart</div>'+
+        '<h1 class="vph-h">Văn phòng phẩm<br>&amp; Dụng cụ học tập</h1>'+
+        '<p class="vph-sub">'+allVpp.length+' sản phẩm · Bút viết, vở, dụng cụ, họa phẩm và túi balo cho mọi cấp học</p>'+
+        '<div class="vph-actions">'+
+          '<button class="btn-primary" onclick="go(\'listing\',\'vpp\')">Xem tất cả sản phẩm</button>'+
+          '<button class="btn-ghost" onclick="vppSub=\'hot\';go(\'listing\',\'vpp\')">🔥 Đang giảm giá</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="vph-stats">'+
+        Object.entries(VPP_SUBS).map(([k,v])=>{const cnt=P.filter(p=>p.cat==='vpp'&&p.sub===k).length;return '<div class="vphs" onclick="vppSub=\''+k+'\';go(\'listing\',\'vpp\')"><div class="vphs-ic">'+v.icon+'</div><div class="vphs-nm">'+v.lbl+'</div><div class="vphs-cnt">'+cnt+' sp</div></div>';}).join('')+
+      '</div>'+
+    '</div>'+
+
+    '<h2 class="vpp-sec-h">📦 Danh mục</h2>'+
+    '<div class="vpp-cats">'+Object.entries(VPP_SUBS).map(([k,v])=>{const cnt=P.filter(p=>p.cat==='vpp'&&p.sub===k).length;const items=P.filter(p=>p.cat==='vpp'&&p.sub===k).slice(0,3);return '<div class="vpp-cat" onclick="vppSub=\''+k+'\';go(\'listing\',\'vpp\')">'+
+      '<div class="vc-head"><span class="vc-icon">'+v.icon+'</span><div><div class="vc-nm">'+v.lbl+'</div><div class="vc-cnt">'+cnt+' sản phẩm</div></div></div>'+
+      '<div class="vc-desc">'+v.desc+'</div>'+
+      '<div class="vc-items">'+items.map(p=>'<div class="vci-nm">'+p.name+'</div>').join('')+'</div>'+
+      '<div class="vc-more">Xem tất cả ›</div>'+
+    '</div>';}).join('')+'</div>'+
+
+    '<h2 class="vpp-sec-h">🔥 Bán chạy nhất</h2>'+
+    '<div class="vpp-grid">'+bestsellers.map(vCard).join('')+'</div>'+
+
+    (hotItems.length?'<h2 class="vpp-sec-h">⚡ Đang khuyến mãi</h2>'+
+    '<div class="vpp-grid">'+hotItems.map(vCard).join('')+'</div>':'')+
+
+    (newItems.length?'<h2 class="vpp-sec-h">✨ Hàng mới về</h2>'+
+    '<div class="vpp-grid">'+newItems.map(vCard).join('')+'</div>':'')+
+
+    '<h2 class="vpp-sec-h">🎨 Họa phẩm & Sáng tạo</h2>'+
+    '<div class="vpp-grid">'+P.filter(p=>p.cat==='vpp'&&p.sub==='hoapham').map(vCard).join('')+'</div>'+
+
+    '<div class="vpp-cta-bar">'+
+      '<div>'+
+        '<div class="vcb-t">Mua sỉ cho trường học?</div>'+
+        '<div class="vcb-s">Đặt đơn số lượng lớn và nhận báo giá ưu đãi đặc biệt</div>'+
+      '</div>'+
+      '<button class="btn-primary" onclick="go(\'rfq\')">Yêu cầu báo giá</button>'+
+    '</div>';
+}
+
+/* ---- Cửa hàng Ebook & Sách nói ---- */
+function renderEbookStore(){
+  const allEb=P.filter(p=>p.ebook&&!p.audio);
+  const allAu=P.filter(p=>p.audio);
+  const featured=P.filter(p=>(p.ebook||p.audio)&&p.tag==='hot');
+  const newest=P.filter(p=>(p.ebook||p.audio)&&p.tag==='new');
+  const byAud={
+    tieuhoc:P.filter(p=>p.ebook&&p.aud&&p.aud.includes('tieuhoc')),
+    thcs:P.filter(p=>p.ebook&&p.aud&&p.aud.includes('thcs')),
+    thpt:P.filter(p=>p.ebook&&p.aud&&p.aud.includes('thpt')),
+    sinhvien:P.filter(p=>(p.ebook||p.audio)&&p.aud&&p.aud.includes('sinhvien')),
+    giaovien:P.filter(p=>(p.ebook||p.audio)&&p.aud&&p.aud.includes('giaovien')),
+  };
+  const CATS=[
+    ['📖 Ebook','all-ebook','listing','ebook',allEb.length+' cuốn'],
+    ['🎧 Sách nói','all-audio','listing','audiobook',allAu.length+' cuốn'],
+    ['🏫 Học sinh K–12','k12','listing','thcs',P.filter(p=>p.ebook&&(p.aud||[]).some(a=>['tieuhoc','thcs','thpt'].includes(a))).length+' cuốn'],
+    ['🎓 Sinh viên','sv','listing','sinhvien',byAud.sinhvien.length+' cuốn'],
+    ['👨‍🏫 Giáo viên','gv','listing','giaovien',byAud.giaovien.length+' cuốn'],
+    ['💡 Kỹ năng','kn','listing','kynang',P.filter(p=>(p.ebook||p.audio)&&p.genre==='kynang').length+' cuốn'],
+    ['🌍 Ngoại ngữ','nn','listing','ngoaingu',P.filter(p=>(p.ebook||p.audio)&&p.genre==='ngoaingu').length+' cuốn'],
+  ];
+  function ebCard(p){
+    const acc=hasAccess(p.id);
+    const rentPr=p.price?fmt(rentPrice(p,30)):null;
+    return '<div class="eb-card" onclick="go(\'product\','+p.id+')">'+
+      '<div class="eb-card-cover">'+cover(p)+(p.tag?'<span class="eb-tag '+p.tag+'">'+(p.tag==='hot'?'🔥 Hot':'✨ Mới')+'</span>':'')+
+        (acc?'<span class="eb-tag owned">✓ Đã có</span>':'')+
+      '</div>'+
+      '<div class="eb-card-body">'+
+        '<div class="eb-card-nm">'+p.name+'</div>'+
+        '<div class="eb-card-by">'+p.by+'</div>'+
+        (p.rate?'<div class="eb-card-stars">'+('★'.repeat(Math.round(p.rate||0)))+'<span>'+p.rate+'</span><span class="ec-rc">('+p.sold+')</span></div>':'')+
+        '<div class="eb-card-price">'+
+          '<span class="ep">'+fmt(p.price)+'</span>'+
+          (rentPr&&!acc?'<span class="er">thuê '+rentPr+'/tháng</span>':'')+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }
+  document.getElementById('app').innerHTML=
+    '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <b>Ebook & Sách nói</b></div>'+
+    '<div class="eb-store-hero">'+
+      '<div class="esh-l">'+
+        '<div class="esh-eyebrow">📚 Tủ sách số EduMart</div>'+
+        '<h1 class="esh-h">Ebook & Sách nói</h1>'+
+        '<p class="esh-sub">'+( allEb.length+allAu.length)+' đầu sách số · Nhận ngay sau thanh toán · Đọc/Nghe trên mọi thiết bị</p>'+
+        '<div class="esh-actions">'+
+          '<button class="btn-primary" onclick="go(\'listing\',\'ebook\')">Xem tất cả ebook</button>'+
+          '<button class="btn-ghost" onclick="go(\'library\')">📚 Tủ sách của tôi</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="esh-stats">'+
+        '<div class="esh-stat"><div class="esh-sv">'+allEb.length+'</div><div class="esh-sl">Ebook</div></div>'+
+        '<div class="esh-stat"><div class="esh-sv">'+allAu.length+'</div><div class="esh-sl">Sách nói</div></div>'+
+        '<div class="esh-stat"><div class="esh-sv">PDF·EPUB·MP3</div><div class="esh-sl">Định dạng</div></div>'+
+        '<div class="esh-stat"><div class="esh-sv">∞</div><div class="esh-sl">Sở hữu vĩnh viễn</div></div>'+
+      '</div>'+
+    '</div>'+
+
+    '<h2 class="eb-sec-h">Danh mục</h2>'+
+    '<div class="eb-cats">'+CATS.map(c=>'<div class="eb-cat" onclick="go(\''+c[2]+'\',\''+c[3]+'\')"><div class="ec-icon">'+c[0].split(' ')[0]+'</div><div class="ec-info"><div class="ec-nm">'+c[0].substring(c[0].indexOf(' ')+1)+'</div><div class="ec-cnt">'+c[4]+'</div></div></div>').join('')+'</div>'+
+
+    (featured.length?'<h2 class="eb-sec-h">🔥 Nổi bật tháng này</h2>'+
+    '<div class="eb-grid">'+featured.map(ebCard).join('')+'</div>':'')+
+
+    (newest.length?'<h2 class="eb-sec-h">✨ Mới nhất</h2>'+
+    '<div class="eb-grid">'+newest.map(ebCard).join('')+'</div>':'')+
+
+    '<h2 class="eb-sec-h">🎧 Sách nói nổi bật</h2>'+
+    '<div class="eb-grid">'+allAu.slice(0,4).map(ebCard).join('')+'</div>'+
+
+    '<h2 class="eb-sec-h">📖 Ebook theo cấp học</h2>'+
+    '<div class="eb-level-grid">'+[
+      ['🏫 Tiểu học',byAud.tieuhoc,'tieuhoc'],
+      ['📘 THCS',byAud.thcs,'thcs'],
+      ['📗 THPT',byAud.thpt,'thpt'],
+      ['🎓 Sinh viên',byAud.sinhvien,'sinhvien'],
+    ].map(([lbl,items,key])=>items.length?
+      '<div class="eb-level-col"><div class="elc-h">'+lbl+'</div>'+items.slice(0,3).map(p=>'<div class="elc-item" onclick="go(\'product\','+p.id+')"><div class="elc-cov">'+cover(p)+'</div><div class="elc-info"><div class="elc-nm">'+p.name+'</div><div class="elc-pr">'+fmt(p.price)+'</div></div></div>').join('')+
+      '<button class="elc-more btn-ghost" onclick="go(\'listing\',\''+key+'\')">Xem tất cả ›</button></div>'
+      :''
+    ).join('')+'</div>';
+}
+
 /* ---- Tủ sách (sở hữu + đang thuê, ebook + audiobook) ---- */
 function renderLibrary(){
   const activeRent=Object.keys(rentals).map(Number).filter(id=>rentalActive(id));
-  const ids=[...new Set([...library,...activeRent])];
-  const items=ids.map(id=>P.find(p=>p.id===id)).filter(Boolean);
+  const allIds=[...new Set([...library,...activeRent])];
   const prog=readProgress(), apos=audioPos();
+  const filterMap={
+    all:  ()=>true,
+    ebook: id=>{const p=P.find(x=>x.id===id);return p&&p.ebook&&!p.audio;},
+    audio: id=>{const p=P.find(x=>x.id===id);return p&&!!p.audio;},
+    rent:  id=>rentalActive(id),
+  };
+  const filteredIds=allIds.filter(filterMap[libFilter]||filterMap.all);
+  const items=filteredIds.map(id=>P.find(p=>p.id===id)).filter(Boolean);
+  const chips=[['all','Tất cả'],['ebook','Ebook'],['audio','Sách nói'],['rent','Đang thuê']];
+  const chipHtml='<div class="filter-chips">'+chips.map(([k,l])=>'<button class="chip'+(libFilter===k?' active':'')+'" onclick="libFilter=\''+k+'\';renderLibrary()">'+l+'</button>').join('')+'</div>';
+  const expiring=activeRent.filter(id=>{const d=rentDaysLeft(id);return d>=0&&d<=3;});
+  const expiryBanner=expiring.length?'<div class="expiry-banner">⚠ '+expiring.length+' cuốn sách thuê sắp hết hạn (≤ 3 ngày) — <a onclick="go(\'listing\',\'ebook\')">Gia hạn hoặc mua ngay ›</a></div>':'';
+  function libCard(p){
+    const owned=isOwned(p.id), isRent=rentalActive(p.id);
+    const badge=owned?'<span class="lib-badge own">Sở hữu</span>':isRent?'<span class="lib-badge rent">Thuê · còn '+rentDaysLeft(p.id)+' ngày</span>':'';
+    let pct=0, progLabel='';
+    if(p.audio){
+      const pos=apos[p.id]||0, tot=p.duration*60;
+      pct=tot>0?Math.round(pos/tot*100):0;
+      progLabel='Đã nghe: '+fmtTime(pos)+' / '+fmtTime(tot);
+    }else{
+      const ch=prog[p.id]||0, tot=ebookChapters(p).length;
+      pct=tot>0?Math.round((ch+1)/tot*100):0;
+      progLabel='Chương '+(ch+1)+' / '+tot;
+    }
+    const barHtml='<div class="lib-bar"><div class="lib-bar-fill" style="width:'+pct+'%"></div></div><span class="lib-pct">'+pct+'%</span>';
+    const btn=p.audio?'<button class="btn-primary" onclick="openPlayer('+p.id+')">Nghe tiếp</button>':'<button class="btn-primary" onclick="openReader('+p.id+',true)">Đọc tiếp</button>';
+    return '<div class="lib-item">'+
+      '<div class="cover-sm">'+cover(p)+'</div>'+
+      '<div class="li-info">'+
+        '<div class="nm">'+p.name+'</div>'+
+        '<div class="au">'+p.by+'</div>'+
+        '<div class="li-badge-row">'+badge+'</div>'+
+        '<div class="li-prog-row">'+barHtml+'</div>'+
+        '<div class="li-sub">'+progLabel+'</div>'+
+      '</div>'+
+      btn+
+    '</div>';
+  }
+  // Reading stats
+  const totalEbooks=allIds.filter(id=>{const p=P.find(x=>x.id===id);return p&&p.ebook&&!p.audio;}).length;
+  const totalAudio=allIds.filter(id=>{const p=P.find(x=>x.id===id);return p&&!!p.audio;}).length;
+  const totalListenMins=allIds.reduce((s,id)=>{const p=P.find(x=>x.id===id);return p&&p.audio?(s+(apos[id]||0)/60):s;},0);
+  const totalChapters=allIds.reduce((s,id)=>{const p=P.find(x=>x.id===id);return p&&p.ebook&&!p.audio?(s+(prog[id]||0)):s;},0);
+  const statsHtml='<div class="lib-stats">'+
+    '<div class="ls-item"><div class="ls-v">'+totalEbooks+'</div><div class="ls-l">Ebook</div></div>'+
+    '<div class="ls-item"><div class="ls-v">'+totalAudio+'</div><div class="ls-l">Sách nói</div></div>'+
+    '<div class="ls-item"><div class="ls-v">'+totalChapters+'</div><div class="ls-l">Chương đã đọc</div></div>'+
+    '<div class="ls-item"><div class="ls-v">'+Math.round(totalListenMins)+'<span class="ls-unit">ph</span></div><div class="ls-l">Đã nghe</div></div>'+
+  '</div>';
   document.getElementById('app').innerHTML=
    '<div class="breadcrumb"><a onclick="go(\'home\')">Trang chủ</a> › <b>Tủ sách của tôi</b></div>'+
-   '<h1 class="page-title">Tủ sách của tôi'+(items.length?' ('+items.length+')':'')+'</h1>'+
-   (items.length?'<div class="lib-grid">'+items.map(p=>{
-     const owned=isOwned(p.id);
-     const badge=owned?'<span class="lib-badge own">Sở hữu</span>':'<span class="lib-badge rent">Thuê · còn '+rentDaysLeft(p.id)+' ngày</span>';
-     const sub=p.audio?('Đã nghe: '+fmtTime(apos[p.id]||0)):('Đang đọc: chương '+((prog[p.id]||0)+1)+'/5');
-     const btn=p.audio?'<button class="btn-primary" onclick="openPlayer('+p.id+')">Nghe tiếp</button>':'<button class="btn-primary" onclick="openReader('+p.id+',true)">Đọc tiếp</button>';
-     return '<div class="lib-item"><div class="cover-sm">'+cover(p)+'</div><div class="li-info"><div class="nm">'+p.name+'</div><div class="au">'+p.by+'</div><div class="li-prog">'+badge+' · '+sub+'</div></div>'+btn+'</div>';
-   }).join('')+'</div>'
-    :'<div class="empty"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19V5a1 1 0 0 1 1-1h6v16H5a1 1 0 0 1-1-1Z"/><path d="M13 4h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-6"/></svg><div style="font-size:17px;margin-bottom:6px">Tủ sách của bạn đang trống</div><a class="hero-cta" style="display:inline-flex" onclick="go(\'listing\',\'ebook\')">Khám phá ebook &amp; sách nói</a></div>');
+   '<h1 class="page-title">Tủ sách của tôi'+(allIds.length?' ('+allIds.length+')':'')+'</h1>'+
+   (allIds.length?statsHtml:'')+expiryBanner+chipHtml+
+   (items.length?'<div class="lib-grid">'+items.map(libCard).join('')+'</div>'
+    :'<div class="empty"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19V5a1 1 0 0 1 1-1h6v16H5a1 1 0 0 1-1-1Z"/><path d="M13 4h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-6"/></svg><div style="font-size:17px;margin-bottom:6px">'+(libFilter==='all'?'Tủ sách của bạn đang trống':'Không có mục nào trong bộ lọc này')+'</div><a class="hero-cta" style="display:inline-flex" onclick="go(\'listing\',\'ebook\')">Khám phá ebook &amp; sách nói</a></div>');
 }
 
 /* ---------------- Mega-menu (mục Sách) ---------------- */

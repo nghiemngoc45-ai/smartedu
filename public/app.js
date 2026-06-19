@@ -885,12 +885,13 @@ const ROLE_GROUPS=[
     roles:[
       {k:'admin',name:'Quản trị viên',desc:'Vận hành toàn sàn',ic:'<circle cx="12" cy="12" r="3"/><path d="M19.4 13a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7 19.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.7 7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 19 4.7l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V10a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/>'},
     ],
-    kind:'redirect',to:'admin.html'
+    kind:'admin'
   }
 ];
 const ROLES=ROLE_GROUPS.flatMap(g=>g.roles.map(r=>({...r,kind:g.kind,to:g.to})));
 let lgRole='hocsinh', authView='login', authResetToken=null;
 let user=LS.get('user',null), orders=LS.get('orders',[]), acctTab='dashboard';
+let adminDays=30;
 let orderFilter='all';
 let libFilter='all';
 let vppSub='all';
@@ -1164,6 +1165,7 @@ function orderCardFull(o){
     '</div></div>';
 }
 function acctContent(){
+  if(user.role==='admin')return adminContent();
   if(acctTab==='dashboard'){
     const isTeacher=user.teacherVerified==='verified';
     const tierPct=isTeacher?'15%':'5%';
@@ -1452,7 +1454,153 @@ function submitStudentVerify(){
   user.studentVerified='pending';user.studentId=sid;user.svUni=uni;user.svVfyDate=todayStr();
   saveUser();toast('Đã gửi hồ sơ — EduMart sẽ phê duyệt trong 1–2 ngày làm việc');renderAccount();
 }
+/* ── ADMIN MOCK DATA ──────────────────────────────── */
+const ADM={
+  totals:{users:48200,sellers:1240,products:34800},
+  perDay:{users:162,orders:840,revenue:20900000},
+  growth:{
+    7: {users:8.2, sellers:3.1, products:5.4, revenue:12.7},
+    30:{users:15.3,sellers:7.8, products:11.2,revenue:22.4},
+    90:{users:31.5,sellers:18.2,products:23.7,revenue:48.9}
+  },
+  cats:[
+    {name:'Sách giáo khoa',pct:38,clr:'#c0392b'},
+    {name:'Văn phòng phẩm',pct:22,clr:'#e67e22'},
+    {name:'Thiết bị GD',   pct:18,clr:'#2980b9'},
+    {name:'Ebook & Audio', pct:14,clr:'#27ae60'},
+    {name:'Khác',          pct:8, clr:'#8e44ad'}
+  ],
+  shops:[
+    {name:'NXB Giáo dục VN',orders:4820,rev:284000000,g:12.3},
+    {name:'Fahasa Official', orders:3640,rev:198000000,g:8.7},
+    {name:'Alphabooks',      orders:2910,rev:156000000,g:15.2},
+    {name:'Đinh Tị Books',   orders:2180,rev:124000000,g:-2.1},
+    {name:'Sbooks',          orders:1840,rev:98000000, g:6.4}
+  ],
+  act:[
+    {tp:'reg',  text:'Nguyễn Thị Lan đăng ký tài khoản Học sinh',            t:'2 phút'},
+    {tp:'shop', text:'Shop "VPP Minh Long" đang chờ duyệt',                   t:'8 phút'},
+    {tp:'order',text:'#EDU-28471 · Fahasa · 345.000đ',                        t:'12 phút'},
+    {tp:'reg',  text:'Trường THPT Nguyễn Du đăng ký tài khoản Trường học',    t:'25 phút'},
+    {tp:'shop', text:'Shop "Thiết bị GD EduPro" đã được duyệt ✓',             t:'1 giờ'},
+    {tp:'order',text:'#EDU-28468 · Alphabooks · 128.000đ',                    t:'1 giờ'},
+    {tp:'reg',  text:'Lê Văn Minh đăng ký tài khoản Sinh viên',               t:'2 giờ'},
+    {tp:'order',text:'#EDU-28461 · NXB Giáo dục VN · 890.000đ',               t:'3 giờ'}
+  ]
+};
+function fmtMil(n){if(n>=1e9)return (n/1e9).toFixed(1).replace('.',',')+'B';if(n>=1e6)return Math.round(n/1e6)+'M';return n.toLocaleString('vi-VN');}
+function fmtBig(n){return Number(n).toLocaleString('vi-VN');}
+function admGrowth(g){const up=g>=0;return '<span class="adm-growth '+(up?'up':'dn')+'">'+(up?'▲':'▼')+Math.abs(g)+'%</span>';}
+
+function adminContent(){
+  if(acctTab==='adm-users')   return '<div class="acct-card"><h3>Quản lý người dùng</h3><p class="wip-note">Đang phát triển — sẽ ra mắt trong phiên bản tới</p></div>';
+  if(acctTab==='adm-products')return '<div class="acct-card"><h3>Quản lý sản phẩm</h3><p class="wip-note">Đang phát triển — sẽ ra mắt trong phiên bản tới</p></div>';
+  if(acctTab==='adm-orders')  return '<div class="acct-card"><h3>Quản lý đơn hàng</h3><p class="wip-note">Đang phát triển — sẽ ra mắt trong phiên bản tới</p></div>';
+  if(acctTab==='adm-shops')   return '<div class="acct-card"><h3>Quản lý Shop / NCC</h3><p class="wip-note">Đang phát triển — sẽ ra mắt trong phiên bản tới</p></div>';
+  return adminOverview();
+}
+function adminOverview(){
+  const d=adminDays, g=ADM.growth[d];
+  const rev=ADM.perDay.revenue*d;
+  const KPIC={
+    users:'<circle cx="10" cy="7" r="4"/><path d="M2 21c0-4 3.6-7 8-7s8 3 8 7"/>',
+    sellers:'<path d="M3 9l1-5h16l1 5M5 9v11h14V9M9 14h6"/>',
+    products:'<path d="M4 19V7l8-4 8 4v12l-8 4-8-4Z"/><path d="M12 3v18M4 7l8 4 8-4"/>',
+    revenue:'<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>'
+  };
+  const kpis=[
+    {lbl:'Người dùng', val:fmtBig(ADM.totals.users),   sub:'+'+fmtBig(Math.round(ADM.perDay.users*d))+' kỳ này',       g:g.users,   ic:'users'},
+    {lbl:'Người bán',  val:fmtBig(ADM.totals.sellers),  sub:'+'+Math.round(d*1.4)+' kỳ này',                            g:g.sellers, ic:'sellers'},
+    {lbl:'Sản phẩm',   val:fmtBig(ADM.totals.products), sub:'+'+fmtBig(Math.round(d*38))+' kỳ này',                     g:g.products,ic:'products'},
+    {lbl:'Doanh thu',  val:fmtMil(rev)+'đ',             sub:'trong '+d+' ngày',                                         g:g.revenue, ic:'revenue'}
+  ];
+  const kpiHtml=kpis.map(k=>
+    '<div class="adm-kpi">'+
+      '<div class="adm-kpi-top">'+
+        '<div class="adm-kpi-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">'+KPIC[k.ic]+'</svg></div>'+
+        admGrowth(k.g)+
+      '</div>'+
+      '<div class="adm-kpi-val">'+k.val+'</div>'+
+      '<div class="adm-kpi-lbl">'+k.lbl+'</div>'+
+      '<div class="adm-kpi-sub">'+k.sub+'</div>'+
+    '</div>'
+  ).join('');
+
+  const ACT_IC={
+    reg:'<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"/>',
+    shop:'<path d="M3 9l1-5h16l1 5M5 9v11h14V9"/>',
+    order:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>'
+  };
+  const ACT_CLR={reg:'#2980b9',shop:'#e67e22',order:'#27ae60'};
+  const actHtml=ADM.act.map(a=>
+    '<div class="adm-act-row">'+
+      '<div class="adm-act-ic" style="background:'+ACT_CLR[a.tp]+'18;color:'+ACT_CLR[a.tp]+'">'+
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">'+ACT_IC[a.tp]+'</svg>'+
+      '</div>'+
+      '<div class="adm-act-body"><div class="adm-act-text">'+a.text+'</div></div>'+
+      '<div class="adm-act-time">'+a.t+' trước</div>'+
+    '</div>'
+  ).join('');
+
+  const maxRev=ADM.shops[0].rev;
+  const shopsHtml=ADM.shops.map((s,i)=>
+    '<div class="adm-shop-row">'+
+      '<div class="adm-shop-rank">'+(i+1)+'</div>'+
+      '<div class="adm-shop-info">'+
+        '<div class="adm-shop-name">'+s.name+'</div>'+
+        '<div class="adm-bar-wrap"><div class="adm-bar-fill" style="width:'+(s.rev/maxRev*100).toFixed(0)+'%"></div></div>'+
+      '</div>'+
+      '<div class="adm-shop-stats">'+
+        '<div class="adm-shop-rev">'+fmtMil(s.rev)+'đ</div>'+
+        '<div class="adm-shop-orders">'+fmtBig(s.orders)+' đơn</div>'+
+        admGrowth(s.g)+
+      '</div>'+
+    '</div>'
+  ).join('');
+
+  const catsHtml=ADM.cats.map(c=>
+    '<div class="adm-cat-row">'+
+      '<div class="adm-cat-dot" style="background:'+c.clr+'"></div>'+
+      '<div class="adm-cat-name">'+c.name+'</div>'+
+      '<div class="adm-bar-wrap"><div class="adm-bar-fill" style="width:'+c.pct+'%;background:'+c.clr+'"></div></div>'+
+      '<div class="adm-cat-pct">'+c.pct+'%</div>'+
+      '<div class="adm-cat-rev">'+fmtMil(rev*c.pct/100)+'đ</div>'+
+    '</div>'
+  ).join('');
+
+  const rangeHtml=[7,30,90].map(n=>
+    '<button class="adm-range-btn'+(adminDays===n?' on':'')+'" onclick="adminDays='+n+';acctTab=\'dashboard\';renderAccount()">'+n+' ngày</button>'
+  ).join('');
+
+  return '<div class="adm-header">'+
+      '<div><h2 class="adm-title">Tổng quan hệ thống</h2><p class="adm-subtitle">EduMart Admin · '+todayStr()+'</p></div>'+
+      '<div class="adm-range">'+rangeHtml+'</div>'+
+    '</div>'+
+    '<div class="adm-kpi-grid">'+kpiHtml+'</div>'+
+    '<div class="adm-2col">'+
+      '<div class="acct-card">'+
+        '<div class="adm-sec-hd"><h4>Hoạt động gần đây</h4><span class="adm-sec-tag live">● Trực tiếp</span></div>'+
+        '<div class="adm-act-list">'+actHtml+'</div>'+
+      '</div>'+
+      '<div>'+
+        '<div class="acct-card" style="margin-bottom:14px">'+
+          '<div class="adm-sec-hd"><h4>Top 5 shop bán chạy</h4><span class="adm-sec-tag">'+d+' ngày qua</span></div>'+
+          '<div class="adm-shop-list">'+shopsHtml+'</div>'+
+        '</div>'+
+        '<div class="acct-card">'+
+          '<div class="adm-sec-hd"><h4>Phân bổ doanh thu</h4><span class="adm-sec-tag">Theo danh mục</span></div>'+
+          '<div class="adm-cat-list">'+catsHtml+'</div>'+
+          '<div class="adm-rev-total">Tổng '+d+' ngày: <b>'+fmtMil(rev)+'đ</b></div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+}
+
 function navForRole(r){
+  if(r==='admin'){
+    const adminTabs=[['dashboard','Tổng quan'],['adm-users','Người dùng'],['adm-products','Sản phẩm'],['adm-orders','Đơn hàng'],['adm-shops','Shop / NCC']];
+    return adminTabs;
+  }
   const nav=[['dashboard','Tổng quan'],['orders','Đơn hàng của tôi'],['returns','Đổi / Trả hàng']];
   /* Người mua — sub-types */
   if(r==='hocsinh')nav.push(['study','Học tập & Gợi ý sách']);

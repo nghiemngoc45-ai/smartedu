@@ -1665,6 +1665,11 @@ function adminUserList(){
     const st=_admStatus(u);
     const clr=ADM_ROLE_CLR[u.role]||'#888';
     const av=u.name?.charAt(0)?.toUpperCase()||'?';
+    const rowIsMe=user&&u.id===user.id;
+    const lockQuick=rowIsMe||st==='deleted'?''
+      :st==='locked'
+        ?'<button class="adm-row-btn adm-unlock-btn" title="Mở khóa tài khoản này" onclick="event.stopPropagation();doAdminUnlock(\''+u.id+'\')">Mở khóa</button>'
+        :'<button class="adm-row-btn adm-lock-btn" title="Khóa tài khoản này" onclick="event.stopPropagation();doAdminLock(\''+u.id+'\')">Khóa</button>';
     return '<tr class="adm-usr-row" onclick="admSelectedUserId=\''+u.id+'\';admUsersView=\'detail\';renderAccount()">'+
       '<td><div class="adm-usr-av" style="background:'+clr+'18;color:'+clr+'">'+av+'</div></td>'+
       '<td><div class="adm-usr-nm">'+escHtml(u.name||'—')+'</div><div class="adm-usr-em">'+escHtml(u.email||'—')+'</div></td>'+
@@ -1673,7 +1678,10 @@ function adminUserList(){
       '</td>'+
       '<td>'+ADM_STATUS_BADGE[st]+'</td>'+
       '<td class="adm-usr-date">'+(u.createdAt||'—')+'</td>'+
-      '<td onclick="event.stopPropagation()"><button class="adm-row-btn" onclick="admSelectedUserId=\''+u.id+'\';admUsersView=\'detail\';renderAccount()">Xem</button></td>'+
+      '<td class="adm-row-actions" onclick="event.stopPropagation()">'+
+        '<button class="adm-row-btn" onclick="admSelectedUserId=\''+u.id+'\';admUsersView=\'detail\';renderAccount()">Xem</button>'+
+        lockQuick+
+      '</td>'+
     '</tr>';
   }).join('');
 

@@ -1218,6 +1218,11 @@
 .adm-badge.gray{background:var(--surface);color:var(--text-soft);}
 .adm-row-btn{font-size:12px;padding:5px 11px;border:1.5px solid var(--line);border-radius:7px;background:transparent;cursor:pointer;color:var(--text);}
 .adm-row-btn:hover{background:var(--surface);}
+.adm-row-actions{display:flex;gap:6px;align-items:center;white-space:nowrap;}
+.adm-lock-btn{color:#c0392b;border-color:#f5c0b8;}
+.adm-lock-btn:hover{background:#fff0ee;border-color:#c0392b;}
+.adm-unlock-btn{color:#27ae60;border-color:#a8dfbc;}
+.adm-unlock-btn:hover{background:#edfaf2;border-color:#27ae60;}
 .adm-pager{display:flex;align-items:center;justify-content:center;gap:14px;padding:14px;font-size:13px;color:var(--text-soft);}
 .adm-pager-btn{border:1.5px solid var(--line);border-radius:8px;padding:7px 14px;font-size:13px;background:var(--paper);cursor:pointer;color:var(--text);}
 .adm-pager-btn:disabled{opacity:.4;cursor:default;}

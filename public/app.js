@@ -960,9 +960,21 @@ function _rolePicker(){
         '<div class="role-grid rg-cols-'+g.roles.length+'">'+cards+'</div></div>';
     }).join('')+'</div>';
 }
+const DEMO_HINTS={
+  admin:  {email:'admin@edumart.vn',  pw:'admin123'},
+  hocsinh:{email:'hocsinh@demo.vn',  pw:'demo123'},
+  sinhvien:{email:'sinhvien@demo.vn', pw:'demo123'},
+};
 function _loginForm(sel){
   const rem=LS.get('rememberMe',false);
-  return '<div class="form-field"><label>Email</label>'+
+  const hint=DEMO_HINTS[sel.k];
+  const hintHtml=hint
+    ?'<div class="demo-hint" onclick="document.getElementById(\'lgEmail\').value=\''+hint.email+'\';document.getElementById(\'lgPw\').value=\''+hint.pw+'\'">'+
+      '<span class="demo-hint-label">Demo</span> '+hint.email+' / '+hint.pw+
+      ' <span class="demo-hint-fill">Điền tự động ›</span></div>'
+    :'';
+  return hintHtml+
+    '<div class="form-field"><label>Email</label>'+
     '<input id="lgEmail" type="email" placeholder="ten@email.com" autocomplete="email"></div>'+
     '<div class="form-field"><div class="auth-label-row"><label>Mật khẩu</label>'+
     '<a class="auth-link" onclick="authTab(\'forgot\')">Quên mật khẩu?</a></div>'+
@@ -2417,5 +2429,22 @@ function closeNav(){document.querySelectorAll('.mainnav .navitem.open').forEach(
 document.addEventListener('click',e=>{if(!e.target.closest('.has-menu'))closeNav();});
 
 /* ---------------- init ---------------- */
+// Seed demo accounts (chỉ tạo nếu chưa tồn tại)
+(function(){
+  const SEEDS=[
+    {id:'demo-admin',name:'Admin EduMart',   email:'admin@edumart.vn', pw:'admin123',role:'admin'},
+    {id:'demo-hs',   name:'Nguyễn Học Sinh', email:'hocsinh@demo.vn',  pw:'demo123', role:'hocsinh'},
+    {id:'demo-sv',   name:'Trần Sinh Viên',  email:'sinhvien@demo.vn', pw:'demo123', role:'sinhvien'},
+  ];
+  let changed=false;
+  SEEDS.forEach(s=>{
+    if(!authUsers.find(u=>u.email===s.email)){
+      authUsers.push({id:s.id,name:s.name,email:s.email,pwHash:hashPw(s.pw),role:s.role,
+        points:s.role==='admin'?0:120,phone:'',ref:'EDUDEMO',checkin:null,streak:0,createdAt:'01/01/2025'});
+      changed=true;
+    }
+  });
+  if(changed)saveAuthUsers();
+})();
 updateCartCount(); updateWishCount(); updateNotifCount();
 render();

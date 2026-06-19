@@ -961,9 +961,11 @@ function _rolePicker(){
     }).join('')+'</div>';
 }
 const DEMO_ACCOUNTS=[
-  {role:'admin',   label:'Quản trị viên', email:'admin@edumart.vn',  pw:'admin123'},
-  {role:'hocsinh', label:'Học sinh',       email:'hocsinh@demo.vn',  pw:'demo123'},
-  {role:'sinhvien',label:'Sinh viên',      email:'sinhvien@demo.vn', pw:'demo123'},
+  {role:'admin',   label:'Quản trị viên',        email:'admin@edumart.vn',  pw:'admin123'},
+  {role:'hocsinh', label:'Học sinh',               email:'hocsinh@demo.vn',  pw:'demo123'},
+  {role:'sinhvien',label:'Sinh viên',              email:'sinhvien@demo.vn', pw:'demo123'},
+  {role:'parent',  label:'Phụ huynh',              email:'phuhuynh@demo.vn', pw:'demo123'},
+  {role:'school',  label:'Trường học / Tổ chức',   email:'truonghoc@demo.vn',pw:'demo123'},
 ];
 function demoFill(role,email,pw){
   lgRole=role;
@@ -2446,9 +2448,11 @@ document.addEventListener('click',e=>{if(!e.target.closest('.has-menu'))closeNav
 // Seed demo accounts (chỉ tạo nếu chưa tồn tại)
 (function(){
   const SEEDS=[
-    {id:'demo-admin',name:'Admin EduMart',   email:'admin@edumart.vn', pw:'admin123',role:'admin'},
-    {id:'demo-hs',   name:'Nguyễn Học Sinh', email:'hocsinh@demo.vn',  pw:'demo123', role:'hocsinh'},
-    {id:'demo-sv',   name:'Trần Sinh Viên',  email:'sinhvien@demo.vn', pw:'demo123', role:'sinhvien'},
+    {id:'demo-admin', name:'Admin EduMart',          email:'admin@edumart.vn',  pw:'admin123',role:'admin'},
+    {id:'demo-hs',    name:'Nguyễn Học Sinh',         email:'hocsinh@demo.vn',   pw:'demo123', role:'hocsinh'},
+    {id:'demo-sv',    name:'Trần Sinh Viên',           email:'sinhvien@demo.vn',  pw:'demo123', role:'sinhvien'},
+    {id:'demo-ph',    name:'Lê Phụ Huynh',             email:'phuhuynh@demo.vn',  pw:'demo123', role:'parent'},
+    {id:'demo-th',    name:'Trường THPT Demo',          email:'truonghoc@demo.vn', pw:'demo123', role:'school'},
   ];
   let changed=false;
   SEEDS.forEach(s=>{

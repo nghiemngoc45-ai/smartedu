@@ -869,7 +869,7 @@ const ROLE_GROUPS=[
     roles:[
       {k:'school',name:'Trường học / Tổ chức',desc:'Mua sỉ, yêu cầu báo giá, thư viện số',ic:'<path d="M3 21h18M3 10l9-7 9 7M9 21V14h6v7"/>'},
     ],
-    kind:'truonghoc'
+    kind:'portal',to:'school.html'
   },
   {
     group:'Người bán / NCC',
@@ -967,6 +967,7 @@ const DEMO_ACCOUNTS=[
   {role:'sinhvien',label:'Sinh viên',              email:'sinhvien@demo.vn', pw:'demo123'},
   {role:'parent',  label:'Phụ huynh',              email:'phuhuynh@demo.vn', pw:'demo123'},
   {role:'school',  label:'Trường học / Tổ chức',   email:'truonghoc@demo.vn',pw:'demo123'},
+  {role:'school',  label:'Ban Giám hiệu (BGH)',     email:'bgh@demo.vn',      pw:'demo123'},
 ];
 function demoFill(role,email,pw){
   lgRole=role;
@@ -1075,7 +1076,6 @@ function doLogin(){
   const email=(val('lgEmail')||'').trim().toLowerCase();
   const pw=val('lgPw')||'';
   const sel=ROLES.find(r=>r.k===lgRole)||ROLES[0];
-  if(sel.kind==='redirect'){window.location.href=sel.to;return;}
   if(!email){showAuthErr('lgErr','Vui lòng nhập email');return;}
   if(!pw){showAuthErr('lgErr','Vui lòng nhập mật khẩu');return;}
   const found=authUsers.find(u=>(u.email===email||u.phone===email)&&u.pwHash===hashPw(pw));
@@ -1084,6 +1084,7 @@ function doLogin(){
   if(found.status==='locked'){showAuthErr('lgErr','Tài khoản đã bị khóa: <b>'+escHtml(found.lockedReason||'Vi phạm điều khoản')+'</b>. Vui lòng liên hệ hỗ trợ.');return;}
   LS.set('rememberMe',!!document.getElementById('lgRemember')?.checked);
   user={...found};saveUser();
+  if(sel.kind==='redirect'||sel.kind==='portal'){window.location.href=sel.to;return;}
   toast('Đăng nhập thành công · '+ROLELBL[user.role]);acctTab='dashboard';go('account');
 }
 function doRegister(){
@@ -1091,8 +1092,7 @@ function doRegister(){
   const email=(val('rgEmail')||'').trim().toLowerCase();
   const pw=val('rgPw')||'',pw2=val('rgPw2')||'';
   const sel=ROLES.find(r=>r.k===lgRole)||ROLES[0];
-  if(sel.kind==='redirect'){window.location.href=sel.to;return;}
-  if(!name){showAuthErr('rgErr','Vui lòng nhập họ tên');return;}
+  if(!name){showAuthErr('rgErr','Vui lòng nhập họ tên / tên tổ chức');return;}
   if(!validEmail(email)){showAuthErr('rgErr','Email không hợp lệ');return;}
   if(!validPw(pw)){showAuthErr('rgErr','Mật khẩu phải từ 6 ký tự trở lên');return;}
   if(pw!==pw2){showAuthErr('rgErr','Mật khẩu xác nhận không khớp');return;}
@@ -1103,6 +1103,7 @@ function doRegister(){
     points:0,phone:'',ref:refCode(name),checkin:null,streak:0,createdAt:todayStr()};
   authUsers.push(nu);saveAuthUsers();
   user={...nu};saveUser();
+  if(sel.kind==='redirect'||sel.kind==='portal'){window.location.href=sel.to;return;}
   toast('Tạo tài khoản thành công · '+ROLELBL[lgRole]);acctTab='dashboard';go('account');
 }
 function doSocialAuth(provider){
@@ -1124,6 +1125,7 @@ function doSocialAuth(provider){
     toast('Đăng nhập qua '+pname+' · '+ROLELBL[found.role||lgRole]);
   }
   user={...found,role:found.role||lgRole};saveUser();
+  if(sel.kind==='redirect'||sel.kind==='portal'){window.location.href=sel.to;return;}
   acctTab='dashboard';go('account');
 }
 function doForgotPw(){
@@ -2722,6 +2724,7 @@ document.addEventListener('click',e=>{if(!e.target.closest('.has-menu'))closeNav
     {id:'demo-sv',   name:'Trần Sinh Viên',     email:'sinhvien@demo.vn',  pw:'demo123', role:'sinhvien'},
     {id:'demo-ph',   name:'Lê Phụ Huynh',       email:'phuhuynh@demo.vn',  pw:'demo123', role:'parent'},
     {id:'demo-th',   name:'Trường THPT Demo',   email:'truonghoc@demo.vn', pw:'demo123', role:'school'},
+    {id:'demo-bgh',  name:'Hiệu Trưởng Demo',   email:'bgh@demo.vn',       pw:'demo123', role:'school', subRole:'BGH'},
   ];
   const MOCKS=[
     {id:'mock-01',name:'Nguyễn Văn An',    email:'nva001@gmail.com',     pw:'mock123',role:'hocsinh', status:'active',  createdAt:'15/03/2025',points:240,ref:'EDU4812'},
@@ -2748,6 +2751,7 @@ document.addEventListener('click',e=>{if(!e.target.closest('.has-menu'))closeNav
     if(!authUsers.find(u=>u.email===s.email)){
       authUsers.push({id:s.id,name:s.name,email:s.email,pwHash:hashPw(s.pw),role:s.role,
         adminLevel:s.adminLevel||undefined,
+        subRole:s.subRole||undefined,
         points:s.role==='admin'?0:120,phone:'',ref:'EDUDEMO',checkin:null,streak:0,
         createdAt:'01/01/2025',status:'active'});
       changed=true;

@@ -1,0 +1,2193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Sàn Hiệu Sách — Cổng Trường học</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap');
+:root{
+  --ink:#1f4773;--ink-deep:#163554;--paper:#f4f6f9;--surface:#fff;--line:#e6eaf0;
+  --text:#23303c;--text-soft:#73808d;--marigold:#f0a92e;--coral:#e2563f;--green:#1a7a4a;
+  --amber:#d97706;--sidebar:#163554;--r:13px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Be Vietnam Pro',system-ui,sans-serif;color:var(--text);background:var(--paper);-webkit-font-smoothing:antialiased;line-height:1.55;}
+a{color:inherit;text-decoration:none;}button{font-family:inherit;cursor:pointer;border:none;background:none;}
+
+/* ── Shell ── */
+.shell{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+
+/* ── Sidebar ── */
+.side{background:var(--sidebar);color:#cdd9e6;display:flex;flex-direction:column;padding:18px 14px;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;}
+.side .logo{display:flex;align-items:center;gap:9px;padding:6px 8px 20px;}
+.side .logo .mark{width:34px;height:34px;border-radius:9px;background:var(--marigold);color:#5a3d00;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.side .logo .name{font-family:'Lora',serif;font-weight:600;font-size:19px;color:#fff;}
+.side .logo small{display:block;font-size:10.5px;color:#7e93ab;font-family:'Be Vietnam Pro';font-weight:400;letter-spacing:.05em;}
+.navg{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#6f86a0;padding:14px 10px 6px;font-weight:600;}
+.navg:first-child{padding-top:4px;}
+.nav-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:10px 11px;border-radius:9px;color:#cdd9e6;font-size:13.5px;margin-bottom:2px;transition:background .12s;position:relative;}
+.nav-item:hover{background:rgba(255,255,255,.06);}
+.nav-item.on{background:var(--ink);color:#fff;font-weight:500;}
+.nav-item svg{flex-shrink:0;stroke:currentColor;}
+.nb{margin-left:auto;background:var(--marigold);color:#5a3d00;font-size:9.5px;font-weight:700;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;}
+.side-foot{margin-top:auto;display:flex;align-items:center;gap:10px;padding:12px 8px 4px;border-top:1px solid rgba(255,255,255,.08);}
+.side-foot .av{width:34px;height:34px;border-radius:50%;background:var(--marigold);color:#5a3d00;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex-shrink:0;}
+.side-foot .nm{font-size:13px;color:#fff;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.side-foot .rl{font-size:11px;color:#7e93ab;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.side-foot .cog{color:#7e93ab;margin-left:auto;flex-shrink:0;transition:color .12s;}
+.side-foot .cog:hover{color:#fff;}
+
+/* ── Main ── */
+.main{display:flex;flex-direction:column;min-width:0;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--line);padding:14px 26px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:20;}
+.topbar h1{font-family:'Lora',serif;font-weight:600;font-size:21px;color:var(--ink-deep);margin:0;}
+.topbar .sp{flex:1;}
+.tb-btn{width:36px;height:36px;border-radius:10px;background:var(--paper);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--text-soft);transition:all .12s;}
+.tb-btn:hover{color:var(--ink);border-color:var(--ink);}
+.content{padding:24px 26px 48px;}
+
+/* ── Org banner ── */
+.org-banner{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+.ob-av{width:44px;height:44px;border-radius:12px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;flex-shrink:0;}
+.ob-info{flex:1;min-width:0;}
+.ob-row1{display:flex;align-items:center;gap:7px;margin-bottom:5px;flex-wrap:wrap;}
+.ob-name{font-size:16px;font-weight:700;}
+.ob-row2{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.ob-meta{font-size:11.5px;color:var(--text-soft);display:flex;align-items:center;gap:4px;}
+.ob-acts{display:flex;gap:8px;flex-shrink:0;}
+
+/* ── Badge ── */
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.bb{background:#dbeafe;color:#1e40af;}
+.bg{background:#dcfce7;color:#15803d;}
+.bo{background:#ffedd5;color:#c2410c;}
+.br{background:#fee2e2;color:#b91c1c;}
+.bp{background:#ede9fe;color:#6d28d9;}
+.bs{background:#f1f5f9;color:#475569;}
+.by{background:#fefce8;color:#92400e;}
+
+/* ── KPI grid ── */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:11px;margin-bottom:18px;}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;transition:box-shadow .15s;cursor:default;}
+.kpi:hover{box-shadow:0 4px 18px rgba(22,53,84,.09);}
+.kpi .top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.kpi .ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.kpi .tr{font-size:11px;font-weight:600;}
+.tr-up{color:var(--green);}
+.tr-dn{color:var(--coral);}
+.tr-wn{color:var(--amber);}
+.kpi .val{font-size:22px;font-weight:700;line-height:1;margin-bottom:3px;color:var(--ink-deep);}
+.kpi .lbl{font-size:12.5px;font-weight:500;margin-bottom:2px;}
+.kpi .sub{font-size:10.5px;color:var(--text-soft);}
+
+/* ── Panels ── */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;}
+.ph h3{font-family:'Lora',serif;font-weight:600;font-size:15px;color:var(--ink-deep);}
+.ph .phsub{font-size:11px;color:var(--text-soft);margin-top:2px;}
+.ph .phact{font-size:12px;color:var(--ink);font-weight:500;display:flex;align-items:center;gap:4px;cursor:pointer;margin-top:2px;white-space:nowrap;}
+.ph .phact:hover{color:var(--ink-deep);}
+.charts-row{display:grid;grid-template-columns:1fr 300px;gap:16px;margin-bottom:16px;}
+.bottom-row{display:grid;grid-template-columns:1fr 300px;gap:16px;}
+
+/* ── Donut legend ── */
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:10px;}
+.leg-row{display:flex;align-items:center;justify-content:space-between;font-size:12px;margin-bottom:5px;}
+.leg-left{display:flex;align-items:center;gap:7px;}
+.leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.leg-pct{font-weight:600;color:var(--text-soft);}
+
+/* ── Notification list ── */
+.notif-item{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid var(--line);}
+.notif-item:last-child{border-bottom:none;}
+.ni-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.ni-txt{font-size:12px;color:var(--text);line-height:1.4;flex:1;}
+.ni-time{font-size:10.5px;color:var(--text-soft);margin-top:2px;}
+.ph-badge{display:flex;align-items:center;gap:6px;}
+.cnt-badge{background:var(--marigold);color:#5a3d00;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;}
+
+/* ── Tables ── */
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+th{text-align:left;font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-soft);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--line);}
+td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+.tb-panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;}
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.toolbar .sp{flex:1;}
+.fchip{font-size:12.5px;padding:7px 13px;border-radius:20px;border:1px solid var(--line);color:var(--text);background:var(--surface);cursor:pointer;transition:all .12s;}
+.fchip.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+.fchip:hover:not(.on){border-color:var(--ink);color:var(--ink);}
+.act-sm{font-size:12.5px;color:var(--ink);font-weight:500;padding:5px 10px;border:1px solid var(--line);border-radius:8px;transition:all .12s;}
+.act-sm:hover{background:var(--paper);}
+.del-sm{font-size:12.5px;color:var(--coral);font-weight:500;padding:5px 10px;border:1px solid #f1d6d0;border-radius:8px;}
+.del-sm:hover{background:#fae3df;}
+.btn-pr{display:inline-flex;align-items:center;gap:7px;background:var(--ink);color:#fff;font-weight:500;font-size:13.5px;padding:9px 16px;border-radius:10px;}
+.btn-pr:hover{background:var(--ink-deep);}
+.btn-out{display:inline-flex;align-items:center;gap:6px;background:var(--surface);color:var(--text);font-weight:500;font-size:13px;padding:8px 14px;border-radius:10px;border:1px solid var(--line);}
+.btn-out:hover{border-color:var(--ink);color:var(--ink);}
+
+/* ── Modal ── */
+.modal-bg{position:fixed;inset:0;background:rgba(22,53,84,.4);display:none;align-items:center;justify-content:center;z-index:60;padding:20px;}
+.modal-bg.show{display:flex;}
+.modal{background:#fff;border-radius:14px;padding:24px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(22,53,84,.25);}
+.modal h2{font-family:'Lora',serif;font-size:18px;font-weight:600;color:var(--ink-deep);margin:0 0 16px;}
+.mf{margin-bottom:12px;}
+.mf label{display:block;font-size:12.5px;font-weight:500;color:var(--text-soft);margin-bottom:4px;}
+.mf input,.mf select,.mf textarea{width:100%;font-family:inherit;font-size:14px;border:1.5px solid var(--line);border-radius:9px;padding:10px 12px;outline:none;color:var(--text);background:var(--paper);}
+.mf input:focus,.mf select:focus,.mf textarea:focus{border-color:var(--ink);}
+.mf textarea{min-height:68px;resize:vertical;}
+.m2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.mact{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+.modal .add{background:var(--ink);color:#fff;font-weight:500;font-size:13.5px;padding:9px 16px;border-radius:9px;}
+.modal .add:hover{background:var(--ink-deep);}
+.modal .act-btn{font-size:13px;padding:9px 14px;border:1px solid var(--line);border-radius:9px;}
+.modal .act-btn:hover{background:var(--paper);}
+.modal .del-btn{font-size:13px;padding:9px 14px;border:1px solid #f1d6d0;border-radius:9px;color:var(--coral);font-weight:500;background:none;cursor:pointer;}
+.modal .del-btn:hover{background:#fae3df;}
+.modal-xl{max-width:780px!important;}
+#confirmBg{z-index:65;}
+.kp-opt{padding:8px 12px;font-size:13px;cursor:pointer;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.kp-opt:hover{background:var(--paper);}
+.kp-opt-unit{font-size:11px;color:var(--text-soft);white-space:nowrap;}
+#kp-dropdown{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:9px;z-index:200;max-height:180px;overflow-y:auto;box-shadow:0 4px 16px rgba(22,53,84,.12);}
+.req{color:var(--coral);font-weight:600;margin-left:1px;}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink-deep);color:#fff;padding:12px 20px;border-radius:11px;font-size:14px;font-weight:500;opacity:0;transform:translateY(14px);transition:all .3s;z-index:70;box-shadow:0 10px 30px rgba(0,0,0,.2);}
+.toast.show{opacity:1;transform:none;}
+
+
+/* ── Budget bars ── */
+.bgt-bar-bg{background:var(--line);border-radius:4px;height:7px;overflow:hidden;margin-top:5px;}
+.bgt-bar-fill{height:100%;border-radius:4px;transition:width .5s;}
+
+/* ── Recent 3-col grid ── */
+.recent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px;}
+.ri{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);}
+.ri:last-child{border-bottom:none;padding-bottom:0;}
+.ri:first-child{padding-top:0;}
+.ri-left{flex:1;min-width:0;}
+.ri-title{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ri-meta{font-size:12px;color:var(--text-soft);}
+.ri-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+.ri-amount{font-size:13px;font-weight:600;color:var(--ink-deep);}
+.recent-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.recent-head h3{font-family:'Lora',serif;font-weight:600;font-size:15px;color:var(--ink-deep);}
+.recent-head .rh-link{font-size:12.5px;color:var(--ink);font-weight:500;cursor:pointer;}
+.recent-head .rh-link:hover{color:var(--ink-deep);}
+
+/* ── Tabs ── */
+.tabs{display:flex;border-bottom:2px solid var(--line);margin-bottom:18px;}
+.tab-btn{padding:10px 22px;font-size:14px;font-weight:500;color:var(--text-soft);border:none;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;background:none;border-radius:0;cursor:pointer;}
+.tab-btn.on{color:var(--ink);border-bottom-color:var(--ink);font-weight:600;}
+.tab-btn:hover:not(.on){color:var(--text);}
+/* ── Tooltip ── */
+.tip-wrap{position:relative;display:inline-flex;}
+.tip-wrap .tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;font-size:11.5px;white-space:nowrap;padding:5px 10px;border-radius:7px;opacity:0;pointer-events:none;transition:opacity .15s;z-index:10;}
+.tip-wrap .tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1e293b;}
+.tip-wrap:hover .tip{opacity:1;}
+/* ── Qty control ── */
+.qty-step{width:28px;height:30px;border:1.5px solid var(--line);border-radius:7px;background:var(--paper);font-size:17px;font-weight:500;color:var(--text);transition:all .12s;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.qty-step:hover{border-color:var(--ink);color:var(--ink);}
+.qty-input{width:46px;height:30px;border:1.5px solid var(--line);border-radius:7px;font-family:inherit;font-size:13px;outline:none;text-align:center;background:var(--surface);}
+.qty-input:focus{border-color:var(--ink);}
+.qty-input::-webkit-inner-spin-button,.qty-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+
+/* ── Responsive ── */
+@media(max-width:960px){
+  .shell{grid-template-columns:1fr;}
+  .side{display:none;}
+  .kpis{grid-template-columns:repeat(3,1fr);}
+  .charts-row,.bottom-row,.recent-grid{grid-template-columns:1fr;}
+}
+@media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr);}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+:focus-visible{outline:2.5px solid var(--marigold);outline-offset:2px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)tryCloseModal()"><div class="modal" id="modal"></div></div>
+<div class="modal-bg" id="confirmBg" onclick="if(event.target===this)hideConfirm()"><div class="modal" id="confirmModal" style="max-width:360px"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+/* ── Storage (school-specific data) ── */
+const LS={
+  get(k,d){try{const v=localStorage.getItem('school_'+k);return v===null?d:JSON.parse(v);}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem('school_'+k,JSON.stringify(v));}catch(e){}}
+};
+/* ── Main app session (shared with Sàn Hiệu Sách) ── */
+function getMainUser(){try{const v=localStorage.getItem('edumart_user');return v?JSON.parse(v):null;}catch(e){return null;}}
+let currentUser=null;
+let membersTab='members',memberSearch='',memberGender='all',memberDeptFilter='all',deptSearch='';
+let CART=[];
+let cartTitle='',cartDesc='',cartNeedDate='',cartNote='';
+let cartDept='',cartMember='';
+let cartSaveKit=false;
+let cartSelected=new Set();
+
+/* ── Formatters ── */
+const fmtV=n=>n>=1e9?(n/1e9).toFixed(1).replace(/\.0$/,'')+'tỷ':n>=1e6?(n/1e6).toFixed(0)+'tr':n>=1e3?(n/1e3).toFixed(0)+'k':n;
+const fmtC=n=>n.toLocaleString('vi-VN')+'đ';
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+function readMoney(n){
+  if(!n&&n!==0)return'';
+  n=Math.abs(Math.round(n));if(n===0)return'Không đồng';
+  const d=['không','một','hai','ba','bốn','năm','sáu','bảy','tám','chín'];
+  function r3(x){
+    if(!x)return'';
+    const h=Math.floor(x/100),t=Math.floor(x%100/10),u=x%10;let s='';
+    if(h){s+=d[h]+' trăm';if(!t&&u)s+=' linh';}
+    if(t===1)s+=(s?' ':'')+'mười';
+    else if(t>1)s+=(s?' ':'')+d[t]+' mươi';
+    if(u){const w=(t>1&&u===1)?'mốt':(t&&u===5)?'lăm':d[u];s+=(s?' ':'')+w;}
+    return s;
+  }
+  const ty=Math.floor(n/1e9),tr=Math.floor(n%1e9/1e6),ng=Math.floor(n%1e6/1e3),dv=n%1e3;
+  const parts=[];
+  if(ty)parts.push(r3(ty)+' tỷ');
+  if(tr)parts.push(r3(tr)+' triệu');
+  if(ng)parts.push(r3(ng)+' nghìn');
+  if(dv)parts.push(r3(dv));
+  const txt=parts.join(' ');
+  return txt.charAt(0).toUpperCase()+txt.slice(1)+' đồng';
+}
+function parsePrDate(s){const[d,m,y]=(s||'').split('/');return d?new Date(+y,+m-1,+d):null;}
+function parseInputDate(s){const[y,m,d]=(s||'').split('-');return y?new Date(+y,+m-1,+d):null;}
+
+/* ── Icons (inline SVG) ── */
+function ic(path,size=15){return`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;}
+const I={
+  dash:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>',
+  org:'<path d="M3 21h18M3 10l9-7 9 7"/><path d="M9 21V14h6v7"/>',
+  members:'<circle cx="9" cy="7" r="3"/><path d="M3 20c0-3 2.5-5 6-5s6 2 6 5"/><path d="M16 4a3 3 0 0 1 0 6M19 20c0-2-1.3-3.8-3-4.5"/>',
+  catalog:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  kit:'<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
+  incat:'<rect x="2" y="3" width="7" height="7"/><rect x="15" y="3" width="7" height="7"/><rect x="15" y="14" width="7" height="7"/><rect x="2" y="14" width="7" height="7"/>',
+  pr:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15h6"/>',
+  appr:'<path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+  order:'<path d="M5 4h14l-1 16H6L5 4Z"/><path d="M9 8h6"/>',
+  budget:'<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  invoice:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>',
+  ebook:'<path d="M4 19V5a1 1 0 0 1 1-1h6v16H5a1 1 0 0 1-1-1z"/><path d="M13 4h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-6"/>',
+  report:'<path d="M18 20V10M12 20V4M6 20v-6"/>',
+  rfq:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  contract:'<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/><path d="M9 9h1M9 13h6M9 17h6"/>',
+  bell:'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  chevd:'<path d="m6 9 6 6 6-6"/>',
+  dl:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+  support:'<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/>',
+  settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+};
+
+/* ── Navigation config ── */
+const NAV=[
+  {g:'Tổng quan'},
+  {v:'dashboard',l:'Dashboard',i:'dash'},
+  {g:'Tổ chức'},
+  {v:'organization',l:'Tổ chức',i:'org'},
+  {v:'members',l:'Thành viên & Phòng ban',i:'members'},
+  {g:'Mua sắm'},
+  {v:'marketplace',l:'Danh mục mua sắm',i:'catalog'},
+  {v:'schoolkit',l:'School Kit',i:'kit'},
+  {g:'Quy trình'},
+  {v:'purchase',l:'Yêu cầu mua hàng',i:'pr'},
+  {v:'approvals',l:'Phê duyệt',i:'appr',badge:3},
+  {v:'orders',l:'Đơn hàng',i:'order'},
+  {g:'Tài chính'},
+  {v:'budget',l:'Ngân sách',i:'budget'},
+  {v:'invoices',l:'Hóa đơn & Thanh toán',i:'invoice'},
+  {v:'contracts',l:'Hợp đồng',i:'contract'},
+  {g:'Tài nguyên'},
+  {v:'ebook',l:'Ebook & Tài nguyên số',i:'ebook'},
+  {v:'rfq',l:'Báo giá B2B',i:'rfq'},
+  {g:'Phân tích'},
+  {v:'reports',l:'Báo cáo',i:'report'},
+  {g:'Khác'},
+  {v:'support',l:'Hỗ trợ',i:'support'},
+];
+
+/* ── Mock data ── */
+const ORG={name:'Trường THPT Demo',type:'Trường học',status:'active',points:1250,contracts:2,year:'2024-2025',tax:'0100200300',addr:'123 Nguyễn Trãi, Q.1, TP.HCM',email:'contact@thptdemo.edu.vn',phone:'028 3812 3456'};
+
+const MEMBERS=[
+  {id:1,name:'Nguyễn Văn An',gender:'nam',role:'admin',dept:'Ban Giám hiệu',email:'nvan@thptdemo.edu.vn',phone:'0901234567',status:'active'},
+  {id:2,name:'Trần Thị Bích',gender:'nu',role:'manager',dept:'Phòng Đào tạo',email:'ttbich@thptdemo.edu.vn',phone:'0912345678',status:'active'},
+  {id:3,name:'Lê Minh Cường',gender:'nam',role:'buyer',dept:'Phòng Hành chính',email:'lmcuong@thptdemo.edu.vn',phone:'0923456789',status:'active'},
+  {id:4,name:'Phạm Hồng Dung',gender:'nu',role:'viewer',dept:'Phòng Kế toán',email:'phdung@thptdemo.edu.vn',phone:'0934567890',status:'active'},
+  {id:5,name:'Hoàng Thu Hà',gender:'nu',role:'buyer',dept:'Phòng Thư viện',email:'htha@thptdemo.edu.vn',phone:'0945678901',status:'inactive'},
+  {id:6,name:'Vũ Quang Hải',gender:'nam',role:'manager',dept:'Khối Tự Nhiên',email:'vqhai@thptdemo.edu.vn',phone:'0956789012',status:'active'},
+];
+const DEPTS=[
+  {id:1,name:'Ban Giám hiệu',head:'Nguyễn Văn An',budget:80e6,spent:42e6,members:3},
+  {id:2,name:'Phòng Đào tạo',head:'Trần Thị Bích',budget:120e6,spent:98e6,members:8},
+  {id:3,name:'Phòng Hành chính',head:'Lê Minh Cường',budget:60e6,spent:35e6,members:5},
+  {id:4,name:'Phòng Kế toán',head:'Phạm Hồng Dung',budget:40e6,spent:12e6,members:4},
+  {id:5,name:'Phòng Thư viện',head:'Hoàng Thu Hà',budget:90e6,spent:67e6,members:6},
+  {id:6,name:'Khối Tự Nhiên',head:'Vũ Quang Hải',budget:180e6,spent:145e6,members:22},
+];
+
+const PR_STATUS={pending:['Chờ duyệt','bo'],approved:['Đã duyệt','bg'],rejected:['Từ chối','br'],done:['Hoàn thành','bs']};
+let PRS=LS.get('prs',[
+  {id:'PR-2026-048',title:'Mua bộ SGK lớp 10 năm học 2026-2027',dept:'Phòng Đào tạo',by:'Trần Thị Bích',date:'15/06/2026',total:142e6,status:'pending',items:3,lvl:2},
+  {id:'PR-2026-047',title:'Văn phòng phẩm quý 3/2026',dept:'Phòng Hành chính',by:'Lê Minh Cường',date:'12/06/2026',total:28.5e6,status:'approved',items:12,lvl:1},
+  {id:'PR-2026-046',title:'Thiết bị phòng máy tính mới',dept:'Phòng Đào tạo',by:'Trần Thị Bích',date:'10/06/2026',total:385e6,status:'pending',items:5,lvl:3},
+  {id:'PR-2026-045',title:'Sách tham khảo thư viện 2026',dept:'Phòng Thư viện',by:'Hoàng Thu Hà',date:'08/06/2026',total:75e6,status:'rejected',items:48,lvl:2},
+  {id:'PR-2026-044',title:'Dụng cụ thể dục thể thao',dept:'Phòng Đào tạo',by:'Trần Thị Bích',date:'05/06/2026',total:18.2e6,status:'done',items:8,lvl:1},
+]);
+
+const ORD_ST={ship:['Đang giao','bb'],done:['Hoàn thành','bg'],proc:['Đang xử lý','bo'],cancel:['Đã hủy','br']};
+let ORDERS=LS.get('school_orders',[
+  {id:'ORD-2026-0821',pr:'PR-2026-047',sup:'Nhà sách Tri Thức',date:'14/06/2026',dlv:'20/06/2026',total:28.5e6,status:'ship',items:12},
+  {id:'ORD-2026-0819',pr:'PR-2026-044',sup:'Thiết bị GD Việt Nam',date:'08/06/2026',dlv:'15/06/2026',total:18.2e6,status:'done',items:8},
+  {id:'ORD-2026-0815',pr:'PR-2026-042',sup:'VPP Bút Chì Xanh',date:'01/06/2026',dlv:'10/06/2026',total:12.45e6,status:'done',items:6},
+  {id:'ORD-2026-0810',pr:'PR-2026-040',sup:'NXB Giáo Dục',date:'25/05/2026',dlv:'05/06/2026',total:68e6,status:'done',items:35},
+]);
+
+const INVOICES=[
+  {id:'INV-2026-0312',order:'ORD-2026-0819',sup:'Thiết bị GD Việt Nam',date:'10/06/2026',due:'10/07/2026',total:18.2e6,status:'unpaid'},
+  {id:'INV-2026-0308',order:'ORD-2026-0815',sup:'VPP Bút Chì Xanh',date:'05/06/2026',due:'05/07/2026',total:12.45e6,status:'paid'},
+  {id:'INV-2026-0301',order:'ORD-2026-0810',sup:'NXB Giáo Dục',date:'28/05/2026',due:'28/06/2026',total:68e6,status:'overdue'},
+  {id:'INV-2026-0290',order:'ORD-2026-0805',sup:'Nhà sách Tri Thức',date:'20/05/2026',due:'20/06/2026',total:43e6,status:'paid'},
+];
+const INV_ST={unpaid:['Chưa thanh toán','bo'],paid:['Đã thanh toán','bg'],overdue:['Quá hạn','br']};
+
+const EBOOKS=[
+  {id:1,title:'Toán học nâng cao lớp 12',pub:'NXB Giáo dục',lic:50,used:38,exp:'31/08/2027',cat:'Toán'},
+  {id:2,title:'Vật lý đại cương (bộ 3 tập)',pub:'NXB ĐH Quốc gia',lic:30,used:22,exp:'31/08/2027',cat:'Khoa học'},
+  {id:3,title:'Tiếng Anh B1-B2 Cambridge Suite',pub:'Cambridge Press',lic:100,used:87,exp:'31/12/2026',cat:'Ngoại ngữ'},
+  {id:4,title:'Lịch sử Việt Nam toàn tập',pub:'NXB Giáo dục',lic:40,used:12,exp:'31/08/2027',cat:'Lịch sử'},
+  {id:5,title:'Hóa học hữu cơ thực hành',pub:'NXB KHKT',lic:25,used:25,exp:'30/06/2026',cat:'Khoa học'},
+];
+
+const RFQS=[
+  {id:'RFQ-2026-012',title:'Máy chiếu phòng học đa năng',sups:3,due:'25/06/2026',budget:180e6,status:'open',resp:2},
+  {id:'RFQ-2026-011',title:'Bàn ghế học sinh cấp THPT (180 bộ)',sups:5,due:'30/06/2026',budget:350e6,status:'open',resp:3},
+  {id:'RFQ-2026-010',title:'Phần mềm quản lý thư viện điện tử',sups:2,due:'15/06/2026',budget:45e6,status:'closed',resp:2},
+];
+const RFQ_ST={open:['Đang mở','bg'],closed:['Đã đóng','bs']};
+
+const CONTRACTS=[
+  {id:'HĐ-2026-008',sup:'Nhà sách Tri Thức',type:'Cung cấp SGK & sách tham khảo',val:280e6,start:'01/01/2026',end:'31/12/2026',status:'active'},
+  {id:'HĐ-2026-005',sup:'Thiết bị GD Việt Nam',type:'Thiết bị phòng học',val:450e6,start:'01/03/2026',end:'28/02/2027',status:'active'},
+  {id:'HĐ-2025-018',sup:'VPP Bút Chì Xanh',type:'Văn phòng phẩm',val:120e6,start:'01/09/2025',end:'31/08/2026',status:'expiring'},
+];
+const CON_ST={active:['Đang hiệu lực','bg'],expiring:['Sắp hết hạn','by'],expired:['Hết hạn','br']};
+
+const PRODUCTS=[
+  {id:1,name:'Bộ SGK lớp 10 — Kết nối tri thức (14 cuốn)',cat:'SGK',price:285000,unit:'bộ',stock:500,
+    tiers:[{min:1,max:9,price:285000},{min:10,max:49,price:270000},{min:50,price:255000}]},
+  {id:2,name:'Bộ SGK lớp 11 — Chân trời sáng tạo (13 cuốn)',cat:'SGK',price:268000,unit:'bộ',stock:380,
+    tiers:[{min:1,max:9,price:268000},{min:10,max:49,price:254000},{min:50,price:240000}]},
+  {id:3,name:'Bộ SGK lớp 12 — Kết nối tri thức (12 cuốn)',cat:'SGK',price:254000,unit:'bộ',stock:290,
+    tiers:[{min:1,max:9,price:254000},{min:10,max:49,price:240000},{min:50,price:228000}]},
+  {id:4,name:'Bút bi Thiên Long 027 (hộp 20 cây)',cat:'VPP',price:48000,unit:'hộp',stock:2000,
+    tiers:[{min:1,max:99,price:48000},{min:100,max:499,price:45000},{min:500,price:42000}]},
+  {id:5,name:'Vở Campus 200 trang — lốc 10 quyển',cat:'VPP',price:102000,unit:'lốc',stock:1500,
+    tiers:[{min:1,max:99,price:102000},{min:100,max:499,price:96000},{min:500,price:90000}]},
+  {id:6,name:'Giấy A4 IK Plus (500 tờ/ram)',cat:'VPP',price:85000,unit:'ram',stock:800,
+    tiers:[{min:1,max:99,price:85000},{min:100,max:499,price:80000},{min:500,price:75000}]},
+  {id:7,name:'Máy chiếu Epson EB-S41 3300 lumen',cat:'Thiết bị',price:8500000,unit:'cái',stock:20,
+    tiers:[{min:1,max:4,price:8500000},{min:5,max:9,price:8200000},{min:10,price:7800000}]},
+  {id:8,name:'Bảng tương tác thông minh 75" 4K',cat:'Thiết bị',price:24500000,unit:'cái',stock:8,
+    tiers:[{min:1,max:2,price:24500000},{min:3,max:5,price:23500000},{min:6,price:22000000}]},
+  {id:9,name:'Máy tính Casio fx-580VN X',cat:'Thiết bị',price:490000,unit:'cái',stock:200,
+    tiers:[{min:1,max:49,price:490000},{min:50,max:199,price:470000},{min:200,price:450000}]},
+  {id:10,name:'Toán nâng cao lớp 12 (license/năm)',cat:'Ebook',price:180000,unit:'license',stock:9999,
+    tiers:[{min:1,max:29,price:180000},{min:30,max:99,price:165000},{min:100,price:150000}]},
+  {id:11,name:'Tiếng Anh B1-B2 Cambridge (license/năm)',cat:'Ebook',price:320000,unit:'license',stock:9999,
+    tiers:[{min:1,max:29,price:320000},{min:30,max:99,price:295000},{min:100,price:270000}]},
+];
+const KITS=[
+  {id:1,name:'School Kit Lớp 10 — Kết nối tri thức',grade:'Lớp 10',desc:'Bộ sản phẩm chuẩn cho học sinh lớp 10 chương trình Kết nối tri thức: SGK, vở, bút và máy tính.',items:4,price:0,students:45,
+    products:[
+      {id:1,name:'Bộ SGK lớp 10 — Kết nối tri thức (14 cuốn)',unit:'bộ',qty:45},
+      {id:5,name:'Vở Campus 200 trang — lốc 10 quyển',unit:'lốc',qty:15},
+      {id:4,name:'Bút bi Thiên Long 027 (hộp 20 cây)',unit:'hộp',qty:10},
+      {id:9,name:'Máy tính Casio fx-580VN X',unit:'cái',qty:45},
+    ]},
+  {id:2,name:'School Kit Lớp 11 — Chân trời sáng tạo',grade:'Lớp 11',desc:'Bộ sản phẩm cho học sinh lớp 11 chương trình Chân trời sáng tạo, kết hợp SGK và tài nguyên học tập số.',items:4,price:0,students:42,
+    products:[
+      {id:2,name:'Bộ SGK lớp 11 — Chân trời sáng tạo (13 cuốn)',unit:'bộ',qty:42},
+      {id:5,name:'Vở Campus 200 trang — lốc 10 quyển',unit:'lốc',qty:14},
+      {id:4,name:'Bút bi Thiên Long 027 (hộp 20 cây)',unit:'hộp',qty:9},
+      {id:11,name:'Tiếng Anh B1-B2 Cambridge (license/năm)',unit:'license',qty:42},
+    ]},
+  {id:3,name:'School Kit Lớp 12 — Kết nối tri thức',grade:'Lớp 12',desc:'Bộ ôn thi THPT Quốc gia cho học sinh lớp 12: SGK, máy tính và tài nguyên học tập số nâng cao.',items:4,price:0,students:38,
+    products:[
+      {id:3,name:'Bộ SGK lớp 12 — Kết nối tri thức (12 cuốn)',unit:'bộ',qty:38},
+      {id:9,name:'Máy tính Casio fx-580VN X',unit:'cái',qty:38},
+      {id:10,name:'Toán nâng cao lớp 12 (license/năm)',unit:'license',qty:38},
+      {id:11,name:'Tiếng Anh B1-B2 Cambridge (license/năm)',unit:'license',qty:38},
+    ]},
+  {id:4,name:'School Kit THCS (Lớp 6-9)',grade:'THCS',desc:'Bộ văn phòng phẩm thiết yếu cho 180 học sinh khối THCS, dùng cho cả học kỳ.',items:3,price:0,students:180,
+    products:[
+      {id:5,name:'Vở Campus 200 trang — lốc 10 quyển',unit:'lốc',qty:60},
+      {id:4,name:'Bút bi Thiên Long 027 (hộp 20 cây)',unit:'hộp',qty:36},
+      {id:6,name:'Giấy A4 IK Plus (500 tờ/ram)',unit:'ram',qty:20},
+    ]},
+  {id:5,name:'School Kit VPP Học kỳ I',grade:'Tất cả cấp',desc:'Bộ văn phòng phẩm tiêu chuẩn phục vụ toàn trường 450 học sinh cho học kỳ I.',items:3,price:0,students:450,
+    products:[
+      {id:5,name:'Vở Campus 200 trang — lốc 10 quyển',unit:'lốc',qty:150},
+      {id:4,name:'Bút bi Thiên Long 027 (hộp 20 cây)',unit:'hộp',qty:90},
+      {id:6,name:'Giấy A4 IK Plus (500 tờ/ram)',unit:'ram',qty:50},
+    ]},
+  {id:6,name:'School Kit Lớp 1 — Chân trời sáng tạo',grade:'Lớp 1',items:14,price:215000,students:60},
+  {id:7,name:'School Kit Lớp 2 — Cánh diều',grade:'Lớp 2',items:13,price:198000,students:58},
+  {id:8,name:'School Kit Lớp 3 — Kết nối tri thức',grade:'Lớp 3',items:15,price:225000,students:55},
+  {id:9,name:'School Kit Lớp 4 — Chân trời sáng tạo',grade:'Lớp 4',items:16,price:238000,students:52},
+  {id:10,name:'School Kit Lớp 5 — Cánh diều',grade:'Lớp 5',items:17,price:252000,students:50},
+  {id:11,name:'School Kit Lớp 6 — Kết nối tri thức',grade:'Lớp 6',items:19,price:298000,students:48},
+  {id:12,name:'School Kit Lớp 7 — Chân trời sáng tạo',grade:'Lớp 7',items:20,price:315000,students:46},
+  {id:13,name:'School Kit Lớp 8 — Cánh diều',grade:'Lớp 8',items:19,price:308000,students:44},
+  {id:14,name:'School Kit Lớp 9 — Kết nối tri thức',grade:'Lớp 9',items:21,price:325000,students:43},
+  {id:15,name:'School Kit Văn phòng phẩm Giáo viên',grade:'Giáo viên',items:25,price:450000,students:0,desc:'Bộ VPP dành cho đội ngũ giáo viên: bút đỏ, giấy in, dấu đỏ, sổ họp...'},
+  {id:16,name:'School Kit Mỹ thuật — Tiểu học',grade:'Tiểu học',items:20,price:185000,students:120,desc:'Màu sáp, màu nước, giấy vẽ, cọ vẽ, kéo và hồ dán an toàn cho trẻ em'},
+  {id:17,name:'School Kit Khoa học tự nhiên — THCS',grade:'THCS',items:28,price:520000,students:90,desc:'Dụng cụ thí nghiệm vật lý, hóa học, sinh học dùng cho phòng thực hành'},
+  {id:18,name:'School Kit Tin học — THCS & THPT',grade:'THCS & THPT',items:10,price:145000,students:200,desc:'Chuột, lót chuột, USB 16GB, cáp HDMI, tai nghe học trực tuyến'},
+  {id:19,name:'School Kit VPP Học kỳ II',grade:'Tất cả cấp',items:11,price:115000,students:450},
+  {id:20,name:'School Kit Thể dục — Tiểu học',grade:'Tiểu học',items:8,price:168000,students:110,desc:'Bóng, dây nhảy, áo tập, còi và dụng cụ thể thao mini'},
+  {id:21,name:'School Kit Âm nhạc — Tiểu học & THCS',grade:'Tiểu học & THCS',items:12,price:210000,students:85,desc:'Sáo học sinh, kèn harmonica, phách, sổ nhạc và bút kẻ nhạc'},
+  {id:22,name:'School Kit Ôn thi THPT Quốc gia — Khối A',grade:'Lớp 12',items:14,price:295000,students:30,desc:'Tài liệu và VPP chuyên cho ôn thi Toán, Vật Lý, Hóa học'},
+  {id:23,name:'School Kit Ôn thi THPT Quốc gia — Khối C',grade:'Lớp 12',items:13,price:278000,students:25,desc:'Tài liệu và VPP chuyên cho ôn thi Văn, Sử, Địa'},
+  {id:24,name:'School Kit Thư viện trường',grade:'Tất cả cấp',items:30,price:680000,students:0,desc:'Bìa bọc sách, nhãn dán, tem phân loại, sổ mượn trả và dụng cụ thư viện'},
+  {id:25,name:'School Kit Ban giám hiệu',grade:'BGH & Văn phòng',items:35,price:850000,students:0,desc:'VPP cao cấp cho phòng họp, tiếp khách, hồ sơ lưu trữ và đóng dấu'},
+];
+
+
+const NOTIFS=[
+  {dot:'orange',txt:'Ngân sách Khối Tự Nhiên đạt 85% hạn mức',time:'2 giờ trước'},
+  {dot:'orange',txt:'YC-0891 đang chờ phê duyệt cấp 1',time:'3 giờ trước'},
+  {dot:'green',txt:'DH-1232 đã giao hàng thành công',time:'5 giờ trước'},
+  {dot:'red',txt:'HD-0455 quá hạn thanh toán 10 ngày',time:'1 ngày trước'},
+  {dot:'blue',txt:'HĐ NXB Giáo Dục hết hạn 15/07/2026',time:'1 ngày trước'},
+];
+
+let ORG_ADDRESSES=[
+  {addr:'123 Nguyễn Trãi, Q.1, TP.HCM',label:'Địa chỉ chính',cls:'bg'},
+  {addr:'45 Lê Văn Việt, Q.9, TP.HCM',label:'Cơ sở 2',cls:'bs'},
+];
+let ORG_DOCS=[
+  {name:'Quyết định thành lập',status:'Đã xác minh',cls:'bg'},
+  {name:'Mã số thuế GTGT',status:'Đã xác minh',cls:'bg'},
+  {name:'Giấy phép hoạt động',status:'Đang xử lý',cls:'bo'},
+  {name:'Hợp đồng khung EduMart',status:'Chưa tải lên',cls:'bs'},
+];
+
+/* ── Navigation ── */
+let curV='dashboard';
+function nav(v,el){
+  curV=v;
+  document.querySelectorAll('.nav-item[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  const pt=document.getElementById('pageTitle');
+  if(pt)pt.textContent=NAV.find(n=>n.v===v)?.l||'Dashboard';
+  render();
+}
+let _t;
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(_t);_t=setTimeout(()=>t.classList.remove('show'),2200);}
+let _modalInitVals={};
+function openModal(h){
+  const m=document.getElementById('modal');m.innerHTML=h;
+  document.getElementById('modalBg').classList.add('show');
+  _modalInitVals={};m.querySelectorAll('input,select,textarea').forEach((el,i)=>{_modalInitVals[el.id||i]=el.value;});
+}
+function closeModal(){document.getElementById('modalBg').classList.remove('show');document.getElementById('modal').classList.remove('modal-xl');}
+function isDirty(){const m=document.getElementById('modal');return Array.from(m.querySelectorAll('input,select,textarea')).some((el,i)=>{if(el.type==='file')return el.files&&el.files.length>0;return el.value!==(_modalInitVals[el.id||i]??'');});}
+let _confirmCb=null;
+function showConfirm(cb){
+  _confirmCb=cb;
+  document.getElementById('confirmModal').innerHTML=`
+    <div style="text-align:center;padding:6px 0 4px">
+      <div style="width:52px;height:52px;border-radius:50%;background:#fff7ed;color:#d97706;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">${ic('<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',26)}</div>
+      <div style="font-family:'Lora',serif;font-size:16px;font-weight:600;color:var(--ink-deep);margin-bottom:8px">Dữ liệu chưa được lưu</div>
+      <div style="font-size:13.5px;color:var(--text-soft);line-height:1.6">Nếu đóng, dữ liệu bạn vừa nhập<br>sẽ không được lưu lại.</div>
+    </div>
+    <div class="mact" style="justify-content:center;margin-top:20px">
+      <button class="act-btn" onclick="hideConfirm()">Ở lại</button>
+      <button class="del-btn" onclick="confirmOk()">Đóng mà không lưu</button>
+    </div>`;
+  document.getElementById('confirmBg').classList.add('show');
+}
+function hideConfirm(){document.getElementById('confirmBg').classList.remove('show');}
+function confirmOk(){hideConfirm();if(_confirmCb){_confirmCb();_confirmCb=null;}}
+function tryCloseModal(){if(isDirty()){showConfirm(closeModal);}else{closeModal();}}
+
+/* ── Chart helpers ── */
+function lineChart(data,labels,maxV,W,H,lm,bm){
+  const rm=16,tm=10,cw=W-lm-rm,ch=H-bm-tm,n=data.length;
+  const pts=data.map((v,i)=>({x:lm+(i/(n-1))*cw,y:tm+ch*(1-v/maxV)}));
+  const t=0.35;
+  let d=`M${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+  for(let i=0;i<n-1;i++){
+    const p0=pts[Math.max(0,i-1)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(n-1,i+2)];
+    const c1x=p1.x+t*(p2.x-p0.x)/3,c1y=p1.y+t*(p2.y-p0.y)/3;
+    const c2x=p2.x-t*(p3.x-p1.x)/3,c2y=p2.y-t*(p3.y-p1.y)/3;
+    d+=` C${c1x.toFixed(1)},${c1y.toFixed(1)} ${c2x.toFixed(1)},${c2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+  }
+  const area=d+` L${(lm+cw).toFixed(1)},${(tm+ch)} L${lm},${tm+ch} Z`;
+  const yGrids=[0,80,160,240,320].map(v=>{const y=tm+ch*(1-v/maxV);return`<line x1="${lm}" y1="${y.toFixed(1)}" x2="${W-rm}" y2="${y.toFixed(1)}" stroke="#e2e8f0" stroke-width="1"/><text x="${lm-5}" y="${(y+4).toFixed(1)}" text-anchor="end" font-size="10" fill="#94a3b8">${v?v+'tr':'0'}</text>`;}).join('');
+  const xLabels=labels.map((l,i)=>`<text x="${pts[i].x.toFixed(1)}" y="${H-5}" text-anchor="middle" font-size="10" fill="#94a3b8">${l}</text>`).join('');
+  return`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;display:block"><defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4f46e5" stop-opacity=".18"/><stop offset="100%" stop-color="#4f46e5" stop-opacity=".01"/></linearGradient></defs>${yGrids}${xLabels}<path d="${area}" fill="url(#ag)"/><path d="${d}" fill="none" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
+function donutChart(segs){
+  const r=52,cx=70,cy=70,sw=20,C=2*Math.PI*r;
+  let off=0;
+  const circles=segs.map(s=>{const dash=s.p/100*C,gap=C-dash;const c=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.c}" stroke-width="${sw}" stroke-dasharray="${dash.toFixed(1)} ${gap.toFixed(1)}" stroke-dashoffset="${(-off).toFixed(1)}" transform="rotate(-90,${cx},${cy})"/>`;off+=dash;return c;}).join('');
+  const legend=segs.map(s=>`<div class="leg-row"><div class="leg-left"><span class="leg-dot" style="background:${s.c}"></span>${s.l}</div><span class="leg-pct">${s.p}%</span></div>`).join('');
+  return`<div class="donut-wrap"><svg viewBox="0 0 140 140" width="126" height="126" style="display:block"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#f1f5f9" stroke-width="${sw}"/>${circles}<circle cx="${cx}" cy="${cy}" r="${r-sw/2-1}" fill="white"/></svg><div style="width:100%">${legend}</div></div>`;
+}
+
+function barChart(labels,vals,color,W,H,lm,bm){
+  const tm=10,cw=W-lm,ch=H-bm-tm,n=vals.length,maxV=220;
+  const gap=14,bw=(cw-(n+1)*gap)/n;
+  const bars=labels.map((l,i)=>{const bh=vals[i]/maxV*ch,x=lm+gap+i*(bw+gap),y=tm+ch-bh;return`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="5" fill="${color}"/><text x="${(x+bw/2).toFixed(1)}" y="${H-7}" text-anchor="middle" font-size="10.5" fill="#64748b">${l}</text>`;}).join('');
+  const grids=[0,55,110,165,220].map(v=>{const y=tm+ch*(1-v/maxV);return`<line x1="${lm}" y1="${y.toFixed(1)}" x2="${W}" y2="${y.toFixed(1)}" stroke="#e2e8f0" stroke-width="1"/><text x="${lm-5}" y="${(y+4).toFixed(1)}" text-anchor="end" font-size="10" fill="#94a3b8">${v?v+'tr':''}</text>`;}).join('');
+  return`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;display:block">${grids}${bars}</svg>`;
+}
+
+/* ── Dashboard ── */
+function dashboard(){
+  // Org banner
+  const banner=``;
+
+  // KPI cards
+  const kpiData=[
+    {val:'2,4 tỷ',lbl:'Ngân sách còn lại',sub:'/ 4,2 tỷ tổng năm học',tr:'+8.2%',tc:'tr-up',bg:'#eff6ff',fg:'#2563eb',
+      svg:'<path d="M2 9h20M2 15h20M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/>'},
+    {val:'12',lbl:'Yêu cầu chờ duyệt',sub:'3 yêu cầu cần duyệt gấp',tr:'+4%',tc:'tr-up',bg:'#fff7ed',fg:'#ea580c',
+      svg:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15h6"/>'},
+    {val:'8',lbl:'Đơn hàng đang xử lý',sub:'2 đơn đang giao hàng',tr:'+1%',tc:'tr-up',bg:'#eff6ff',fg:'#2563eb',
+      svg:'<path d="M5 4h14l-1 16H6L5 4Z"/><path d="M9 8h6"/>'},
+    {val:'5',lbl:'Hóa đơn chưa thanh toán',sub:'Tổng 165 triệu đồng',tr:'−2%',tc:'tr-dn',bg:'#fef2f2',fg:'#dc2626',
+      svg:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/>'},
+    {val:'328tr',lbl:'Công nợ hiện tại',sub:'Hạn NET30: 25/06/2026',tr:'+12%',tc:'tr-wn',bg:'#fff7ed',fg:'#ea580c',
+      svg:'<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>'},
+    {val:'450',lbl:'Ebook đang sử dụng',sub:'/ 500 license tổ chức',tr:'',tc:'',bg:'#eff6ff',fg:'#2563eb',
+      svg:'<path d="M4 19V5a1 1 0 0 1 1-1h6v16H5a1 1 0 0 1-1-1z"/><path d="M13 4h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-6"/>'},
+  ];
+  const kpis=`<div class="kpis">${kpiData.map(k=>`<div class="kpi">
+    <div class="top">
+      <div class="ic" style="background:${k.bg};color:${k.fg}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${k.svg}</svg></div>
+      ${k.tr?`<span class="tr ${k.tc}">${k.tr}</span>`:''}
+    </div>
+    <div class="val">${k.val}</div>
+    <div class="lbl">${k.lbl}</div>
+    <div class="sub">${k.sub}</div>
+  </div>`).join('')}</div>`;
+
+  // Line chart
+  const months=[175,135,115,180,305,285,120,145,220,290,305,315];
+  const mLabels=['T8/24','T9','T10','T11','T12','T1/25','T2','T3','T4','T5','T6','T7'];
+  const linePanel=`<div class="panel">
+    <div class="ph">
+      <div><h3>Chi tiêu theo tháng</h3><div class="phsub">Năm học 2024-2025 · Đơn vị: triệu đồng</div></div>
+      <button class="phact" onclick="toast('Đang xuất báo cáo...')">${ic(I.dl)} Xuất</button>
+    </div>
+    <div style="margin-top:12px">${lineChart(months,mLabels,320,880,198,50,28)}</div>
+  </div>`;
+
+  // Donut chart
+  const donutSegs=[
+    {l:'SGK',p:35,c:'#3b82f6'},
+    {l:'VPP',p:22,c:'#f97316'},
+    {l:'Thiết Bị',p:28,c:'#22c55e'},
+    {l:'Ebook',p:10,c:'#a855f7'},
+    {l:'Khác',p:5,c:'#94a3b8'},
+  ];
+  const donutPanel=`<div class="panel">
+    <div class="ph">
+      <div><h3>Chi tiêu theo danh mục</h3><div class="phsub">Tháng 6/2026</div></div>
+    </div>
+    ${donutChart(donutSegs)}
+  </div>`;
+
+  // Bar chart - by dept
+  const deptLabels=['BGH','Tự Nhiên','Xã Hội','Thể Dục','Ngoại Ngữ','HC'];
+  const deptVals=[110,205,175,90,165,70];
+  const barPanel=`<div class="panel">
+    <div class="ph">
+      <div><h3>Chi tiêu theo phòng ban</h3><div class="phsub">6 tháng gần nhất · Đơn vị: triệu đồng</div></div>
+    </div>
+    <div style="margin-top:12px">${barChart(deptLabels,deptVals,'#f97316',560,188,48,28)}</div>
+  </div>`;
+
+  // Notifications
+  const notifPanel=`<div class="panel">
+    <div class="ph">
+      <div class="ph-badge"><h3>Thông báo hệ thống</h3><span class="cnt-badge">5</span></div>
+    </div>
+    <div style="margin-top:8px">${NOTIFS.map(n=>`<div class="notif-item">
+      <div class="ni-dot" style="background:${n.dot==='orange'?'#f97316':n.dot==='green'?'#22c55e':n.dot==='red'?'#dc2626':'#4f46e5'}"></div>
+      <div><div class="ni-txt">${n.txt}</div><div class="ni-time">${n.time}</div></div>
+    </div>`).join('')}</div>
+  </div>`;
+
+  return banner+kpis+
+    `<div class="charts-row">${linePanel}${donutPanel}</div>`+
+    `<div class="bottom-row">${barPanel}${notifPanel}</div>`+
+    recentRow();
+}
+
+/* ── Recent 3-column row ── */
+function recentRow(){
+  // ── Data ──
+  const recPRs=[
+    {id:'YC-0891',title:'SGK Lớp 10 HK1 2025-26',dept:'Tự Nhiên',date:'15/06',total:45200000,st:'pending'},
+    {id:'YC-0890',title:'VPP Học Kỳ 2',dept:'Hành Chính',date:'14/06',total:12800000,st:'approved'},
+    {id:'YC-0889',title:'Thiết bị Lab Hóa học',dept:'Tự Nhiên',date:'13/06',total:128500000,st:'returned'},
+    {id:'YC-0888',title:'Sách tham khảo Toán 11',dept:'Tự Nhiên',date:'12/06',total:8400000,st:'ordered'},
+    {id:'YC-0887',title:'Máy chiếu phòng họp BGH',dept:'BGH',date:'11/06',total:56000000,st:'rejected'},
+  ];
+  const recOrders=[
+    {id:'DH-1234',sup:'NXB Giáo Dục Việt Nam',date:'16/06',total:45200000,st:'ship'},
+    {id:'DH-1233',sup:'Thiết Bị EduTech VN',date:'15/06',total:128500000,st:'proc'},
+    {id:'DH-1232',sup:'VPP Minh Long',date:'14/06',total:12800000,st:'done'},
+    {id:'DH-1231',sup:'NXB Giáo Dục Việt Nam',date:'10/06',total:32100000,st:'done'},
+  ];
+  const recInvoices=[
+    {id:'HD-0456',sup:'NXB Giáo Dục VN',due:'30/06',total:45200000,st:'unpaid'},
+    {id:'HD-0455',sup:'Thiết Bị EduTech',due:'10/06',total:128500000,st:'overdue'},
+    {id:'HD-0454',sup:'VPP Minh Long',due:'15/06',total:12800000,st:'paid'},
+    {id:'HD-0453',sup:'Ebook Platform',due:'01/06',total:24000000,st:'paid'},
+  ];
+
+  // ── Status maps ──
+  const PR_S={
+    pending:  ['Chờ duyệt','bo'],
+    approved: ['Đã duyệt','bg'],
+    returned: ['Trả lại','by'],
+    ordered:  ['Đã đặt hàng','bb'],
+    rejected: ['Từ chối','br'],
+    done:     ['Hoàn thành','bs'],
+  };
+  const ORD_S={
+    ship:  ['Đang giao','bb'],
+    proc:  ['Đang xử lý','bo'],
+    done:  ['Hoàn thành','bg'],
+    cancel:['Đã hủy','br'],
+  };
+  const INV_S={
+    unpaid:  ['Chưa thanh toán','bo'],
+    overdue: ['Quá hạn','br'],
+    paid:    ['Đã thanh toán','bg'],
+  };
+
+  // ── Row builders ──
+  const prRows=recPRs.map(p=>{
+    const[lbl,cls]=PR_S[p.st]||['—','bs'];
+    return`<div class="ri">
+      <div class="ri-left">
+        <div class="ri-title">${p.title}</div>
+        <div class="ri-meta">${p.id} · ${p.dept} · ${p.date}</div>
+      </div>
+      <div class="ri-right">
+        <span class="badge ${cls}">${lbl}</span>
+        <span class="ri-amount">${p.total.toLocaleString('vi-VN')}đ</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  const orderRows=recOrders.map(o=>{
+    const[lbl,cls]=ORD_S[o.st]||['—','bs'];
+    return`<div class="ri">
+      <div class="ri-left">
+        <div class="ri-title">${o.sup}</div>
+        <div class="ri-meta">${o.id} · ${o.date}</div>
+      </div>
+      <div class="ri-right">
+        <span class="badge ${cls}">${lbl}</span>
+        <span class="ri-amount">${o.total.toLocaleString('vi-VN')}đ</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  const invoiceRows=recInvoices.map(i=>{
+    const[lbl,cls]=INV_S[i.st]||['—','bs'];
+    return`<div class="ri">
+      <div class="ri-left">
+        <div class="ri-title">${i.sup}</div>
+        <div class="ri-meta">${i.id} · Hạn: ${i.due}</div>
+      </div>
+      <div class="ri-right">
+        <span class="badge ${cls}">${lbl}</span>
+        <span class="ri-amount">${i.total.toLocaleString('vi-VN')}đ</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── Card wrapper ──
+  const col=(title,rows,view)=>`<div class="panel">
+    <div class="recent-head">
+      <h3>${title}</h3>
+      <span class="rh-link" onclick="nav('${view}',null)">Xem tất cả ↗</span>
+    </div>
+    ${rows}
+  </div>`;
+
+  return`<div class="recent-grid">
+    ${col('Yêu cầu mua gần đây',prRows,'purchase')}
+    ${col('Đơn hàng gần đây',orderRows,'orders')}
+    ${col('Hóa đơn gần đây',invoiceRows,'invoices')}
+  </div>`;
+}
+
+/* ── Marketplace ── */
+let mkCat='all',mkQ='';
+
+function getTierPrice(product,qty){
+  if(!product.tiers||!product.tiers.length)return product.price;
+  const tier=product.tiers.find(t=>qty>=t.min&&(t.max===undefined||qty<=t.max));
+  return tier?tier.price:product.price;
+}
+
+function updateMkPrice(id,qty){
+  const p=PRODUCTS.find(x=>x.id===id);
+  const el=document.getElementById('mkprice_'+id);
+  if(!p||!el)return;
+  if(!qty||qty<1){el.textContent='';return;}
+  const price=getTierPrice(p,qty);
+  el.textContent=`Bạn được mua với giá ${price.toLocaleString('vi-VN')}đ/${p.unit}`;
+  el.style.color=price<p.tiers[0].price?'var(--green)':'var(--text-soft)';
+}
+
+function stepQty(id,delta){
+  const el=document.getElementById('qty_'+id);if(!el)return;
+  const p=PRODUCTS.find(x=>x.id===id);
+  const max=p&&p.cat!=='Ebook'?p.stock||9999:9999;
+  const v=Math.min(max,Math.max(1,(parseInt(el.value)||1)+delta));
+  el.value=v;updateMkPrice(id,v);
+}
+
+const MK_IMGS={
+  1:'https://picsum.photos/seed/textbook-math/44/44',
+  2:'https://picsum.photos/seed/textbook-science/44/44',
+  3:'https://picsum.photos/seed/textbook-lit/44/44',
+  4:'https://picsum.photos/seed/ballpen-blue/44/44',
+  5:'https://picsum.photos/seed/school-notebook/44/44',
+  6:'https://picsum.photos/seed/white-paper/44/44',
+  7:'https://picsum.photos/seed/projector-room/44/44',
+  8:'https://picsum.photos/seed/smartboard-class/44/44',
+  9:'https://picsum.photos/seed/calculator-desk/44/44',
+  10:'https://picsum.photos/seed/math-ebook/44/44',
+  11:'https://picsum.photos/seed/english-ebook/44/44',
+};
+
+function mkRow(p){
+  const maxQty=p.cat==='Ebook'?9999:p.stock||9999;
+  return`<tr>
+    <td><div style="display:flex;align-items:center;gap:10px">
+      <img src="${MK_IMGS[p.id]||''}" alt="" width="44" height="44" style="border-radius:9px;object-fit:cover;flex-shrink:0;border:1px solid var(--line)" onerror="this.style.display='none'">
+      <span style="font-weight:500">${p.name}</span>
+    </div></td>
+    <td><span class="badge bs">${p.cat}</span></td>
+    <td style="font-weight:600;white-space:nowrap">${p.price.toLocaleString('vi-VN')}đ</td>
+    <td>${p.unit}</td>
+    <td>${p.cat==='Ebook'?'<span class="badge bg">Số ∞</span>':p.stock>0?`<span class="badge bg">Còn ${p.stock.toLocaleString('vi-VN')}</span>`:'<span class="badge br">Hết hàng</span>'}</td>
+    <td>
+      <div style="display:flex;align-items:center;gap:6px">
+        <button class="qty-step" onclick="stepQty(${p.id},-1)">−</button>
+        <input type="number" id="qty_${p.id}" value="1" min="1" max="${maxQty}" class="qty-input" oninput="updateMkPrice(${p.id},+this.value)">
+        <button class="qty-step" onclick="stepQty(${p.id},+1)">+</button>
+        <button class="btn-pr" style="font-size:12px;padding:5px 12px;height:30px;white-space:nowrap" onclick="addToCart(${p.id})">+ Thêm vào giỏ yêu cầu</button>
+      </div>
+      <div id="mkprice_${p.id}" style="font-size:11.5px;font-weight:500;margin-top:5px;min-height:16px"></div>
+    </td>
+  </tr>`;
+}
+
+function mkFiltered(){
+  const q=mkQ.toLowerCase();
+  return PRODUCTS.filter(p=>{
+    const mCat=mkCat==='all'||p.cat===mkCat;
+    const mQ=!q||p.name.toLowerCase().includes(q);
+    return mCat&&mQ;
+  });
+}
+
+function filterMarketplace(){
+  const inp=document.getElementById('mk-search');
+  if(inp)mkQ=inp.value;
+  const list=mkFiltered();
+  const tbody=document.getElementById('mk-tbody');
+  if(!tbody)return;
+  tbody.innerHTML=list.length
+    ?list.map(mkRow).join('')
+    :'<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text-soft)">Không tìm thấy sản phẩm phù hợp.</td></tr>';
+  document.querySelectorAll('.mk-chip').forEach(b=>b.classList.toggle('on',b.dataset.c===mkCat));
+}
+
+function marketplace(){
+  const cats=['all','SGK','VPP','Thiết bị','Ebook'];
+  const chips=cats.map(c=>`<button class="fchip mk-chip${mkCat===c?' on':''}" data-c="${c}" onclick="mkCat='${c}';filterMarketplace()">${c==='all'?'Tất cả':c}</button>`).join('');
+  const list=mkFiltered();
+  const rows=list.length?list.map(mkRow).join(''):'<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text-soft)">Không tìm thấy sản phẩm phù hợp.</td></tr>';
+  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Danh mục sản phẩm</div></div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+    <div style="position:relative;flex:1;min-width:180px;max-width:300px">
+      <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-soft);pointer-events:none" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><line x1="13.5" y1="13.5" x2="18" y2="18"/></svg>
+      <input id="mk-search" value="${mkQ.replace(/"/g,'&quot;')}" placeholder="Tìm tên sản phẩm..." oninput="filterMarketplace()"
+        style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13.5px;border:1.5px solid var(--line);border-radius:10px;padding:8px 12px 8px 32px;outline:none;color:var(--text);background:#fff">
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">${chips}</div>
+  </div>
+  <div class="tb-panel"><table><thead><tr><th>Sản phẩm</th><th>Danh mục</th><th>Đơn giá</th><th>Đơn vị</th><th>Tồn kho</th><th>Số lượng</th></tr></thead><tbody id="mk-tbody">${rows}</tbody></table></div>`;
+}
+
+function addToCart(id){
+  const p=PRODUCTS.find(x=>x.id===id);if(!p)return;
+  const qtyEl=document.getElementById('qty_'+id);
+  const qty=qtyEl?Math.max(1,parseInt(qtyEl.value)||1):1;
+  const existing=CART.find(x=>x.id===id);
+  if(existing){
+    existing.qty+=qty;
+    existing.price=getTierPrice(p,existing.qty);
+    toast(`Đã cập nhật giỏ: "${p.name}" — tổng ${existing.qty} ${p.unit}`);
+  } else {
+    CART.push({id:p.id,name:p.name,unit:p.unit,qty,price:getTierPrice(p,qty)});
+    toast(`Đã thêm "${p.name}" (x${qty}) vào giỏ yêu cầu`);
+  }
+  updateCartBadge();
+}
+
+function updateCartBadge(){
+  const badge=document.getElementById('cartBadge');if(!badge)return;
+  const total=CART.reduce((s,i)=>s+i.qty,0);
+  badge.textContent=total;
+  badge.style.display=total>0?'flex':'none';
+}
+
+function openCart(){
+  document.getElementById('modal').classList.add('modal-xl');
+  openModal(cartDialogHTML());
+}
+
+function getProductImg(id){
+  const seeds={1:237,2:180,3:119,4:91,5:250,6:42,7:63,8:155,9:190,10:215,11:122};
+  const s=seeds[id]||(id*37%300+50);
+  return`https://picsum.photos/seed/${s}/60/60`;
+}
+
+function getProductCode(id){return'SP'+String(id).padStart(3,'0');}
+
+function cartUpdateQty(id,val){
+  const item=CART.find(x=>x.id===id);if(!item)return;
+  val=Math.max(1,parseInt(val)||1);
+  const p=PRODUCTS.find(x=>x.id===id);
+  item.qty=val;
+  if(p)item.price=getTierPrice(p,val);
+  const inp=document.getElementById('cqty_'+id);
+  if(inp)inp.value=val;
+  const td=document.getElementById('ctotal_'+id);
+  if(td)td.textContent=(item.price*item.qty).toLocaleString('vi-VN')+'đ';
+  updateCartSummary();
+  updateCartBadge();
+}
+
+function stepCartQty(id,delta){
+  const inp=document.getElementById('cqty_'+id);
+  const cur=inp?parseInt(inp.value)||1:1;
+  cartUpdateQty(id,cur+delta);
+}
+
+function updateCartSummary(){
+  const el=document.getElementById('cart-summary');if(!el)return;
+  const tI=CART.length,tQ=CART.reduce((s,i)=>s+i.qty,0),tV=CART.reduce((s,i)=>s+i.price*i.qty,0);
+  el.innerHTML=`<div style="display:flex;gap:24px;align-items:center">
+    <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:1px">Mặt hàng</div><div style="font-size:17px;font-weight:700">${tI}</div></div>
+    <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:1px">Số lượng</div><div style="font-size:17px;font-weight:700">${tQ}</div></div>
+    <div style="margin-left:auto;text-align:right"><div style="font-size:11px;color:var(--text-soft);margin-bottom:1px">Tổng giá trị dự kiến</div><div style="font-size:20px;font-weight:700;color:var(--ink)">${tV.toLocaleString('vi-VN')}đ</div></div>
+  </div>`;
+}
+
+function cartDeleteItem(id){
+  const idx=CART.findIndex(x=>x.id===id);
+  if(idx>-1)CART.splice(idx,1);
+  cartSelected.delete(id);
+  const row=document.getElementById('crow_'+id);if(row)row.remove();
+  updateCartSummary();
+  updateCartBadge();
+  const hdr=document.getElementById('cart-h-count');
+  if(hdr)hdr.textContent=CART.length?`(${CART.length} sản phẩm)`:'';
+  if(!CART.length){
+    const tbody=document.querySelector('#cart-table tbody');
+    if(tbody)tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:36px;color:var(--text-soft)">Giỏ trống — <a href="#" style="color:var(--ink)" onclick="closeModal();nav('marketplace');return false">tiếp tục mua sắm</a></td></tr>`;
+  }
+}
+
+function cartToggle(id){
+  if(cartSelected.has(id))cartSelected.delete(id);else cartSelected.add(id);
+  const cb=document.getElementById('cchk_'+id);if(cb)cb.checked=cartSelected.has(id);
+  const row=document.getElementById('crow_'+id);if(row)row.style.background=cartSelected.has(id)?'var(--surface)':'';
+  const allChk=document.getElementById('cchk_all');if(allChk)allChk.checked=CART.length>0&&cartSelected.size===CART.length;
+  cartRefreshDelBtn();
+}
+
+function cartToggleAll(checked){
+  cartSelected.clear();
+  if(checked)CART.forEach(i=>cartSelected.add(i.id));
+  CART.forEach(i=>{
+    const cb=document.getElementById('cchk_'+i.id);if(cb)cb.checked=checked;
+    const row=document.getElementById('crow_'+i.id);if(row)row.style.background=checked?'var(--surface)':'';
+  });
+  cartRefreshDelBtn();
+}
+
+function cartRefreshDelBtn(){
+  const btn=document.getElementById('cart-del-sel');
+  if(btn)btn.textContent=`Xóa đã chọn (${cartSelected.size})`;
+  const wrap=document.getElementById('cart-del-sel-wrap');
+  if(wrap)wrap.style.display=cartSelected.size>0?'':'none';
+}
+
+function cartDeleteSelected(){
+  [...cartSelected].forEach(id=>cartDeleteItem(id));
+  cartSelected.clear();
+  const allChk=document.getElementById('cchk_all');if(allChk)allChk.checked=false;
+  cartRefreshDelBtn();
+}
+
+function cartDialogHTML(){
+  const tI=CART.length,tQ=CART.reduce((s,i)=>s+i.qty,0),tV=CART.reduce((s,i)=>s+i.price*i.qty,0);
+  const rows=CART.map(item=>`<tr id="crow_${item.id}">
+    <td style="padding:10px 8px;width:44px"><img src="${getProductImg(item.id)}" width="40" height="40" style="border-radius:7px;object-fit:cover;display:block"></td>
+    <td style="padding:10px 8px;font-weight:500;font-size:13px;max-width:180px">${item.name}<div style="font-size:11.5px;color:var(--text-soft);margin-top:1px">${getProductCode(item.id)}</div></td>
+    <td style="padding:10px 8px;font-size:12.5px;color:var(--text-soft);white-space:nowrap">${item.price.toLocaleString('vi-VN')}đ/${item.unit}</td>
+    <td style="padding:10px 8px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <button class="qty-step" style="width:26px;height:26px;font-size:15px" onclick="stepCartQty(${item.id},-1)">−</button>
+        <input type="number" id="cqty_${item.id}" class="qty-input" value="${item.qty}" min="1" style="width:42px;height:26px" oninput="cartUpdateQty(${item.id},+this.value)">
+        <button class="qty-step" style="width:26px;height:26px;font-size:15px" onclick="stepCartQty(${item.id},+1)">+</button>
+      </div>
+    </td>
+    <td id="ctotal_${item.id}" style="padding:10px 8px;font-weight:600;font-size:13px;white-space:nowrap;text-align:right">${(item.price*item.qty).toLocaleString('vi-VN')}đ</td>
+    <td style="padding:10px 8px;text-align:center;width:32px"><button onclick="cartDeleteItem(${item.id})" style="background:none;border:none;cursor:pointer;color:var(--text-soft);font-size:16px;line-height:1;padding:2px" title="Xóa">✕</button></td>
+  </tr>`).join('');
+  const emptyRow=`<tr><td colspan="6" style="text-align:center;padding:36px;color:var(--text-soft);font-size:13px">Giỏ trống — <a href="#" style="color:var(--ink)" onclick="closeModal();nav('marketplace');return false">tiếp tục mua sắm</a></td></tr>`;
+
+  return`
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+    <h2 style="margin:0">Giỏ yêu cầu <span id="cart-h-count" style="font-size:14px;font-weight:400;color:var(--text-soft)">${tI?`(${tI} sản phẩm)`:''}</span></h2>
+    <button onclick="tryCloseModal()" style="background:none;border:none;cursor:pointer;color:var(--text-soft);font-size:20px;line-height:1;padding:2px 4px">&times;</button>
+  </div>
+
+  <div class="m2" style="margin-bottom:14px">
+    <div class="mf" style="grid-column:1/-1;margin-bottom:0">
+      <label>Tên yêu cầu <span style="color:var(--coral)">*</span></label>
+      <input placeholder="VD: Mua SGK học kỳ 2 năm 2026" value="${cartTitle}" oninput="cartTitle=this.value">
+    </div>
+    <div class="mf" style="margin-bottom:0">
+      <label>Phòng ban <span style="color:var(--coral)">*</span></label>
+      <select onchange="cartDeptChange(this.value)">
+        <option value="">— Chọn phòng ban —</option>
+        ${DEPTS.map(d=>`<option value="${d.name}" ${cartDept===d.name?'selected':''}>${d.name}</option>`).join('')}
+      </select>
+    </div>
+    <div class="mf" style="margin-bottom:0">
+      <label>Người tạo <span style="color:var(--coral)">*</span></label>
+      <select id="cart-member-sel" onchange="cartMember=this.value" ${!cartDept?'disabled':''}>
+        <option value="">— Chọn nhân viên —</option>
+        ${cartDept?MEMBERS.filter(m=>m.dept===cartDept&&m.status==='active').map(m=>`<option value="${m.name}" ${cartMember===m.name?'selected':''}>${m.name}</option>`).join(''):''}
+      </select>
+    </div>
+    <div class="mf" style="margin-bottom:0">
+      <label>Ngày cần hàng</label>
+      <input type="date" value="${cartNeedDate}" oninput="cartNeedDate=this.value">
+    </div>
+    <div class="mf" style="margin-bottom:0">
+      <label>Mô tả yêu cầu</label>
+      <input placeholder="Mô tả ngắn về yêu cầu mua hàng..." value="${cartNote}" oninput="cartNote=this.value">
+    </div>
+  </div>
+
+  <div style="padding:10px 12px;background:var(--surface);border-radius:10px;margin-bottom:14px">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:500;user-select:none">
+      <input type="checkbox" id="crt-kit-chk" ${cartSaveKit?'checked':''} onchange="cartSaveKit=this.checked" style="width:15px;height:15px;accent-color:var(--ink)">
+      Lưu danh sách sản phẩm thành <span style="color:var(--ink)">School Kit</span>
+    </label>
+    <div style="font-size:12px;color:var(--text-soft);margin-top:6px;padding-left:23px">Tên kit và mô tả sẽ lấy theo tên & mô tả yêu cầu phía trên.</div>
+  </div>
+
+  <div style="max-height:210px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:14px">
+    <table id="cart-table" style="width:100%;border-collapse:collapse">
+      <thead><tr style="border-bottom:1.5px solid var(--line);background:var(--surface)">
+        <th style="width:52px;padding:8px 8px"></th>
+        <th style="text-align:left;padding:8px 8px;font-size:11.5px;color:var(--text-soft);font-weight:600">Sản phẩm</th>
+        <th style="text-align:left;padding:8px 8px;font-size:11.5px;color:var(--text-soft);font-weight:600">Đơn giá</th>
+        <th style="padding:8px 8px;font-size:11.5px;color:var(--text-soft);font-weight:600">Số lượng</th>
+        <th style="text-align:right;padding:8px 8px;font-size:11.5px;color:var(--text-soft);font-weight:600">Thành tiền</th>
+        <th style="width:32px"></th>
+      </tr></thead>
+      <tbody>${tI?rows:emptyRow}</tbody>
+    </table>
+  </div>
+
+  <div id="cart-summary" style="background:var(--surface);border-radius:10px;padding:12px 16px;margin-bottom:4px">
+    <div style="display:flex;gap:24px;align-items:center">
+      <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:1px">Mặt hàng</div><div style="font-size:17px;font-weight:700">${tI}</div></div>
+      <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:1px">Số lượng</div><div style="font-size:17px;font-weight:700">${tQ}</div></div>
+      <div style="margin-left:auto;text-align:right"><div style="font-size:11px;color:var(--text-soft);margin-bottom:1px">Tổng giá trị dự kiến</div><div style="font-size:20px;font-weight:700;color:var(--ink)">${tV.toLocaleString('vi-VN')}đ</div></div>
+    </div>
+  </div>
+
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Tiếp tục mua sắm</button>
+    <button class="add" onclick="cartSubmit()">Tạo yêu cầu mua hàng</button>
+  </div>`;
+}
+
+function cartSaveDraft(){
+  if(!cartTitle.trim()){toast('Vui lòng nhập tên yêu cầu trước khi lưu nháp');return;}
+  toast(`Đã lưu nháp "${cartTitle}"`);
+}
+
+function cartDeptChange(val){
+  cartDept=val;
+  cartMember='';
+  const sel=document.getElementById('cart-member-sel');if(!sel)return;
+  const members=MEMBERS.filter(m=>m.dept===val&&m.status==='active');
+  sel.disabled=!val||!members.length;
+  sel.innerHTML=`<option value="">— Chọn nhân viên —</option>`
+    +members.map(m=>`<option value="${m.name}">${m.name}</option>`).join('');
+}
+
+function cartSubmit(){
+  if(!cartTitle.trim()){toast('Vui lòng nhập tên yêu cầu');return;}
+  if(!cartDept){toast('Vui lòng chọn phòng ban');return;}
+  if(!cartMember){toast('Vui lòng chọn người tạo');return;}
+  if(!CART.length){toast('Giỏ yêu cầu đang trống');return;}
+  if(cartSaveKit){
+    const kitItems=CART.map(i=>({id:i.id,name:i.name,unit:i.unit,qty:i.qty}));
+    KITS.push({id:Date.now(),name:cartTitle.trim(),desc:cartNote,grade:'',price:0,items:CART.length,students:0,products:kitItems});
+    LS.set('kits',KITS);
+    toast(`Đã lưu School Kit "${cartTitle.trim()}"`);
+  }
+  const total=CART.reduce((s,i)=>s+i.price*i.qty,0);
+  const totalQty=CART.reduce((s,i)=>s+i.qty,0);
+  const n=PRS.length+1;
+  const id=`PR-2026-0${49+n}`;
+  PRS.unshift({id,title:cartTitle.trim(),dept:cartDept,by:cartMember,date:new Date().toLocaleDateString('vi-VN'),total,status:'pending',items:CART.length,lvl:total>50e6?2:1,price:totalQty>0?Math.round(total/totalQty):0,products:CART.map(i=>({...i}))});
+  LS.set('prs',PRS);
+  CART.splice(0);cartSelected.clear();
+  cartTitle='';cartDesc='';cartNeedDate='';cartNote='';
+  cartDept='';cartMember='';
+  cartSaveKit=false;
+  updateCartBadge();
+  closeModal();
+  toast(`Đã tạo ${id} thành công · ${fmtC(total)}`);
+  nav('purchase',null);
+}
+
+/* ── School Kit ── */
+let kitQ='',kitGrade='all';
+
+function kitCard(k){
+  return`<div class="panel" style="cursor:default;display:flex;flex-direction:column;gap:0">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+      <div style="flex:1;min-width:0;padding-right:10px">
+        <div style="font-weight:600;font-size:13.5px;margin-bottom:5px;line-height:1.4">${k.name}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${k.grade?`<span class="badge bb">${k.grade}</span>`:''}
+          ${k.products&&k.products.length?'<span class="badge bg">Có danh sách SP</span>':''}
+        </div>
+      </div>
+      ${k.price?`<span style="font-size:17px;font-weight:700;color:var(--ink);white-space:nowrap">${k.price.toLocaleString('vi-VN')}đ</span>`:''}
+    </div>
+    ${k.desc?`<div style="font-size:12px;color:var(--text-soft);margin-bottom:8px;line-height:1.5">${k.desc}</div>`:''}
+    <div style="font-size:12px;color:var(--text-soft);margin-bottom:14px">${k.items} sản phẩm${k.students?` · ${k.students} học sinh dự kiến`:''}</div>
+    <div style="display:flex;gap:8px;margin-top:auto;flex-wrap:nowrap">
+      <button class="act-sm" style="white-space:nowrap" onclick="viewKit(${k.id})">Xem chi tiết</button>
+      <button class="btn-pr" style="font-size:12px;padding:5px 12px;white-space:nowrap;flex:1;justify-content:center" onclick="orderKit(${k.id})">+ Tạo yêu cầu mua hàng</button>
+    </div>
+  </div>`;
+}
+
+function kitMatchGrade(grade,f){
+  if(f==='all')return true;
+  const g=(grade||'').toLowerCase();
+  if(f==='th')return /lớp\s*[1-5]$/.test(g)||g.includes('tiểu học');
+  if(f==='thcs')return /lớp\s*[6-9]$/.test(g)||g.includes('thcs');
+  if(f==='thpt')return /lớp\s*1[0-2]/.test(g)||g.includes('thpt');
+  if(f==='staff')return g.includes('giáo viên')||g.includes('bgh')||g.includes('văn phòng');
+  return true;
+}
+
+function kitFiltered(){
+  const q=kitQ.toLowerCase();
+  return KITS.filter(k=>{
+    const mQ=!q||k.name.toLowerCase().includes(q)||(k.grade||'').toLowerCase().includes(q);
+    return mQ&&kitMatchGrade(k.grade,kitGrade);
+  });
+}
+
+function filterKits(){
+  const inp=document.getElementById('kit-search');
+  if(inp)kitQ=inp.value;
+  const list=kitFiltered();
+  const grid=document.getElementById('kit-grid');
+  if(!grid)return;
+  grid.innerHTML=list.length
+    ?list.map(kitCard).join('')
+    :`<div style="grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--text-soft);font-size:13.5px">Không tìm thấy School Kit phù hợp.</div>`;
+  document.querySelectorAll('.kit-chip').forEach(b=>b.classList.toggle('on',b.dataset.g===kitGrade));
+}
+
+function schoolkit(){
+  const GRADE_CHIPS=[
+    {k:'all',l:'Tất cả'},
+    {k:'th',l:'Tiểu học'},
+    {k:'thcs',l:'THCS'},
+    {k:'thpt',l:'THPT'},
+    {k:'staff',l:'Giáo viên & BGH'},
+  ];
+  const chips=GRADE_CHIPS.map(g=>`<button class="fchip kit-chip${kitGrade===g.k?' on':''}" data-g="${g.k}" onclick="kitGrade='${g.k}';filterKits()">${g.l}</button>`).join('');
+  const list=kitFiltered();
+  const cards=list.length
+    ?list.map(kitCard).join('')
+    :`<div style="grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--text-soft);font-size:13.5px">Không tìm thấy School Kit phù hợp.</div>`;
+  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">School Kit — Bộ sản phẩm theo cấp học</div></div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <div style="position:relative;flex:1;min-width:180px;max-width:300px">
+      <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-soft);pointer-events:none" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><line x1="13.5" y1="13.5" x2="18" y2="18"/></svg>
+      <input id="kit-search" value="${kitQ.replace(/"/g,'&quot;')}" placeholder="Tìm tên kit, cấp học..." oninput="filterKits()"
+        style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13.5px;border:1.5px solid var(--line);border-radius:10px;padding:8px 12px 8px 32px;outline:none;color:var(--text);background:#fff">
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">${chips}</div>
+  </div>
+  <div id="kit-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">${cards}</div>`;
+}
+
+function viewKit(id){
+  const k=KITS.find(x=>x.id===id);if(!k)return;
+  if(!k.products)k.products=[];
+  const prodRows=k.products.length
+    ?k.products.map((p,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;${i?'border-top:1px solid var(--line)':''}">
+        <div style="flex:1;font-size:13px;font-weight:500;min-width:0">${p.name}</div>
+        <div style="font-size:12px;color:var(--text-soft);white-space:nowrap">${p.qty} ${p.unit}</div>
+        <button onclick="removeKitProduct(${id},${i})" style="flex-shrink:0;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--text-soft);font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center" title="Xóa sản phẩm">×</button>
+      </div>`).join('')
+    :`<div style="padding:18px 12px;text-align:center;font-size:12.5px;color:var(--text-soft)">Chưa có sản phẩm nào trong kit.</div>`;
+  openModal(`<h2>Chi tiết School Kit</h2>
+  <div class="mf"><label>Tên Kit</label><input id="kedit-name" value="${k.name.replace(/"/g,'&quot;')}"></div>
+  <div class="m2">
+    <div class="mf"><label>Cấp học / Nhóm</label><input id="kedit-grade" value="${(k.grade||'').replace(/"/g,'&quot;')}"></div>
+    <div class="mf"><label>Số học sinh dự kiến</label><input type="number" id="kedit-students" value="${k.students||0}"></div>
+  </div>
+  <div class="mf"><label>Mô tả</label><textarea id="kedit-desc" rows="2">${k.desc||''}</textarea></div>
+  <div style="margin-bottom:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+      <span style="font-size:12.5px;font-weight:600;color:var(--text-soft)">Danh sách sản phẩm (${k.products.length})</span>
+    </div>
+    <div style="border:1px solid var(--line);border-radius:9px;max-height:180px;overflow-y:auto;margin-bottom:10px">${prodRows}</div>
+    <div id="kp-add-link">
+      <a href="#" onclick="showKitAddForm();return false" style="font-size:12.5px;font-weight:500;color:var(--ink);text-decoration:none">+ Thêm sản phẩm</a>
+    </div>
+    <div id="kp-add-form" style="display:none;gap:6px;align-items:center;margin-top:4px">
+      <div style="flex:1;position:relative;min-width:0">
+        <input id="kp-name" placeholder="Tìm tên sản phẩm..." autocomplete="off"
+          style="width:100%;font-family:inherit;font-size:13px;border:1.5px solid var(--line);border-radius:9px;padding:7px 10px;outline:none;color:var(--text);background:var(--paper);box-sizing:border-box"
+          oninput="kitProductSearch()"
+          onblur="setTimeout(()=>{const d=document.getElementById('kp-dropdown');if(d)d.style.display='none'},200)">
+        <div id="kp-dropdown"></div>
+      </div>
+      <input id="kp-qty" type="number" min="1" value="1"
+        style="width:58px;font-family:inherit;font-size:13px;border:1.5px solid var(--line);border-radius:9px;padding:7px 8px;outline:none;color:var(--text);background:var(--paper)">
+      <button class="add" style="padding:7px 14px;font-size:13px;white-space:nowrap" onclick="addKitProduct(${id})">Thêm</button>
+    </div>
+  </div>
+  <div class="mact" style="justify-content:space-between">
+    <button class="del-btn" onclick="deleteKit(${id})">Xóa Kit</button>
+    <div style="display:flex;gap:8px">
+      <button class="act-btn" onclick="closeModal()">Đóng</button>
+      <button class="add" onclick="saveKit(${id})">Lưu thay đổi</button>
+    </div>
+  </div>`);
+}
+
+function removeKitProduct(kitId,idx){
+  const k=KITS.find(x=>x.id===kitId);if(!k||!k.products)return;
+  k.products.splice(idx,1);
+  k.items=k.products.length;
+  LS.set('kits',KITS);
+  viewKit(kitId);
+}
+
+let _kitSelUnit='cái';
+
+function showKitAddForm(){
+  document.getElementById('kp-add-link').style.display='none';
+  const f=document.getElementById('kp-add-form');
+  f.style.display='flex';
+  document.getElementById('kp-name').focus();
+}
+
+function kitProductSearch(){
+  const q=(document.getElementById('kp-name').value||'').toLowerCase().trim();
+  const dd=document.getElementById('kp-dropdown');
+  if(!q){dd.style.display='none';return;}
+  const hits=PRODUCTS.filter(p=>p.name.toLowerCase().includes(q)).slice(0,7);
+  if(!hits.length){dd.style.display='none';return;}
+  dd.innerHTML=hits.map(p=>`<div class="kp-opt" onmousedown="selectKitProduct('${p.name.replace(/'/g,"\\'")}','${p.unit}')"><span>${p.name}</span><span class="kp-opt-unit">${p.unit}</span></div>`).join('');
+  dd.style.display='block';
+}
+
+function selectKitProduct(name,unit){
+  document.getElementById('kp-name').value=name;
+  _kitSelUnit=unit;
+  document.getElementById('kp-dropdown').style.display='none';
+}
+
+function addKitProduct(kitId){
+  const k=KITS.find(x=>x.id===kitId);if(!k)return;
+  const name=(document.getElementById('kp-name').value||'').trim();
+  if(!name){toast('Nhập tên sản phẩm');return;}
+  const qty=+document.getElementById('kp-qty').value||1;
+  const unit=_kitSelUnit||'cái';
+  if(!k.products)k.products=[];
+  k.products.push({id:Date.now(),name,unit,qty});
+  k.items=k.products.length;
+  LS.set('kits',KITS);
+  _kitSelUnit='cái';
+  viewKit(kitId);
+}
+
+function saveKit(id){
+  const k=KITS.find(x=>x.id===id);if(!k)return;
+  const name=(document.getElementById('kedit-name').value||'').trim();
+  if(!name){toast('Tên Kit không được để trống');return;}
+  k.name=name;
+  k.grade=(document.getElementById('kedit-grade').value||'').trim();
+  k.desc=(document.getElementById('kedit-desc').value||'').trim();
+  k.students=+document.getElementById('kedit-students').value||0;
+  LS.set('kits',KITS);
+  closeModal();toast('Đã lưu thay đổi');render();
+}
+
+function deleteKit(id){
+  const idx=KITS.findIndex(x=>x.id===id);
+  if(idx>-1)KITS.splice(idx,1);
+  LS.set('kits',KITS);
+  closeModal();toast('Đã xóa School Kit');render();
+}
+
+function orderKit(id){
+  const k=KITS.find(x=>x.id===id);if(!k)return;
+  if(k.products&&k.products.length){
+    k.products.forEach(p=>{
+      const prod=PRODUCTS.find(x=>x.id===p.id);
+      const existing=CART.find(x=>x.id===p.id);
+      if(existing){
+        existing.qty+=p.qty;
+        if(prod)existing.price=getTierPrice(prod,existing.qty);
+      } else {
+        CART.push({id:p.id,name:p.name,unit:p.unit,qty:p.qty,price:prod?getTierPrice(prod,p.qty):0});
+      }
+    });
+    updateCartBadge();
+    toast(`Đã tải ${k.products.length} sản phẩm từ "${k.name}" vào giỏ`);
+  }
+  cartTitle=k.name;
+  cartNote=k.desc||'';
+  openCart();
+}
+
+/* ── Purchase Requests ── */
+let prFilter='all',prSearch='',prDateFrom='',prDateTo='';
+let calOpen=false,calYear=2026,calMonth=5;
+let statusOpen=false;
+
+function calNav(d){
+  calMonth+=d;
+  if(calMonth>11){calMonth=0;calYear++;}
+  if(calMonth<0){calMonth=11;calYear--;}
+  render();
+}
+function calPick(ds){
+  if(!prDateFrom||ds<prDateFrom){prDateFrom=ds;prDateTo='';}
+  else if(!prDateTo&&ds>=prDateFrom){prDateTo=ds;calOpen=false;}
+  else{prDateFrom=ds;prDateTo='';}
+  render();
+}
+function calClear(){prDateFrom='';prDateTo='';calOpen=false;render();}
+
+function renderCal(){
+  const MN=['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+  const DN=['CN','T2','T3','T4','T5','T6','T7'];
+  const first=new Date(calYear,calMonth,1).getDay();
+  const total=new Date(calYear,calMonth+1,0).getDate();
+  const pad=s=>String(s).padStart(2,'0');
+  let cells=[];
+  for(let i=0;i<first;i++)cells.push(null);
+  for(let d=1;d<=total;d++)cells.push(d);
+  while(cells.length%7)cells.push(null);
+  const rows=[];
+  for(let r=0;r<cells.length/7;r++){
+    const week=cells.slice(r*7,(r+1)*7).map(d=>{
+      if(!d)return`<td style="padding:5px"></td>`;
+      const ds=`${calYear}-${pad(calMonth+1)}-${pad(d)}`;
+      const isF=ds===prDateFrom,isT=ds===prDateTo;
+      const inR=prDateFrom&&prDateTo&&ds>prDateFrom&&ds<prDateTo;
+      const today=new Date().toISOString().slice(0,10);
+      let bg=isF||isT?'background:var(--ink);color:#fff;font-weight:700;':inR?'background:rgba(22,53,84,.12);':'';
+      let extra=ds===today&&!isF&&!isT?'font-weight:600;color:var(--ink);':'';
+      return`<td onclick="calPick('${ds}')" style="padding:5px;text-align:center;cursor:pointer;border-radius:7px;font-size:13px;${bg}${extra}">${d}</td>`;
+    }).join('');
+    rows.push(`<tr>${week}</tr>`);
+  }
+  const btnSt='background:none;border:none;cursor:pointer;font-size:18px;padding:2px 8px;color:var(--ink);border-radius:7px;';
+  const hint=prDateFrom&&!prDateTo?`<div style="font-size:11.5px;color:var(--ink);text-align:center;margin-top:8px">Chọn ngày kết thúc</div>`:
+    prDateFrom&&prDateTo?`<div style="font-size:11.5px;color:var(--text-soft);text-align:center;margin-top:8px">${prDateFrom.split('-').reverse().join('/')} → ${prDateTo.split('-').reverse().join('/')}</div>`:'';
+  return`<div style="position:absolute;top:calc(100% + 6px);left:0;z-index:55;background:#fff;border:1.5px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(22,53,84,.18);padding:14px 12px;min-width:252px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <button style="${btnSt}" onclick="calNav(-1)">‹</button>
+      <span style="font-size:13.5px;font-weight:600">${MN[calMonth]} ${calYear}</span>
+      <button style="${btnSt}" onclick="calNav(1)">›</button>
+    </div>
+    <table style="border-collapse:collapse;width:100%">
+      <thead><tr>${DN.map(d=>`<th style="font-size:11px;color:var(--text-soft);padding:4px 5px;text-align:center;font-weight:500">${d}</th>`).join('')}</tr></thead>
+      <tbody>${rows.join('')}</tbody>
+    </table>
+    ${hint}
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">
+      <button onclick="calClear()" style="font-size:12px;color:var(--coral);background:none;border:none;cursor:pointer;${!prDateFrom?'opacity:.4;pointer-events:none':''}">Xóa lọc ngày</button>
+      <button onclick="calOpen=false;render()" style="font-size:12px;padding:5px 12px;border:1.5px solid var(--line);border-radius:8px;background:none;cursor:pointer;font-family:inherit">Đóng</button>
+    </div>
+  </div>`;
+}
+
+const STATUS_OPTS=[
+  {v:'all',label:'Tất cả trạng thái',dot:''},
+  {v:'pending',label:'Chờ duyệt',dot:'#c2410c'},
+  {v:'approved',label:'Đã duyệt',dot:'#15803d'},
+  {v:'rejected',label:'Từ chối',dot:'#b91c1c'},
+  {v:'done',label:'Hoàn thành',dot:'#475569'},
+];
+function renderStatusDrop(){
+  const cur=STATUS_OPTS.find(o=>o.v===prFilter)||STATUS_OPTS[0];
+  const items=STATUS_OPTS.map(o=>{
+    const active=o.v===prFilter;
+    const dot=o.dot?`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${o.dot};flex-shrink:0"></span>`:'<span style="display:inline-block;width:7px;height:7px;flex-shrink:0"></span>';
+    return`<div onclick="prFilter='${o.v}';statusOpen=false;render()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;border-radius:8px;font-size:13px;font-weight:${active?600:400};color:${active?'var(--ink)':'var(--text)'};background:${active?'rgba(22,53,84,.07)':'none'};white-space:nowrap" onmouseenter="this.style.background='rgba(22,53,84,.05)'" onmouseleave="this.style.background='${active?'rgba(22,53,84,.07)':'none'}'">
+      ${dot}<span>${o.label}</span>${active?`<svg style="margin-left:auto" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`:''}
+    </div>`;
+  }).join('');
+  const dotHtml=cur.dot?`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${cur.dot};flex-shrink:0"></span>`:'';
+  return`<div style="position:relative;flex-shrink:0">
+    <button onclick="statusOpen=!statusOpen;calOpen=false;render()" style="font-family:inherit;font-size:13px;border:1.5px solid ${statusOpen?'var(--ink)':prFilter!=='all'?'var(--ink)':'var(--line)'};border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:${prFilter!=='all'?'var(--ink)':'var(--text)'};cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;font-weight:${prFilter!=='all'?500:400}">
+      ${dotHtml}${cur.label}
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:2px;opacity:.5;transition:transform .15s;${statusOpen?'transform:rotate(180deg)':''}"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    ${statusOpen?`<div style="position:absolute;top:calc(100% + 6px);left:0;z-index:55;background:#fff;border:1.5px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(22,53,84,.18);padding:6px;min-width:192px">${items}</div>`:''}
+  </div>`;
+}
+
+function purchase(){
+  const hasFilter=prSearch||prFilter!=='all'||prDateFrom||prDateTo;
+  const list=PRS.filter(p=>{
+    if(prSearch){const q=prSearch.toLowerCase();if(!p.title.toLowerCase().includes(q)&&!(p.by||'').toLowerCase().includes(q))return false;}
+    if(prFilter!=='all'&&p.status!==prFilter)return false;
+    if(prDateFrom||prDateTo){
+      const pd=parsePrDate(p.date);
+      if(pd&&prDateFrom&&pd<parseInputDate(prDateFrom))return false;
+      if(pd&&prDateTo&&pd>parseInputDate(prDateTo))return false;
+    }
+    return true;
+  });
+  const fD=s=>s?s.split('-').reverse().slice(0,2).join('/'):null;
+  const dateBtnLabel=prDateFrom&&prDateTo?`${fD(prDateFrom)} – ${fD(prDateTo)}`:prDateFrom?`Từ ${fD(prDateFrom)} …`:'Ngày tạo';
+  const dateBtnActive=prDateFrom||prDateTo;
+  const IS='font-family:inherit;font-size:13px;border:1.5px solid var(--line);border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:var(--text)';
+  const rows=list.map(p=>{
+    const unitPrice=p.price||Math.round(p.total/(p.items||1));
+    return`<tr>
+      <td style="font-weight:600;white-space:nowrap;font-size:12.5px">${p.id}</td>
+      <td><div style="font-weight:500">${p.title}</div><div style="font-size:11.5px;color:var(--text-soft);margin-top:2px">${p.dept}</div></td>
+      <td style="white-space:nowrap">${p.by||'—'}</td>
+      <td style="white-space:nowrap">${p.date}</td>
+      <td>
+        <div style="font-weight:500;white-space:nowrap">${unitPrice.toLocaleString('vi-VN')}đ</div>
+        <div style="font-size:11px;color:var(--text-soft);margin-top:2px;line-height:1.4">${readMoney(unitPrice)}</div>
+      </td>
+      <td>
+        <div style="font-weight:600;white-space:nowrap">${p.total.toLocaleString('vi-VN')}đ</div>
+        <div style="font-size:11px;color:var(--text-soft);margin-top:2px;line-height:1.4">${readMoney(p.total)}</div>
+      </td>
+      <td><span class="badge ${PR_STATUS[p.status][1]}">${PR_STATUS[p.status][0]}</span></td>
+      <td><button class="act-sm" onclick="viewPR('${p.id}')">Xem chi tiết</button></td>
+    </tr>`;
+  }).join('');
+
+  return`
+  ${calOpen||statusOpen?`<div onclick="calOpen=false;statusOpen=false;render()" style="position:fixed;inset:0;z-index:50"></div>`:''}
+  <div class="panel" style="padding:12px 16px;margin-bottom:14px">
+    <div style="display:flex;gap:8px;align-items:center">
+      <input style="${IS};width:180px;flex-shrink:0" placeholder="Tìm nội dung, người tạo..." value="${prSearch}" oninput="prSearch=this.value;render()">
+      ${renderStatusDrop()}
+      <div style="position:relative;flex-shrink:0">
+        <button onclick="calOpen=!calOpen;statusOpen=false;render()" style="${IS};cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;${dateBtnActive?'border-color:var(--ink);font-weight:500;color:var(--ink)':'color:var(--text-soft)'}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          ${dateBtnLabel}
+        </button>
+        ${calOpen?renderCal():''}
+      </div>
+      ${hasFilter?`<button class="act-sm" onclick="prSearch='';prFilter='all';prDateFrom='';prDateTo='';calOpen=false;statusOpen=false;render()" style="flex-shrink:0;white-space:nowrap">✕ Xóa lọc</button>`:''}
+      ${hasFilter?`<span style="font-size:12px;color:var(--text-soft);white-space:nowrap;margin-left:4px"><b style="color:var(--ink)">${list.length}</b> kết quả</span>`:''}
+    </div>
+  </div>
+  <div class="tb-panel"><table><thead><tr><th>Mã YC</th><th>Nội dung</th><th>Người tạo</th><th>Ngày tạo</th><th>Đơn giá</th><th>Tổng tiền</th><th>Trạng thái</th><th></th></tr></thead>
+  <tbody>${rows}${!list.length?`<tr><td colspan="8" style="text-align:center;padding:36px;color:var(--text-soft)">${hasFilter?'Không tìm thấy kết quả phù hợp':'Chưa có yêu cầu mua hàng'}</td></tr>`:''}</tbody></table></div>`;
+}
+function openPR(){
+  openModal(`<h2>Tạo yêu cầu mua hàng</h2>
+  <div class="mf"><label>Tiêu đề yêu cầu</label><input id="prTitle" placeholder="VD: Mua bộ SGK lớp 10 năm học 2026-2027"></div>
+  <div class="m2">
+    <div class="mf"><label>Phòng ban</label><select id="prDept">${DEPTS.map(d=>`<option>${d.name}</option>`).join('')}</select></div>
+    <div class="mf"><label>Ưu tiên</label><select id="prPrio"><option>Bình thường</option><option>Gấp</option><option>Khẩn cấp</option></select></div>
+  </div>
+  <div class="m2">
+    <div class="mf"><label>Giá trị ước tính (đ)</label><input id="prBudget" type="number" placeholder="0"></div>
+    <div class="mf"><label>Số lượng mục</label><input id="prItems" type="number" placeholder="1"></div>
+  </div>
+  <div class="mf"><label>Mô tả / ghi chú</label><textarea id="prNote" placeholder="Mô tả chi tiết yêu cầu mua hàng..."></textarea></div>
+  <div class="mact">
+    <button class="act-sm" onclick="closeModal()">Hủy</button>
+    <button class="btn-pr" onclick="savePR()">Gửi yêu cầu</button>
+  </div>`);
+}
+function savePR(){
+  const title=(document.getElementById('prTitle').value||'').trim();
+  if(!title){toast('Nhập tiêu đề yêu cầu');return;}
+  const dept=document.getElementById('prDept').value;
+  const total=+(document.getElementById('prBudget').value)||0;
+  const items=+(document.getElementById('prItems').value)||1;
+  const n=PRS.length+1;
+  const id=`PR-2026-0${49+n}`;
+  PRS.unshift({id,title,dept,by:'Nguyễn Văn An',date:new Date().toLocaleDateString('vi-VN'),total,status:'pending',items,lvl:total>50e6?2:1});
+  LS.set('prs',PRS);
+  closeModal();toast(`Đã gửi ${id}`);render();
+}
+function viewPR(id){
+  const p=PRS.find(x=>x.id===id);if(!p)return;
+  const unitPrice=p.price||Math.round(p.total/(p.items||1));
+  const prodRows=p.products&&p.products.length
+    ?p.products.map((item,i)=>`<tr style="${i?'border-top:1px solid var(--line)':''}">
+        <td style="padding:8px 10px;width:44px"><img src="${getProductImg(item.id)}" width="36" height="36" style="border-radius:6px;object-fit:cover;display:block"></td>
+        <td style="padding:8px 10px;font-size:13px;font-weight:500">${item.name}</td>
+        <td style="padding:8px 10px;font-size:12.5px;color:var(--text-soft);white-space:nowrap;text-align:right">${item.price?item.price.toLocaleString('vi-VN')+'đ':'—'}</td>
+        <td style="padding:8px 10px;text-align:center;font-size:13px;white-space:nowrap">${item.qty} ${item.unit}</td>
+        <td style="padding:8px 10px;font-weight:600;font-size:13px;white-space:nowrap;text-align:right">${item.price?(item.price*item.qty).toLocaleString('vi-VN')+'đ':'—'}</td>
+      </tr>`).join('')
+    :`<tr><td colspan="5" style="padding:16px;text-align:center;font-size:12.5px;color:var(--text-soft)">Không có dữ liệu chi tiết sản phẩm</td></tr>`;
+  document.getElementById('modal').classList.add('modal-xl');
+  openModal(`<h2 style="margin-bottom:4px">${p.id}</h2>
+  <div style="font-size:13.5px;font-weight:600;margin-bottom:12px">${p.title}</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+    <div style="background:var(--surface);border-radius:10px;padding:12px">
+      <div style="font-size:11px;color:var(--text-soft);margin-bottom:3px">Đơn giá</div>
+      <div style="font-size:15px;font-weight:700;color:var(--ink)">${unitPrice.toLocaleString('vi-VN')}đ</div>
+      <div style="font-size:10.5px;color:var(--text-soft);margin-top:3px;line-height:1.4">${readMoney(unitPrice)}</div>
+    </div>
+    <div style="background:var(--surface);border-radius:10px;padding:12px">
+      <div style="font-size:11px;color:var(--text-soft);margin-bottom:3px">Tổng tiền</div>
+      <div style="font-size:15px;font-weight:700;color:var(--ink)">${p.total.toLocaleString('vi-VN')}đ</div>
+      <div style="font-size:10.5px;color:var(--text-soft);margin-top:3px;line-height:1.4">${readMoney(p.total)}</div>
+    </div>
+    <div style="background:var(--surface);border-radius:10px;padding:12px">
+      <div style="font-size:11px;color:var(--text-soft);margin-bottom:6px">Trạng thái</div>
+      <span class="badge ${PR_STATUS[p.status][1]}">${PR_STATUS[p.status][0]}</span>
+    </div>
+  </div>
+  <div style="font-size:12.5px;color:var(--text-soft);margin-bottom:12px;display:flex;gap:14px;flex-wrap:wrap">
+    <span>📂 ${p.dept||'—'}</span>
+    <span>👤 ${p.by||'—'}</span>
+    <span>📅 ${p.date}</span>
+  </div>
+  <div style="font-size:12.5px;font-weight:600;margin-bottom:8px">Danh sách sản phẩm (${p.products?p.products.length:0} mặt hàng)</div>
+  <div style="border:1px solid var(--line);border-radius:10px;overflow:hidden;max-height:240px;overflow-y:auto;margin-bottom:4px">
+    <table style="width:100%;border-collapse:collapse">
+      <thead style="position:sticky;top:0;z-index:1"><tr style="background:var(--surface);border-bottom:1.5px solid var(--line)">
+        <th style="width:44px;padding:7px 10px"></th>
+        <th style="text-align:left;padding:7px 10px;font-size:11.5px;color:var(--text-soft);font-weight:600">Sản phẩm</th>
+        <th style="text-align:right;padding:7px 10px;font-size:11.5px;color:var(--text-soft);font-weight:600">Đơn giá</th>
+        <th style="text-align:center;padding:7px 10px;font-size:11.5px;color:var(--text-soft);font-weight:600">Số lượng</th>
+        <th style="text-align:right;padding:7px 10px;font-size:11.5px;color:var(--text-soft);font-weight:600">Thành tiền</th>
+      </tr></thead>
+      <tbody>${prodRows}</tbody>
+    </table>
+  </div>
+  <div class="mact"><button class="act-btn" onclick="closeModal()">Đóng</button></div>`);
+}
+
+/* ── Approvals ── */
+let apprTab='pending';
+function approvals(){
+  const pending=PRS.filter(p=>p.status==='pending');
+  const tabs=['pending','approved','rejected'].map(t=>`<button class="fchip ${apprTab===t?'on':''}" onclick="apprTab='${t}';render()">${t==='pending'?`Chờ duyệt (${pending.length})`:t==='approved'?'Đã duyệt':'Từ chối'}</button>`).join('');
+  const list=apprTab==='pending'?pending:PRS.filter(p=>p.status===apprTab);
+  const rows=list.map(p=>`<tr>
+    <td style="font-weight:600">${p.id}</td>
+    <td><div style="font-weight:500">${p.title}</div><div style="font-size:11.5px;color:var(--text-soft)">${p.dept} · ${p.by}</div></td>
+    <td style="font-weight:600">${fmtV(p.total)}đ</td>
+    <td><span class="badge bs">Cấp ${p.lvl}</span></td>
+    <td>${p.date}</td>
+    <td>${apprTab==='pending'?`<div style="display:flex;gap:6px">
+      <button class="btn-pr" style="font-size:12px;padding:5px 10px" onclick="apprAction('${p.id}','approved')">Duyệt</button>
+      <button class="del-sm" onclick="apprAction('${p.id}','rejected')">Từ chối</button>
+    </div>`:`<span class="badge ${PR_STATUS[p.status][1]}">${PR_STATUS[p.status][0]}</span>`}</td>
+  </tr>`).join('');
+  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Trung tâm Phê duyệt</div><div class="sp"></div>${tabs}</div>
+  <div class="tb-panel"><table><thead><tr><th>Mã YC</th><th>Nội dung</th><th>Giá trị</th><th>Cấp</th><th>Ngày tạo</th><th>Hành động</th></tr></thead>
+  <tbody>${rows}${!list.length?'<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text-soft)">Không có yêu cầu</td></tr>':''}</tbody></table></div>`;
+}
+function apprAction(id,status){
+  const p=PRS.find(x=>x.id===id);if(!p)return;
+  p.status=status;LS.set('prs',PRS);
+  toast(status==='approved'?`Đã duyệt ${id}`:`Đã từ chối ${id}`);render();
+}
+
+/* ── Orders ── */
+function orders(){
+  const rows=ORDERS.map(o=>`<tr>
+    <td style="font-weight:600">${o.id}</td>
+    <td style="font-size:12px;color:var(--text-soft)">${o.pr}</td>
+    <td>${o.sup}</td>
+    <td>${o.date}</td>
+    <td>${o.dlv}</td>
+    <td>${o.items}</td>
+    <td style="font-weight:600">${fmtV(o.total)}đ</td>
+    <td><span class="badge ${ORD_ST[o.status][1]}">${ORD_ST[o.status][0]}</span></td>
+    <td><button class="act-sm" onclick="toast('Xem chi tiết đơn ${o.id}')">Chi tiết</button></td>
+  </tr>`).join('');
+  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Quản lý đơn hàng</div></div>
+  <div class="tb-panel"><table><thead><tr><th>Mã đơn</th><th>Mã YC</th><th>Nhà cung cấp</th><th>Ngày đặt</th><th>Ngày giao</th><th>SL mục</th><th>Tổng tiền</th><th>Trạng thái</th><th></th></tr></thead>
+  <tbody>${rows}</tbody></table></div>`;
+}
+
+/* ── Budget ── */
+function budget(){
+  const total=800e6,spent=254e6,allocated=670e6,remaining=total-spent;
+  const overviewPanel=`<div class="panel" style="margin-bottom:14px">
+    <div class="ph"><h3>Tổng quan ngân sách — Năm học 2026-2027</h3></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px">
+      ${[['Tổng ngân sách năm','800tr','#3b82f6'],['Đã phân bổ','670tr','#f97316'],['Đã chi tiêu','254tr','#a855f7'],['Còn lại','546tr','#22c55e']].map(([l,v,c])=>`<div style="background:var(--paper);border-radius:10px;padding:14px">
+        <div style="font-size:22px;font-weight:700;color:${c}">${v}</div>
+        <div style="font-size:12px;color:var(--text-soft);margin-top:3px">${l}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+  const deptRows=DEPTS.map(d=>{const p=pct(d.spent,d.budget),barC=p>=90?'#dc2626':p>=75?'#d97706':'#22c55e';return`<tr>
+    <td style="font-weight:500">${d.name}</td>
+    <td>${d.head}</td>
+    <td>${d.members}</td>
+    <td>${fmtV(d.budget)}đ</td>
+    <td>${fmtV(d.spent)}đ</td>
+    <td><div class="bgt-bar-bg"><div class="bgt-bar-fill" style="width:${p}%;background:${barC}"></div></div><div style="font-size:11px;color:var(--text-soft);margin-top:3px">${p}%</div></td>
+  </tr>`;}).join('');
+  return overviewPanel+`<div class="tb-panel"><table><thead><tr><th>Phòng ban</th><th>Trưởng phòng</th><th>TV</th><th>Ngân sách</th><th>Đã chi</th><th style="width:160px">Sử dụng</th></tr></thead><tbody>${deptRows}</tbody></table></div>`;
+}
+
+/* ── Invoices ── */
+function invoices(){
+  const rows=INVOICES.map(inv=>`<tr>
+    <td style="font-weight:600">${inv.id}</td>
+    <td style="font-size:12px;color:var(--text-soft)">${inv.order}</td>
+    <td>${inv.sup}</td>
+    <td>${inv.date}</td>
+    <td>${inv.due}</td>
+    <td style="font-weight:600">${fmtV(inv.total)}đ</td>
+    <td><span class="badge ${INV_ST[inv.status][1]}">${INV_ST[inv.status][0]}</span></td>
+    <td>${inv.status==='unpaid'||inv.status==='overdue'?`<button class="btn-pr" style="font-size:12px;padding:5px 10px" onclick="toast('Xử lý thanh toán ${inv.id}')">Thanh toán</button>`:''}</td>
+  </tr>`).join('');
+  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Hóa đơn & Thanh toán</div></div>
+  <div class="tb-panel"><table><thead><tr><th>Số HĐ</th><th>Mã đơn</th><th>Nhà cung cấp</th><th>Ngày phát hành</th><th>Ngày đến hạn</th><th>Giá trị</th><th>Trạng thái</th><th></th></tr></thead>
+  <tbody>${rows}</tbody></table></div>`;
+}
+
+/* ── Ebook ── */
+function ebook(){
+  const rows=EBOOKS.map(e=>{const p=pct(e.used,e.lic),c=p>=90?'#dc2626':p>=70?'#d97706':'#22c55e';const expiring=e.used===e.lic;return`<tr>
+    <td><div style="font-weight:500">${e.title}</div><div style="font-size:11.5px;color:var(--text-soft)">${e.pub}</div></td>
+    <td><span class="badge bs">${e.cat}</span></td>
+    <td>${e.lic}</td>
+    <td style="font-weight:600;color:${c}">${e.used}</td>
+    <td><div class="bgt-bar-bg"><div class="bgt-bar-fill" style="width:${p}%;background:${c}"></div></div><div style="font-size:11px;color:var(--text-soft);margin-top:2px">${p}%</div></td>
+    <td>${e.exp}</td>
+    <td><span class="badge ${expiring?'br':'bg'}">${expiring?'Đã dùng hết':'Còn hạn'}</span></td>
+    <td><button class="act-sm" onclick="toast('Gia hạn license: ${e.title.replace(/'/g,'')}')">Gia hạn</button></td>
+  </tr>`;}).join('');
+  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Thư viện Ebook & Tài nguyên số</div><div class="sp"></div><button class="btn-pr" onclick="nav('rfq',null)">+ Yêu cầu báo giá license</button></div>
+  <div class="tb-panel"><table><thead><tr><th>Tên ebook</th><th>Danh mục</th><th>Tổng license</th><th>Đang dùng</th><th style="width:130px">Sử dụng</th><th>Hết hạn</th><th>Trạng thái</th><th></th></tr></thead>
+  <tbody>${rows}</tbody></table></div>`;
+}
+
+/* ── RFQ ── */
+function rfq(){
+  const rows=RFQS.map(r=>`<tr>
+    <td style="font-weight:600">${r.id}</td>
+    <td style="font-weight:500">${r.title}</td>
+    <td>${r.sups}</td>
+    <td style="font-weight:600;color:var(--ink)">${r.resp}</td>
+    <td>${fmtV(r.budget)}đ</td>
+    <td>${r.due}</td>
+    <td><span class="badge ${RFQ_ST[r.status][1]}">${RFQ_ST[r.status][0]}</span></td>
+    <td><button class="act-sm" onclick="toast('Xem chi tiết ${r.id}')">Chi tiết</button></td>
+  </tr>`).join('');
+  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Báo giá B2B (RFQ)</div><div class="sp"></div><button class="btn-pr" onclick="openRFQ()">+ Tạo yêu cầu báo giá</button></div>
+  <div class="tb-panel"><table><thead><tr><th>Mã RFQ</th><th>Nội dung</th><th>Số NCC</th><th>Phản hồi</th><th>Ngân sách</th><th>Hạn chót</th><th>Trạng thái</th><th></th></tr></thead>
+  <tbody>${rows}</tbody></table></div>`;
+}
+function openRFQ(){
+  openModal(`<h2>Tạo yêu cầu báo giá (RFQ)</h2>
+  <div class="mf"><label>Tiêu đề</label><input id="rfqTitle" placeholder="VD: Máy chiếu phòng học đa năng"></div>
+  <div class="m2">
+    <div class="mf"><label>Ngân sách ước tính (đ)</label><input id="rfqBudget" type="number" placeholder="0"></div>
+    <div class="mf"><label>Hạn chót nhận báo giá</label><input id="rfqDue" type="date"></div>
+  </div>
+  <div class="mf"><label>Mô tả yêu cầu</label><textarea id="rfqNote" placeholder="Mô tả chi tiết sản phẩm/dịch vụ cần báo giá..."></textarea></div>
+  <div class="mact"><button class="act-sm" onclick="closeModal()">Hủy</button><button class="btn-pr" onclick="saveRFQ()">Gửi yêu cầu</button></div>`);
+}
+function saveRFQ(){const t=(document.getElementById('rfqTitle').value||'').trim();if(!t){toast('Nhập tiêu đề');return;}closeModal();toast('Đã gửi yêu cầu báo giá');}
+
+/* ── Contracts ── */
+function contracts(){
+  const rows=CONTRACTS.map(c=>`<tr>
+    <td style="font-weight:600">${c.id}</td>
+    <td style="font-weight:500">${c.sup}</td>
+    <td>${c.type}</td>
+    <td style="font-weight:600">${fmtV(c.val)}đ</td>
+    <td>${c.start}</td>
+    <td>${c.end}</td>
+    <td><span class="badge ${CON_ST[c.status][1]}">${CON_ST[c.status][0]}</span></td>
+    <td><button class="act-sm" onclick="toast('Xem hợp đồng ${c.id}')">Xem HĐ</button></td>
+  </tr>`).join('');
+  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Quản lý Hợp đồng</div></div>
+  <div class="tb-panel"><table><thead><tr><th>Số HĐ</th><th>Nhà cung cấp</th><th>Loại hợp đồng</th><th>Giá trị</th><th>Ngày bắt đầu</th><th>Ngày kết thúc</th><th>Trạng thái</th><th></th></tr></thead>
+  <tbody>${rows}</tbody></table></div>`;
+}
+
+/* ── Members ── */
+const ROLE_LBL={admin:'Quản trị',manager:'Trưởng phòng',buyer:'Người mua',viewer:'Chỉ xem'};
+const ROLE_CLS={admin:'bp',manager:'bb',buyer:'bo',viewer:'bs'};
+
+function members(){
+  const tabBar=`<div class="tabs">
+    <button class="tab-btn${membersTab==='members'?' on':''}" onclick="membersTab='members';render()">Thành viên</button>
+    <button class="tab-btn${membersTab==='depts'?' on':''}" onclick="membersTab='depts';render()">Phòng ban</button>
+  </div>`;
+  return tabBar+(membersTab==='members'?membersPanel():deptsPanel());
+}
+
+function membersPanel(){
+  let list=MEMBERS;
+  if(memberSearch)list=list.filter(m=>m.name.toLowerCase().includes(memberSearch.toLowerCase()));
+  if(memberGender!=='all')list=list.filter(m=>m.gender===memberGender);
+  if(memberDeptFilter!=='all')list=list.filter(m=>m.dept===memberDeptFilter);
+
+  const searchBox=`<div style="position:relative">
+    <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-soft);pointer-events:none">${ic(I.search,14)}</span>
+    <input style="padding:8px 12px 8px 34px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:13.5px;outline:none;width:230px" placeholder="Tìm theo tên..." value="${memberSearch.replace(/"/g,'&quot;')}" oninput="memberSearch=this.value;render()">
+  </div>`;
+
+  const gChips=['all','nam','nu'].map(g=>`<button class="fchip${memberGender===g?' on':''}" onclick="memberGender='${g}';render()">${g==='all'?'Tất cả':g==='nam'?'Nam':'Nữ'}</button>`).join('');
+
+  const dSel=`<select style="padding:8px 12px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:13px;outline:none;background:var(--surface);color:var(--text)" onchange="memberDeptFilter=this.value;render()">
+    <option value="all"${memberDeptFilter==='all'?' selected':''}>Tất cả phòng ban</option>
+    ${DEPTS.map(d=>`<option value="${d.name}"${memberDeptFilter===d.name?' selected':''}>${d.name}</option>`).join('')}
+  </select>`;
+
+  const rows=list.map(m=>`<tr>
+    <td><div style="display:flex;align-items:center;gap:9px">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${m.name.split(' ').map(x=>x[0]).slice(-2).join('')}</div>
+      <div><div style="font-weight:500;font-size:13.5px">${m.name}</div><div style="font-size:11.5px;color:var(--text-soft)">${m.email}</div></div>
+    </div></td>
+    <td><span class="badge ${m.gender==='nam'?'bb':'bp'}">${m.gender==='nam'?'Nam':'Nữ'}</span></td>
+    <td><span class="badge ${ROLE_CLS[m.role]}">${ROLE_LBL[m.role]}</span></td>
+    <td style="font-size:13px">${m.dept}</td>
+    <td><span class="badge ${m.status==='active'?'bg':'bs'}">${m.status==='active'?'Hoạt động':'Không HĐ'}</span></td>
+    <td><div style="display:flex;gap:6px">
+      <button class="act-sm" onclick="openEditMember(${m.id})">Sửa</button>
+      <button class="del-sm" onclick="deleteMember(${m.id})">Xóa</button>
+    </div></td>
+  </tr>`).join('');
+
+  return`<div class="toolbar" style="flex-wrap:wrap">
+    ${searchBox}
+    ${gChips}
+    ${dSel}
+    <div class="sp"></div>
+    <button class="btn-pr" onclick="openAddMember()">+ Thêm thành viên</button>
+  </div>
+  <div class="tb-panel"><table>
+    <thead><tr><th>Thành viên</th><th>Giới tính</th><th>Vai trò</th><th>Phòng ban</th><th>Trạng thái</th><th></th></tr></thead>
+    <tbody>${rows||`<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text-soft)">Không tìm thấy thành viên</td></tr>`}</tbody>
+  </table></div>`;
+}
+
+function deptsPanel(){
+  const list=deptSearch?DEPTS.filter(d=>d.name.toLowerCase().includes(deptSearch.toLowerCase())):DEPTS;
+
+  const searchBox=`<div style="position:relative">
+    <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-soft);pointer-events:none">${ic(I.search,14)}</span>
+    <input style="padding:8px 12px 8px 34px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:13.5px;outline:none;width:230px" placeholder="Tìm theo tên phòng ban..." value="${deptSearch.replace(/"/g,'&quot;')}" oninput="deptSearch=this.value;render()">
+  </div>`;
+
+  const rows=list.map(d=>{
+    const hasMem=MEMBERS.some(m=>m.dept===d.name);
+    const p=pct(d.spent,d.budget);
+    const barC=p>=90?'#dc2626':p>=75?'#d97706':'#22c55e';
+    const delBtn=hasMem
+      ?`<div class="tip-wrap"><button class="del-sm" style="opacity:.45;cursor:not-allowed" disabled>Xóa</button><div class="tip">Phòng ban có nhân viên, không thể xóa</div></div>`
+      :`<button class="del-sm" onclick="deleteDept(${d.id})">Xóa</button>`;
+    return`<tr>
+      <td style="font-weight:600">${d.name}</td>
+      <td>${d.head}</td>
+      <td style="text-align:center"><span class="badge bb">${d.members}</span></td>
+      <td>${fmtV(d.budget)}đ</td>
+      <td><div class="bgt-bar-bg" style="width:110px"><div class="bgt-bar-fill" style="width:${p}%;background:${barC}"></div></div><div style="font-size:11px;color:var(--text-soft);margin-top:2px">${p}%</div></td>
+      <td><div style="display:flex;gap:6px;align-items:center">
+        <button class="act-sm" onclick="openEditDept(${d.id})">Sửa</button>
+        ${delBtn}
+      </div></td>
+    </tr>`;
+  }).join('');
+
+  return`<div class="toolbar">
+    ${searchBox}
+    <div class="sp"></div>
+    <button class="btn-pr" onclick="openAddDept()">+ Thêm phòng ban</button>
+  </div>
+  <div class="tb-panel"><table>
+    <thead><tr><th>Tên phòng ban</th><th>Trưởng phòng</th><th style="text-align:center">Thành viên</th><th>Ngân sách</th><th style="width:140px">Sử dụng NS</th><th></th></tr></thead>
+    <tbody>${rows||`<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text-soft)">Không tìm thấy phòng ban</td></tr>`}</tbody>
+  </table></div>`;
+}
+
+function openAddMember(){
+  openModal(`<h2>Thêm thành viên</h2>
+  <div class="mf"><label>Họ và tên</label><input id="mName" placeholder="Nhập họ và tên đầy đủ"></div>
+  <div class="m2">
+    <div class="mf"><label>Giới tính</label><select id="mGender"><option value="nam">Nam</option><option value="nu">Nữ</option></select></div>
+    <div class="mf"><label>Phòng ban</label><select id="mDept">${DEPTS.map(d=>`<option value="${d.name}">${d.name}</option>`).join('')}</select></div>
+  </div>
+  <div class="m2">
+    <div class="mf"><label>Vai trò</label><select id="mRole"><option value="admin">Quản trị</option><option value="manager">Trưởng phòng</option><option value="buyer">Người mua</option><option value="viewer">Chỉ xem</option></select></div>
+    <div class="mf"><label>Trạng thái</label><select id="mStatus"><option value="active">Hoạt động</option><option value="inactive">Không hoạt động</option></select></div>
+  </div>
+  <div class="mf"><label>Email</label><input id="mEmail" type="email" placeholder="email@truong.edu.vn"></div>
+  <div class="mf"><label>Số điện thoại</label><input id="mPhone" placeholder="09xx xxx xxx"></div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Hủy</button>
+    <button class="add" onclick="saveMember()">Thêm thành viên</button>
+  </div>`);
+}
+
+function saveMember(){
+  const name=(document.getElementById('mName').value||'').trim();
+  if(!name){toast('Vui lòng nhập họ và tên');return;}
+  const id=Math.max(0,...MEMBERS.map(m=>m.id))+1;
+  MEMBERS.push({id,name,
+    gender:document.getElementById('mGender').value,
+    role:document.getElementById('mRole').value,
+    dept:document.getElementById('mDept').value,
+    email:document.getElementById('mEmail').value||'',
+    phone:document.getElementById('mPhone').value||'',
+    status:document.getElementById('mStatus').value});
+  closeModal();toast(`Đã thêm thành viên "${name}"`);render();
+}
+
+function openEditMember(id){
+  const m=MEMBERS.find(x=>x.id===id);if(!m)return;
+  openModal(`<h2>Sửa thông tin thành viên</h2>
+  <div class="mf"><label>Họ và tên</label><input id="mName" value="${m.name.replace(/"/g,'&quot;')}"></div>
+  <div class="m2">
+    <div class="mf"><label>Giới tính</label><select id="mGender"><option value="nam"${m.gender==='nam'?' selected':''}>Nam</option><option value="nu"${m.gender==='nu'?' selected':''}>Nữ</option></select></div>
+    <div class="mf"><label>Phòng ban</label><select id="mDept">${DEPTS.map(d=>`<option value="${d.name}"${m.dept===d.name?' selected':''}>${d.name}</option>`).join('')}</select></div>
+  </div>
+  <div class="m2">
+    <div class="mf"><label>Vai trò</label><select id="mRole">${Object.entries(ROLE_LBL).map(([v,l])=>`<option value="${v}"${m.role===v?' selected':''}>${l}</option>`).join('')}</select></div>
+    <div class="mf"><label>Trạng thái</label><select id="mStatus"><option value="active"${m.status==='active'?' selected':''}>Hoạt động</option><option value="inactive"${m.status==='inactive'?' selected':''}>Không hoạt động</option></select></div>
+  </div>
+  <div class="mf"><label>Email</label><input id="mEmail" type="email" value="${m.email.replace(/"/g,'&quot;')}"></div>
+  <div class="mf"><label>Số điện thoại</label><input id="mPhone" value="${m.phone}"></div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Hủy</button>
+    <button class="add" onclick="updateMember(${id})">Lưu thay đổi</button>
+  </div>`);
+}
+
+function updateMember(id){
+  const m=MEMBERS.find(x=>x.id===id);if(!m)return;
+  const name=(document.getElementById('mName').value||'').trim();
+  if(!name){toast('Vui lòng nhập họ và tên');return;}
+  m.name=name;
+  m.gender=document.getElementById('mGender').value;
+  m.dept=document.getElementById('mDept').value;
+  m.role=document.getElementById('mRole').value;
+  m.status=document.getElementById('mStatus').value;
+  m.email=document.getElementById('mEmail').value||'';
+  m.phone=document.getElementById('mPhone').value||'';
+  closeModal();toast(`Đã cập nhật thành viên "${name}"`);render();
+}
+
+function deleteMember(id){
+  const m=MEMBERS.find(x=>x.id===id);if(!m)return;
+  MEMBERS.splice(MEMBERS.indexOf(m),1);
+  toast(`Đã xóa thành viên "${m.name}"`);render();
+}
+
+function openAddDept(){
+  openModal(`<h2>Thêm phòng ban</h2>
+  <div class="mf"><label>Tên phòng ban</label><input id="dName" placeholder="VD: Phòng Công nghệ thông tin"></div>
+  <div class="mf"><label>Trưởng phòng</label><input id="dHead" placeholder="Họ và tên trưởng phòng"></div>
+  <div class="mf"><label>Ngân sách năm (đ)</label><input id="dBudget" type="number" placeholder="0"></div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Hủy</button>
+    <button class="add" onclick="saveDept()">Thêm phòng ban</button>
+  </div>`);
+}
+
+function saveDept(){
+  const name=(document.getElementById('dName').value||'').trim();
+  if(!name){toast('Vui lòng nhập tên phòng ban');return;}
+  const id=Math.max(0,...DEPTS.map(d=>d.id))+1;
+  DEPTS.push({id,name,head:document.getElementById('dHead').value||'—',budget:+(document.getElementById('dBudget').value)||0,spent:0,members:0});
+  closeModal();toast(`Đã thêm phòng ban "${name}"`);render();
+}
+
+function openEditDept(id){
+  const d=DEPTS.find(x=>x.id===id);if(!d)return;
+  openModal(`<h2>Sửa phòng ban</h2>
+  <div class="mf"><label>Tên phòng ban</label><input id="dName" value="${d.name.replace(/"/g,'&quot;')}"></div>
+  <div class="mf"><label>Trưởng phòng</label><input id="dHead" value="${d.head.replace(/"/g,'&quot;')}"></div>
+  <div class="mf"><label>Ngân sách năm (đ)</label><input id="dBudget" type="number" value="${d.budget}"></div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Hủy</button>
+    <button class="add" onclick="updateDept(${id})">Lưu thay đổi</button>
+  </div>`);
+}
+
+function updateDept(id){
+  const d=DEPTS.find(x=>x.id===id);if(!d)return;
+  const name=(document.getElementById('dName').value||'').trim();
+  if(!name){toast('Vui lòng nhập tên phòng ban');return;}
+  d.name=name;
+  d.head=document.getElementById('dHead').value||'—';
+  d.budget=+(document.getElementById('dBudget').value)||d.budget;
+  closeModal();toast(`Đã cập nhật phòng ban "${name}"`);render();
+}
+
+function deleteDept(id){
+  const d=DEPTS.find(x=>x.id===id);if(!d)return;
+  if(MEMBERS.some(m=>m.dept===d.name)){toast('Phòng ban có nhân viên, không thể xóa');return;}
+  DEPTS.splice(DEPTS.indexOf(d),1);
+  toast(`Đã xóa phòng ban "${d.name}"`);render();
+}
+
+/* ── Organization dialogs ── */
+function openAddAddress(){
+  openModal(`<h2>Thêm địa chỉ giao hàng</h2>
+  <div class="mf"><label>Địa chỉ <span class="req">*</span></label><input id="aAddr" placeholder="VD: 123 Nguyễn Trãi, Q.1, TP.HCM"></div>
+  <div class="mf"><label>Nhãn <span class="req">*</span></label><input id="aLabel" placeholder="VD: Địa chỉ chính, Cơ sở 2..."></div>
+  <div class="mact"><button class="act-btn" onclick="tryCloseModal()">Đóng</button><button class="add" onclick="saveAddress()">Lưu</button></div>`);
+}
+function saveAddress(){
+  const addr=(document.getElementById('aAddr').value||'').trim();
+  const label=(document.getElementById('aLabel').value||'').trim();
+  if(!addr){toast('Vui lòng nhập địa chỉ');return;}
+  if(!label){toast('Vui lòng nhập nhãn');return;}
+  ORG_ADDRESSES.push({addr,label,cls:'bs'});
+  closeModal();toast('Đã thêm địa chỉ giao hàng');render();
+}
+function openEditAddress(idx){
+  const a=ORG_ADDRESSES[idx];if(!a)return;
+  openModal(`<h2>Sửa địa chỉ giao hàng</h2>
+  <div class="mf"><label>Địa chỉ <span class="req">*</span></label><input id="aAddr" value="${a.addr.replace(/"/g,'&quot;')}"></div>
+  <div class="mf"><label>Nhãn <span class="req">*</span></label><input id="aLabel" value="${a.label.replace(/"/g,'&quot;')}"></div>
+  <div class="mact"><button class="act-btn" onclick="tryCloseModal()">Đóng</button><button class="add" onclick="updateAddress(${idx})">Lưu</button></div>`);
+}
+function updateAddress(idx){
+  const addr=(document.getElementById('aAddr').value||'').trim();
+  const label=(document.getElementById('aLabel').value||'').trim();
+  if(!addr){toast('Vui lòng nhập địa chỉ');return;}
+  if(!label){toast('Vui lòng nhập nhãn');return;}
+  ORG_ADDRESSES[idx]={...ORG_ADDRESSES[idx],addr,label};
+  closeModal();toast('Đã cập nhật địa chỉ giao hàng');render();
+}
+function openUploadDoc(){
+  openModal(`<h2>Tải lên Hồ sơ & Chứng từ</h2>
+  <div class="mf"><label>Loại chứng từ <span class="req">*</span></label><select id="docType"><option>Quyết định thành lập</option><option>Mã số thuế GTGT</option><option>Giấy phép hoạt động</option><option>Hợp đồng khung EduMart</option><option>Khác</option></select></div>
+  <div class="mf"><label>Tên tài liệu <span class="req">*</span></label><input id="docName" placeholder="Nhập tên tài liệu"></div>
+  <div class="mf"><label>File đính kèm <span class="req">*</span></label><input id="docFile" type="file" accept=".pdf,.doc,.docx,.jpg,.png"></div>
+  <div class="mf"><label>Ghi chú</label><textarea id="docNote" placeholder="Ghi chú thêm (tuỳ chọn)"></textarea></div>
+  <div class="mact"><button class="act-btn" onclick="tryCloseModal()">Đóng</button><button class="add" onclick="saveDoc()">Lưu</button></div>`);
+}
+function saveDoc(){
+  const name=(document.getElementById('docName').value||'').trim();
+  const files=document.getElementById('docFile').files;
+  if(!name){toast('Vui lòng nhập tên tài liệu');return;}
+  if(!files||!files.length){toast('Vui lòng chọn file đính kèm');return;}
+  ORG_DOCS.push({name,status:'Đang xử lý',cls:'bo'});
+  closeModal();toast('Đã tải lên "'+name+'"');render();
+}
+function openUpdateDoc(idx){
+  const d=ORG_DOCS[idx];if(!d)return;
+  const isNew=d.cls==='bs';
+  openModal(`<h2>${isNew?'Tải lên':'Cập nhật'}: ${d.name}</h2>
+  <div class="mf"><label>Tên tài liệu <span class="req">*</span></label><input id="docName" value="${d.name.replace(/"/g,'&quot;')}"></div>
+  <div class="mf"><label>${isNew?'File tài liệu':'File đính kèm mới'} <span class="req">*</span></label><input id="docFile" type="file" accept=".pdf,.doc,.docx,.jpg,.png"></div>
+  <div class="mf"><label>Ghi chú</label><textarea id="docNote" placeholder="Ghi chú${isNew?'':' về phiên bản mới'} (tuỳ chọn)"></textarea></div>
+  <div class="mact"><button class="act-btn" onclick="tryCloseModal()">Đóng</button><button class="add" onclick="updateDoc(${idx})">Lưu</button></div>`);
+}
+function updateDoc(idx){
+  const name=(document.getElementById('docName').value||'').trim();
+  const files=document.getElementById('docFile').files;
+  if(!name){toast('Vui lòng nhập tên tài liệu');return;}
+  if(!files||!files.length){toast('Vui lòng chọn file đính kèm');return;}
+  ORG_DOCS[idx]={...ORG_DOCS[idx],name,status:'Đang xử lý',cls:'bo'};
+  closeModal();toast('Đã cập nhật "'+name+'"');render();
+}
+function viewDoc(i){
+  const d=ORG_DOCS[i];
+  const META=[
+    {file:'quyet-dinh-thanh-lap.pdf',size:'1.2 MB',uploaded:'15/01/2026',verified:'20/01/2026'},
+    {file:'mst-gtgt-0100200300.pdf',size:'0.8 MB',uploaded:'15/01/2026',verified:'22/01/2026'},
+    {file:'giay-phep-hoat-dong-v2.pdf',size:'2.4 MB',uploaded:'10/06/2026',verified:null},
+    {file:null,size:null,uploaded:null,verified:null},
+  ];
+  const m=META[i]||{};
+  openModal(`<h2>Chi tiết: ${d.name}</h2>
+  <div style="background:var(--paper);border-radius:10px;padding:14px;margin:4px 0 16px">
+    ${m.file?`<div style="display:flex;align-items:center;gap:12px;padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid var(--line)">
+      <div style="width:42px;height:42px;border-radius:10px;background:#fee2e2;color:#dc2626;display:flex;align-items:center;justify-content:center;flex-shrink:0">${ic(I.invoice,20)}</div>
+      <div><div style="font-weight:600;font-size:13.5px">${m.file}</div><div style="font-size:11.5px;color:var(--text-soft);margin-top:2px">${m.size} · PDF</div></div>
+    </div>`:''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Trạng thái</div><span class="badge ${d.cls}">${d.status}</span></div>
+      <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Ngày tải lên</div><div style="font-size:13px;font-weight:500">${m.uploaded||'—'}</div></div>
+      <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Ngày xác minh</div><div style="font-size:13px;font-weight:500">${m.verified||'Chưa xác minh'}</div></div>
+      <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Kích thước</div><div style="font-size:13px;font-weight:500">${m.size||'—'}</div></div>
+    </div>
+  </div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Đóng</button>
+    ${m.file?`<button class="btn-pr" onclick="toast('Đang tải về tài liệu...')">${ic(I.dl,14)} Tải về</button>`:''}
+  </div>`);
+}
+
+/* ── Organization ── */
+function organization(){
+  const REP={name:'Nguyễn Văn Hiệu',title:'Hiệu trưởng',email:'hieupho@thptdemo.edu.vn',phone:'0901234567',cccd:'079200001234'};
+  return`<div style="min-height:calc(100vh - 130px);display:flex;align-items:center">
+  <div style="width:100%;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="panel">
+        <div class="ph"><h3>Thông tin tổ chức</h3><button class="phact" onclick="toast('Đã lưu thông tin tổ chức')">Lưu thay đổi</button></div>
+        <div style="margin-top:14px">
+          ${[['Tên tổ chức',ORG.name],['Mã số thuế',ORG.tax],['Email liên hệ',ORG.email],['Số điện thoại',ORG.phone],['Địa chỉ',ORG.addr]].map(([l,v])=>`<div class="mf"><label>${l}</label><input value="${v}" onchange="toast('Đã cập nhật ${l.toLowerCase()}')"></div>`).join('')}
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h3>Người đại diện pháp lý</h3><button class="phact" onclick="toast('Đã lưu thông tin người đại diện')">Lưu thay đổi</button></div>
+        <div style="margin-top:14px">
+          ${[['Họ và tên',REP.name],['Chức vụ',REP.title],['Email',REP.email],['Số điện thoại',REP.phone],['CMND / CCCD',REP.cccd]].map(([l,v])=>`<div class="mf"><label>${l}</label><input value="${v}" onchange="toast('Đã cập nhật ${l.toLowerCase()}')"></div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="panel">
+        <div class="ph"><h3>Địa chỉ giao hàng</h3><button class="phact" onclick="openAddAddress()">+ Thêm</button></div>
+        ${ORG_ADDRESSES.map((a,i)=>`
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)">
+          <div><div style="font-size:13px;font-weight:500;margin-bottom:4px">${a.addr}</div><span class="badge ${a.cls}">${a.label}</span></div>
+          <button class="act-sm" onclick="openEditAddress(${i})">Sửa</button>
+        </div>`).join('')}
+      </div>
+      <div class="panel">
+        <div class="ph"><h3>Hồ sơ & Chứng từ</h3><button class="phact" onclick="openUploadDoc()">+ Tải lên</button></div>
+        ${ORG_DOCS.map((d,i)=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)">
+          <div>
+            <div style="font-size:13px;font-weight:500;margin-bottom:4px">${d.name}</div>
+            <span class="badge ${d.cls}">${d.status}</span>
+          </div>
+          <div style="display:flex;gap:7px;flex-shrink:0">
+            ${d.cls!=='bs'?`<button class="act-sm" onclick="viewDoc(${i})">Xem</button>`:''}
+            <button class="act-sm" onclick="openUpdateDoc(${i})">${d.cls==='bs'?'Tải lên':'Cập nhật'}</button>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+  </div>
+  </div>`;
+}
+
+/* ── Reports ── */
+function reports(){
+  const months=[175,135,115,180,305,285,120,145,220,290,305,315];
+  const mLabels=['T8/24','T9','T10','T11','T12','T1/25','T2','T3','T4','T5','T6','T7'];
+  const donutSegs=[{l:'SGK',p:35,c:'#3b82f6'},{l:'VPP',p:22,c:'#f97316'},{l:'Thiết Bị',p:28,c:'#22c55e'},{l:'Ebook',p:10,c:'#a855f7'},{l:'Khác',p:5,c:'#94a3b8'}];
+  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Báo cáo & Thống kê</div><div class="sp"></div><button class="btn-pr" onclick="toast('Xuất báo cáo PDF')">${ic(I.dl)} Xuất PDF</button></div>
+  <div style="display:grid;grid-template-columns:1fr 280px;gap:14px;margin-bottom:14px">
+    <div class="panel">
+      <div class="ph"><h3>Chi tiêu theo tháng</h3><span class="phsub">Năm học 2024-2025</span></div>
+      <div style="margin-top:12px">${lineChart(months,mLabels,320,880,198,50,28)}</div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h3>Cơ cấu chi tiêu</h3><span class="phsub">Tháng 6/2026</span></div>
+      ${donutChart(donutSegs)}
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:11px">
+    ${[['Tổng chi tiêu cả năm','2,4 tỷ đ','#3b82f6'],['Đơn hàng thành công','38','#22c55e'],['Tiết kiệm so với lẻ','185tr','#f97316'],['Nhà cung cấp hợp tác','12','#a855f7']].map(([l,v,c])=>`<div class="panel" style="text-align:center">
+      <div style="font-size:24px;font-weight:700;color:${c};margin-bottom:4px">${v}</div>
+      <div style="font-size:12px;color:var(--text-soft)">${l}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+/* ── Notifications view ── */
+function notifications(){
+  const all=[...NOTIFS,
+    {dot:'blue',txt:'Hợp đồng HĐ-2026-008 đến hạn gia hạn sau 15 ngày',time:'2 ngày trước'},
+    {dot:'green',txt:'Yêu cầu báo giá RFQ-2026-011 nhận được 3 phản hồi',time:'2 ngày trước'},
+    {dot:'orange',txt:'PR-2026-044 đã được phê duyệt cấp 1',time:'3 ngày trước'},
+  ];
+  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Tất cả thông báo</div></div>
+  <div class="panel">
+    ${all.map(n=>`<div class="notif-item">
+      <div class="ni-dot" style="background:${n.dot==='orange'?'#f97316':n.dot==='green'?'#22c55e':n.dot==='red'?'#dc2626':'#4f46e5'}"></div>
+      <div style="flex:1"><div class="ni-txt">${n.txt}</div><div class="ni-time">${n.time}</div></div>
+    </div>`).join('')}
+  </div>`;
+}
+
+/* ── Internal catalog ── */
+function internalcat(){
+  const items=[
+    {name:'Bút bi Thiên Long 027',cat:'VPP',max:500,unit:'cây'},
+    {name:'Vở Campus 200 trang',cat:'VPP',max:2000,unit:'quyển'},
+    {name:'Giấy A4 IK Plus',cat:'VPP',max:200,unit:'ram'},
+    {name:'Bộ SGK theo cấp học',cat:'SGK',max:500,unit:'bộ'},
+    {name:'Máy chiếu Epson',cat:'Thiết bị',max:5,unit:'cái'},
+    {name:'Máy tính Casio fx-580',cat:'Thiết bị',max:50,unit:'cái'},
+  ];
+  const rows=items.map(i=>`<tr><td style="font-weight:500">${i.name}</td><td><span class="badge bs">${i.cat}</span></td><td>${i.max.toLocaleString()} ${i.unit}</td><td><button class="act-sm" onclick="toast('Yêu cầu mua ${i.name}')">Đặt mua</button></td></tr>`).join('');
+  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Danh mục mua sắm nội bộ</div><div class="sp"></div><button class="btn-out" onclick="toast('Chỉnh sửa danh mục')">Chỉnh sửa danh mục</button></div>
+  <div class="tb-panel"><table><thead><tr><th>Sản phẩm được phép mua</th><th>Danh mục</th><th>Hạn mức tối đa</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+/* ── Support ── */
+function support(){
+  return`<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="panel">
+      <div class="ph"><h3>Liên hệ hỗ trợ</h3></div>
+      <div style="margin-top:14px">
+        <div class="mf"><label>Chủ đề</label><select><option>Yêu cầu mua hàng</option><option>Hóa đơn / Thanh toán</option><option>Ebook / License</option><option>Kỹ thuật</option></select></div>
+        <div class="mf"><label>Mô tả vấn đề</label><textarea placeholder="Mô tả chi tiết vấn đề bạn gặp phải..."></textarea></div>
+        <button class="btn-pr" onclick="toast('Đã gửi yêu cầu hỗ trợ. Chúng tôi sẽ phản hồi trong vòng 24 giờ.')">Gửi yêu cầu</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h3>Thông tin liên hệ</h3></div>
+      ${[['📞 Hotline B2B','1800 1234 (Miễn phí)'],['📧 Email','b2b@hieuach.vn'],['💬 Live Chat','Thứ 2 – Thứ 6: 8:00–17:30'],['📍 Văn phòng','18 Nguyễn Thị Minh Khai, Q.1, TP.HCM']].map(([l,v])=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px">
+        <span style="color:var(--text-soft)">${l}</span><span style="font-weight:500">${v}</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ── Render dispatcher ── */
+function render(){
+  const c=document.getElementById('content');if(!c)return;
+  if(curV==='dashboard')c.innerHTML=dashboard();
+  else if(curV==='marketplace')c.innerHTML=marketplace();
+  else if(curV==='schoolkit')c.innerHTML=schoolkit();
+  else if(curV==='purchase')c.innerHTML=purchase();
+  else if(curV==='approvals'){if(currentUser?.subRole==='BGH')c.innerHTML=approvals();else nav('dashboard',null);}
+  else if(curV==='orders')c.innerHTML=orders();
+  else if(curV==='budget')c.innerHTML=budget();
+  else if(curV==='invoices')c.innerHTML=invoices();
+  else if(curV==='ebook')c.innerHTML=ebook();
+  else if(curV==='rfq')c.innerHTML=rfq();
+  else if(curV==='contracts')c.innerHTML=contracts();
+  else if(curV==='members')c.innerHTML=members();
+  else if(curV==='organization')c.innerHTML=organization();
+  else if(curV==='reports')c.innerHTML=reports();
+  else if(curV==='notifications')c.innerHTML=notifications();
+  else if(curV==='internalcat')c.innerHTML=internalcat();
+  else if(curV==='support')c.innerHTML=support();
+  else c.innerHTML=`<div class="panel" style="text-align:center;padding:40px;color:var(--text-soft)">Trang đang được phát triển</div>`;
+}
+
+/* ── Shell builder ── */
+function userInitials(name){return(name||'').split(' ').filter(Boolean).map(w=>w[0]).slice(-2).join('').toUpperCase()||'?';}
+function renderShell(){
+  const isBGH=currentUser?.subRole==='BGH';
+  const sidebar=NAV.filter(n=>n.v!=='approvals'||isBGH).map(n=>{
+    if(n.g)return`<div class="navg">${n.g}</div>`;
+    const badge=n.badge?`<span class="nb">${n.badge}</span>`:'';
+    return`<button class="nav-item${n.v===curV?' on':''}" data-v="${n.v}" onclick="nav('${n.v}',this)">${ic(I[n.i]||I.dash,18)} ${n.l}${badge}</button>`;
+  }).join('');
+
+  const uName=currentUser?.name||ORG.name;
+  const uEmail=currentUser?.email||'';
+  const uInitials=userInitials(uName);
+
+  document.getElementById('app').innerHTML=`
+  <div class="shell">
+    <aside class="side">
+      <div class="logo">
+        <span class="mark"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a1 1 0 0 1 1-1h6v16H5a1 1 0 0 1-1-1Z"/><path d="M13 4h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-6"/></svg></span>
+        <span class="name">EduMart<small>Cổng Trường học</small></span>
+      </div>
+      ${sidebar}
+      <div class="side-foot">
+        <div class="av">${uInitials}</div>
+        <div style="flex:1;min-width:0"><div class="nm">${uName}</div><div class="rl">${uEmail}</div></div>
+        <button class="cog" onclick="logout()" title="Đăng xuất">${ic(I.logout,15)}</button>
+      </div>
+    </aside>
+    <div class="main">
+      <div class="topbar">
+        <h1 id="pageTitle">${NAV.find(n=>n.v===curV)?.l||'Dashboard'}</h1>
+        <div class="sp"></div>
+        <button class="tb-btn" id="cartBtn" onclick="openCart()" title="Giỏ yêu cầu" style="position:relative">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span id="cartBadge" style="display:none;position:absolute;top:-5px;right:-5px;background:var(--coral);color:#fff;font-size:9.5px;font-weight:700;min-width:17px;height:17px;border-radius:9px;padding:0 3px;align-items:center;justify-content:center;pointer-events:none">0</span>
+        </button>
+        <button class="tb-btn" onclick="toast('Không có thông báo mới')" title="Thông báo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
+      </div>
+      <div class="content" id="content"></div>
+    </div>
+  </div>`;
+}
+
+/* ── Auth / Session ── */
+function logout(){
+  try{localStorage.removeItem('edumart_user');}catch(e){}
+  window.location.href='./';
+}
+
+function init(){
+  const mu=getMainUser();
+  if(mu&&mu.role==='school'){
+    currentUser=mu;
+    // Use org name from user profile (orgName field if set, else user name)
+    ORG.name=mu.orgName||mu.name||ORG.name;
+    renderShell();render();
+  } else {
+    // Not logged in or wrong role → back to main app login
+    window.location.href='./';
+  }
+}
+init();
+</script>
+</body>
+</html>

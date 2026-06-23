@@ -290,25 +290,21 @@ const NAV=[
   {v:'dashboard',l:'Dashboard',i:'dash'},
   {g:'Tổ chức'},
   {v:'organization',l:'Tổ chức',i:'org'},
-  {v:'members',l:'Thành viên & Phòng ban',i:'members'},
+  {v:'members',l:'Cấu hình tổ chức',i:'members'},
   {g:'Mua sắm'},
   {v:'marketplace',l:'Danh mục mua sắm',i:'catalog'},
   {v:'schoolkit',l:'School Kit',i:'kit'},
   {g:'Quy trình'},
   {v:'purchase',l:'Yêu cầu mua hàng',i:'pr'},
-  {v:'approvals',l:'Phê duyệt',i:'appr',badge:3},
   {v:'orders',l:'Đơn hàng',i:'order'},
   {g:'Tài chính'},
   {v:'budget',l:'Ngân sách',i:'budget'},
-  {v:'invoices',l:'Hóa đơn & Thanh toán',i:'invoice'},
   {v:'contracts',l:'Hợp đồng',i:'contract'},
   {g:'Tài nguyên'},
   {v:'ebook',l:'Ebook & Tài nguyên số',i:'ebook'},
-  {v:'rfq',l:'Báo giá B2B',i:'rfq'},
+  {v:'rfq',l:'Yêu cầu báo giá',i:'rfq'},
   {g:'Phân tích'},
   {v:'reports',l:'Báo cáo',i:'report'},
-  {g:'Khác'},
-  {v:'support',l:'Hỗ trợ',i:'support'},
 ];
 
 /* ── Mock data ── */
@@ -330,8 +326,38 @@ const DEPTS=[
   {id:5,name:'Phòng Thư viện',head:'Hoàng Thu Hà',budget:90e6,spent:67e6,members:6},
   {id:6,name:'Khối Tự Nhiên',head:'Vũ Quang Hải',budget:180e6,spent:145e6,members:22},
 ];
+const SCHOOL_BUDGETS=[
+  {year:'2026-2027',semesters:[
+    {id:'hk1',label:'Học kỳ 1',from:'08/09/2026',to:'31/01/2027'},
+    {id:'hk2',label:'Học kỳ 2',from:'01/02/2027',to:'30/05/2027'},
+  ]},
+  {year:'2025-2026',semesters:[
+    {id:'hk1',label:'Học kỳ 1',from:'08/09/2025',to:'31/01/2026'},
+    {id:'hk2',label:'Học kỳ 2',from:'01/02/2026',to:'30/05/2026'},
+  ]},
+];
+let DEPT_BUDGETS=[
+  {id:1,year:'2026-2027',sem:'hk1',dept:'Ban Giám hiệu',budget:80e6,spent:42e6},
+  {id:2,year:'2026-2027',sem:'hk1',dept:'Phòng Đào tạo',budget:120e6,spent:98e6},
+  {id:3,year:'2026-2027',sem:'hk1',dept:'Phòng Hành chính',budget:60e6,spent:35e6},
+  {id:4,year:'2026-2027',sem:'hk1',dept:'Phòng Kế toán',budget:40e6,spent:12e6},
+  {id:5,year:'2026-2027',sem:'hk1',dept:'Phòng Thư viện',budget:90e6,spent:67e6},
+  {id:6,year:'2026-2027',sem:'hk1',dept:'Khối Tự Nhiên',budget:180e6,spent:145e6},
+  {id:7,year:'2025-2026',sem:'hk1',dept:'Ban Giám hiệu',budget:70e6,spent:70e6},
+  {id:8,year:'2025-2026',sem:'hk1',dept:'Phòng Đào tạo',budget:110e6,spent:105e6},
+  {id:9,year:'2025-2026',sem:'hk1',dept:'Phòng Hành chính',budget:55e6,spent:50e6},
+  {id:10,year:'2025-2026',sem:'hk1',dept:'Phòng Kế toán',budget:35e6,spent:30e6},
+  {id:11,year:'2025-2026',sem:'hk1',dept:'Phòng Thư viện',budget:80e6,spent:76e6},
+  {id:12,year:'2025-2026',sem:'hk1',dept:'Khối Tự Nhiên',budget:170e6,spent:160e6},
+  {id:13,year:'2025-2026',sem:'hk2',dept:'Ban Giám hiệu',budget:65e6,spent:60e6},
+  {id:14,year:'2025-2026',sem:'hk2',dept:'Phòng Đào tạo',budget:100e6,spent:92e6},
+  {id:15,year:'2025-2026',sem:'hk2',dept:'Phòng Hành chính',budget:50e6,spent:45e6},
+  {id:16,year:'2025-2026',sem:'hk2',dept:'Phòng Kế toán',budget:30e6,spent:24e6},
+  {id:17,year:'2025-2026',sem:'hk2',dept:'Phòng Thư viện',budget:75e6,spent:68e6},
+  {id:18,year:'2025-2026',sem:'hk2',dept:'Khối Tự Nhiên',budget:150e6,spent:140e6},
+];
 
-const PR_STATUS={pending:['Chờ duyệt','bo'],approved:['Đã duyệt','bg'],rejected:['Từ chối','br'],done:['Hoàn thành','bs']};
+const PR_STATUS={draft:['Nháp','bs'],pending:['Chờ duyệt','bo'],approved:['Đã duyệt','bg'],rejected:['Từ chối','br'],done:['Hoàn thành','bs']};
 let PRS=LS.get('prs',[
   {id:'PR-2026-048',title:'Mua bộ SGK lớp 10 năm học 2026-2027',dept:'Phòng Đào tạo',by:'Trần Thị Bích',date:'15/06/2026',total:142e6,status:'pending',items:3,lvl:2},
   {id:'PR-2026-047',title:'Văn phòng phẩm quý 3/2026',dept:'Phòng Hành chính',by:'Lê Minh Cường',date:'12/06/2026',total:28.5e6,status:'approved',items:12,lvl:1},
@@ -340,28 +366,42 @@ let PRS=LS.get('prs',[
   {id:'PR-2026-044',title:'Dụng cụ thể dục thể thao',dept:'Phòng Đào tạo',by:'Trần Thị Bích',date:'05/06/2026',total:18.2e6,status:'done',items:8,lvl:1},
 ]);
 
-const ORD_ST={ship:['Đang giao','bb'],done:['Hoàn thành','bg'],proc:['Đang xử lý','bo'],cancel:['Đã hủy','br']};
-let ORDERS=LS.get('school_orders',[
-  {id:'ORD-2026-0821',pr:'PR-2026-047',sup:'Nhà sách Tri Thức',date:'14/06/2026',dlv:'20/06/2026',total:28.5e6,status:'ship',items:12},
-  {id:'ORD-2026-0819',pr:'PR-2026-044',sup:'Thiết bị GD Việt Nam',date:'08/06/2026',dlv:'15/06/2026',total:18.2e6,status:'done',items:8},
-  {id:'ORD-2026-0815',pr:'PR-2026-042',sup:'VPP Bút Chì Xanh',date:'01/06/2026',dlv:'10/06/2026',total:12.45e6,status:'done',items:6},
-  {id:'ORD-2026-0810',pr:'PR-2026-040',sup:'NXB Giáo Dục',date:'25/05/2026',dlv:'05/06/2026',total:68e6,status:'done',items:35},
+const DLV_ST={pending:['Chờ giao','bs'],ship:['Đang giao','bb'],partial:['Giao một phần','bo'],done:['Hoàn thành','bg']};
+const INV_ISS={none:['Chưa có HĐ','bs'],issued:['Đã xuất HĐ','bg']};
+const PAY_ST={unpaid:['Chưa thanh toán','bo'],paid:['Đã thanh toán','bg'],overdue:['Quá hạn','br']};
+let ORDERS=LS.get('school_orders2',[
+  {id:'ORD-2026-0821',pr:'PR-2026-047',sup:'Nhà sách Tri Thức',date:'14/06/2026',dlv:'22/06/2026',total:28.5e6,items:12,
+    dlvStatus:'ship',invStatus:'none',payStatus:'unpaid',dlvActual:'',receiver:'',dlvNote:'Giao trong giờ hành chính',inv:null,
+    products:[{name:'Sách Toán 12 nâng cao',sku:'STM12-NC',price:85000,qty:60,unit:'cuốn'},{name:'Sách Ngữ văn 12',sku:'SNV12',price:78000,qty:60,unit:'cuốn'},{name:'Sách Vật lý 12',sku:'SVL12',price:82000,qty:55,unit:'cuốn'}]},
+  {id:'ORD-2026-0819',pr:'PR-2026-044',sup:'Thiết bị GD Việt Nam',date:'08/06/2026',dlv:'15/06/2026',total:18.2e6,items:8,
+    dlvStatus:'done',invStatus:'issued',payStatus:'unpaid',dlvActual:'16/06/2026',receiver:'Nguyễn Thị Lan',dlvNote:'',
+    inv:{id:'INV-2026-0312',date:'17/06/2026',due:'17/07/2026',total:18.2e6,paidDate:''},
+    products:[{name:'Máy chiếu Epson EB-X51',sku:'EPS-EBX51',price:9200000,qty:1,unit:'cái'},{name:'Màn chiếu 100 inch',sku:'SCR-100',price:1500000,qty:2,unit:'cái'},{name:'Cáp HDMI 5m',sku:'HDMI-5M',price:150000,qty:5,unit:'sợi'}]},
+  {id:'ORD-2026-0815',pr:'PR-2026-042',sup:'VPP Bút Chì Xanh',date:'01/06/2026',dlv:'10/06/2026',total:12.45e6,items:6,
+    dlvStatus:'done',invStatus:'issued',payStatus:'paid',dlvActual:'09/06/2026',receiver:'Trần Văn Minh',dlvNote:'Đã kiểm đếm đủ số lượng',
+    inv:{id:'INV-2026-0308',date:'10/06/2026',due:'10/07/2026',total:12.45e6,paidDate:'15/06/2026'},
+    products:[{name:'Bút bi xanh Thiên Long',sku:'TL-B01',price:4500,qty:500,unit:'cái'},{name:'Bút chì 2B',sku:'PC-2B',price:3000,qty:300,unit:'cái'},{name:'Thước kẻ 30cm',sku:'RUL-30',price:8000,qty:200,unit:'cái'}]},
+  {id:'ORD-2026-0810',pr:'PR-2026-040',sup:'NXB Giáo Dục',date:'25/05/2026',dlv:'05/06/2026',total:68e6,items:35,
+    dlvStatus:'done',invStatus:'issued',payStatus:'overdue',dlvActual:'04/06/2026',receiver:'Lê Thị Hoa',dlvNote:'Giao thiếu 5 cuốn sách Lịch sử, đã bổ sung 07/06',
+    inv:{id:'INV-2026-0301',date:'05/06/2026',due:'05/06/2026',total:68e6,paidDate:''},
+    products:[{name:'Sách giáo khoa lớp 10 bộ cơ bản',sku:'SGK10-CB',price:320000,qty:80,unit:'bộ'},{name:'Sách bài tập Toán 10',sku:'SBT-T10',price:45000,qty:80,unit:'cuốn'},{name:'Sách bài tập Vật lý 10',sku:'SBT-VL10',price:42000,qty:80,unit:'cuốn'}]},
+  {id:'ORD-2026-0805',pr:'PR-2026-038',sup:'Thiết bị EduTech VN',date:'18/05/2026',dlv:'30/05/2026',total:43e6,items:5,
+    dlvStatus:'partial',invStatus:'none',payStatus:'unpaid',dlvActual:'',receiver:'',dlvNote:'Đã nhận 3/5 mục, đang chờ màn hình tương tác',
+    inv:null,
+    products:[{name:'Máy tính bảng học tập 10"',sku:'TAB-EDU10',price:4500000,qty:8,unit:'cái'},{name:'Bàn phím Bluetooth',sku:'KB-BT01',price:450000,qty:8,unit:'cái'},{name:'Màn hình tương tác 75"',sku:'IFP-75',price:28000000,qty:1,unit:'cái'}]},
+  {id:'ORD-2026-0801',pr:'PR-2026-035',sup:'VPP Minh Long',date:'12/05/2026',dlv:'20/05/2026',total:15.6e6,items:10,
+    dlvStatus:'done',invStatus:'issued',payStatus:'paid',dlvActual:'19/05/2026',receiver:'Phạm Thị Thu',dlvNote:'',
+    inv:{id:'INV-2026-0290',date:'20/05/2026',due:'20/06/2026',total:15.6e6,paidDate:'25/05/2026'},
+    products:[{name:'Giấy A4 70gsm',sku:'PA4-70',price:85000,qty:80,unit:'ram'},{name:'Mực in HP 85A',sku:'HP-85A',price:380000,qty:12,unit:'hộp'},{name:'File tài liệu A4',sku:'FLA4',price:8000,qty:100,unit:'cái'}]},
 ]);
 
-const INVOICES=[
-  {id:'INV-2026-0312',order:'ORD-2026-0819',sup:'Thiết bị GD Việt Nam',date:'10/06/2026',due:'10/07/2026',total:18.2e6,status:'unpaid'},
-  {id:'INV-2026-0308',order:'ORD-2026-0815',sup:'VPP Bút Chì Xanh',date:'05/06/2026',due:'05/07/2026',total:12.45e6,status:'paid'},
-  {id:'INV-2026-0301',order:'ORD-2026-0810',sup:'NXB Giáo Dục',date:'28/05/2026',due:'28/06/2026',total:68e6,status:'overdue'},
-  {id:'INV-2026-0290',order:'ORD-2026-0805',sup:'Nhà sách Tri Thức',date:'20/05/2026',due:'20/06/2026',total:43e6,status:'paid'},
-];
-const INV_ST={unpaid:['Chưa thanh toán','bo'],paid:['Đã thanh toán','bg'],overdue:['Quá hạn','br']};
-
 const EBOOKS=[
-  {id:1,title:'Toán học nâng cao lớp 12',pub:'NXB Giáo dục',lic:50,used:38,exp:'31/08/2027',cat:'Toán'},
-  {id:2,title:'Vật lý đại cương (bộ 3 tập)',pub:'NXB ĐH Quốc gia',lic:30,used:22,exp:'31/08/2027',cat:'Khoa học'},
-  {id:3,title:'Tiếng Anh B1-B2 Cambridge Suite',pub:'Cambridge Press',lic:100,used:87,exp:'31/12/2026',cat:'Ngoại ngữ'},
-  {id:4,title:'Lịch sử Việt Nam toàn tập',pub:'NXB Giáo dục',lic:40,used:12,exp:'31/08/2027',cat:'Lịch sử'},
-  {id:5,title:'Hóa học hữu cơ thực hành',pub:'NXB KHKT',lic:25,used:25,exp:'30/06/2026',cat:'Khoa học'},
+  {id:1,title:'Toán học nâng cao lớp 12',pub:'NXB Giáo dục',sup:'NXB Giáo Dục',cat:'Toán',licType:'Số lượng/năm',lic:50,used:38,activatedAt:'01/09/2025',exp:'31/08/2026',rfq:'RFQ-2025-031',po:'ORD-2025-0950',purchasedAt:'28/08/2025',contractVal:9e6,renewHistory:[]},
+  {id:2,title:'Vật lý đại cương (bộ 3 tập)',pub:'NXB ĐH Quốc gia',sup:'NXB ĐH Quốc gia',cat:'Khoa học',licType:'Số lượng/năm',lic:30,used:22,activatedAt:'01/09/2025',exp:'31/08/2026',rfq:'RFQ-2025-030',po:'ORD-2025-0945',purchasedAt:'28/08/2025',contractVal:4.5e6,renewHistory:[]},
+  {id:3,title:'Tiếng Anh B1-B2 Cambridge Suite',pub:'Cambridge Press',sup:'Cambridge Press VN',cat:'Ngoại ngữ',licType:'Số lượng/năm',lic:100,used:87,activatedAt:'01/01/2026',exp:'31/12/2026',rfq:'RFQ-2025-041',po:'ORD-2025-1120',purchasedAt:'28/12/2025',contractVal:32e6,renewHistory:[{date:'01/01/2025',lic:100,period:'1 năm',cost:28e6}]},
+  {id:4,title:'Lịch sử Việt Nam toàn tập',pub:'NXB Giáo dục',sup:'NXB Giáo Dục',cat:'Lịch sử',licType:'Số lượng/năm',lic:40,used:12,activatedAt:'01/09/2025',exp:'31/08/2026',rfq:'RFQ-2025-031',po:'ORD-2025-0950',purchasedAt:'28/08/2025',contractVal:6e6,renewHistory:[]},
+  {id:5,title:'Hóa học hữu cơ thực hành',pub:'NXB KHKT',sup:'NXB KHKT',cat:'Khoa học',licType:'Số lượng/năm',lic:25,used:25,activatedAt:'01/07/2025',exp:'30/06/2026',rfq:'RFQ-2025-019',po:'ORD-2025-0680',purchasedAt:'28/06/2025',contractVal:3.75e6,renewHistory:[{date:'01/07/2025',lic:25,period:'1 năm',cost:3.75e6}]},
+  {id:6,title:'Sinh học phổ thông tập 1',pub:'NXB Giáo dục',sup:'NXB Giáo Dục',cat:'Khoa học',licType:'Số lượng/năm',lic:20,used:20,activatedAt:'01/01/2025',exp:'31/05/2026',rfq:'RFQ-2024-098',po:'ORD-2024-1440',purchasedAt:'28/12/2024',contractVal:2.4e6,renewHistory:[]},
 ];
 
 const RFQS=[
@@ -370,13 +410,43 @@ const RFQS=[
   {id:'RFQ-2026-010',title:'Phần mềm quản lý thư viện điện tử',sups:2,due:'15/06/2026',budget:45e6,status:'closed',resp:2},
 ];
 const RFQ_ST={open:['Đang mở','bg'],closed:['Đã đóng','bs']};
-
-const CONTRACTS=[
-  {id:'HĐ-2026-008',sup:'Nhà sách Tri Thức',type:'Cung cấp SGK & sách tham khảo',val:280e6,start:'01/01/2026',end:'31/12/2026',status:'active'},
-  {id:'HĐ-2026-005',sup:'Thiết bị GD Việt Nam',type:'Thiết bị phòng học',val:450e6,start:'01/03/2026',end:'28/02/2027',status:'active'},
-  {id:'HĐ-2025-018',sup:'VPP Bút Chì Xanh',type:'Văn phòng phẩm',val:120e6,start:'01/09/2025',end:'31/08/2026',status:'expiring'},
+const SUPPLIERS=[
+  {id:'sup-001',name:'Thiên Long',cat:'Văn phòng phẩm'},
+  {id:'sup-002',name:'Hồng Hà',cat:'Văn phòng phẩm'},
+  {id:'sup-003',name:'Fahasa',cat:'Sách & Giáo dục'},
+  {id:'sup-004',name:'NXB Giáo dục',cat:'Sách & Giáo dục'},
+  {id:'sup-005',name:'Nhà sách Tri Thức',cat:'Sách & Giáo dục'},
+  {id:'sup-006',name:'Thiết bị GD Việt Nam',cat:'Thiết bị giáo dục'},
+  {id:'sup-007',name:'VPP Bút Chì Xanh',cat:'Văn phòng phẩm'},
+  {id:'sup-008',name:'Thiết bị EduTech VN',cat:'Thiết bị giáo dục'},
+  {id:'sup-009',name:'VPP Minh Long',cat:'Văn phòng phẩm'},
 ];
-const CON_ST={active:['Đang hiệu lực','bg'],expiring:['Sắp hết hạn','by'],expired:['Hết hạn','br']};
+const SUP_SUGGEST={
+  general:['sup-001','sup-002','sup-007','sup-009'],
+  ebook:['sup-003','sup-004','sup-005'],
+  software:['sup-003','sup-008'],
+  device:['sup-006','sup-008'],
+  service:['sup-006'],
+};
+
+let CONTRACTS=LS.get('school_contracts2',[
+  {id:'HĐ-2026-008',sup:'Nhà sách Tri Thức',type:'Cung cấp SGK & sách tham khảo',val:280e6,start:'01/01/2026',end:'31/12/2026'},
+  {id:'HĐ-2026-005',sup:'Thiết bị GD Việt Nam',type:'Thiết bị phòng học',val:450e6,start:'01/03/2026',end:'28/02/2027'},
+  {id:'HĐ-2026-003',sup:'VPP Bút Chì Xanh',type:'Văn phòng phẩm',val:120e6,start:'01/01/2026',end:'25/06/2026'},
+  {id:'HĐ-2025-018',sup:'NXB Giáo Dục',type:'Cung cấp sách giáo khoa',val:680e6,start:'01/06/2025',end:'31/05/2026'},
+]);
+const CON_ST={active:['Đang hiệu lực','bg'],expiring:['Sắp hết hạn','bo'],expired:['Hết hạn','br']};
+function computeConStatus(endStr){
+  if(!endStr)return'active';
+  const p=endStr.split('/');
+  if(p.length!==3)return'active';
+  const end=new Date(+p[2],+p[1]-1,+p[0]);
+  const today=new Date();today.setHours(0,0,0,0);end.setHours(0,0,0,0);
+  const diff=Math.ceil((end-today)/(864e5));
+  if(diff<0)return'expired';
+  if(diff<=7)return'expiring';
+  return'active';
+}
 
 const PRODUCTS=[
   {id:1,name:'Bộ SGK lớp 10 — Kết nối tri thức (14 cuốn)',cat:'SGK',price:285000,unit:'bộ',stock:500,
@@ -459,13 +529,28 @@ const KITS=[
 ];
 
 
-const NOTIFS=[
+let NOTIFS=LS.get('notifs')||[
   {dot:'orange',txt:'Ngân sách Khối Tự Nhiên đạt 85% hạn mức',time:'2 giờ trước'},
   {dot:'orange',txt:'YC-0891 đang chờ phê duyệt cấp 1',time:'3 giờ trước'},
   {dot:'green',txt:'DH-1232 đã giao hàng thành công',time:'5 giờ trước'},
   {dot:'red',txt:'HD-0455 quá hạn thanh toán 10 ngày',time:'1 ngày trước'},
   {dot:'blue',txt:'HĐ NXB Giáo Dục hết hạn 15/07/2026',time:'1 ngày trước'},
 ];
+function addNotif(dot,txt){
+  NOTIFS.unshift({dot,txt,time:'Vừa xong'});
+  LS.set('notifs',NOTIFS);
+  updateNotifBadge();
+}
+function updateNotifBadge(){
+  const b=document.getElementById('notifBadge');
+  if(!b)return;
+  b.textContent=NOTIFS.length;
+  b.style.display=NOTIFS.length?'flex':'none';
+}
+function clearNotifs(){
+  NOTIFS=[];LS.set('notifs',NOTIFS);
+  updateNotifBadge();render();
+}
 
 let ORG_ADDRESSES=[
   {addr:'123 Nguyễn Trãi, Q.1, TP.HCM',label:'Địa chỉ chính',cls:'bg'},
@@ -515,6 +600,22 @@ function showConfirm(cb){
 function hideConfirm(){document.getElementById('confirmBg').classList.remove('show');}
 function confirmOk(){hideConfirm();if(_confirmCb){_confirmCb();_confirmCb=null;}}
 function tryCloseModal(){if(isDirty()){showConfirm(closeModal);}else{closeModal();}}
+function dangerConfirm(msg,btnLabel,cb){
+  _confirmCb=cb;
+  document.getElementById('confirmModal').innerHTML=`
+    <div style="text-align:center;padding:6px 0 4px">
+      <div style="width:48px;height:48px;border-radius:50%;background:#fee2e2;color:#dc2626;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </div>
+      <div style="font-family:'Lora',serif;font-size:15px;font-weight:600;color:var(--ink-deep);margin-bottom:8px">${msg}</div>
+      <div style="font-size:13px;color:var(--text-soft)">Hành động này không thể hoàn tác.</div>
+    </div>
+    <div class="mact" style="justify-content:center;margin-top:18px">
+      <button class="act-btn" onclick="hideConfirm()">Hủy</button>
+      <button class="del-btn" onclick="confirmOk()">${btnLabel}</button>
+    </div>`;
+  document.getElementById('confirmBg').classList.add('show');
+}
 
 /* ── Chart helpers ── */
 function lineChart(data,labels,maxV,W,H,lm,bm){
@@ -580,57 +681,54 @@ function dashboard(){
     <div class="sub">${k.sub}</div>
   </div>`).join('')}</div>`;
 
-  // Line chart
-  const months=[175,135,115,180,305,285,120,145,220,290,305,315];
-  const mLabels=['T8/24','T9','T10','T11','T12','T1/25','T2','T3','T4','T5','T6','T7'];
-  const linePanel=`<div class="panel">
-    <div class="ph">
-      <div><h3>Chi tiêu theo tháng</h3><div class="phsub">Năm học 2024-2025 · Đơn vị: triệu đồng</div></div>
-      <button class="phact" onclick="toast('Đang xuất báo cáo...')">${ic(I.dl)} Xuất</button>
+  // BGH approval widgets
+  const isBGH=currentUser?.subRole==='BGH';
+  const pendingPRs=PRS.filter(p=>p.status==='pending');
+  const pendingTotal=pendingPRs.reduce((s,p)=>s+p.total,0);
+  const bghPanel=isBGH?`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:18px">
+    <div class="kpi" style="cursor:pointer" onclick="prFilter='pending';nav('purchase',document.querySelector('[data-v=purchase]'))">
+      <div class="top">
+        <div class="ic" style="background:#fff7ed;color:#ea580c"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h3"/></svg></div>
+        ${pendingPRs.length>0?`<span class="tr tr-wn">Cần xử lý</span>`:''}
+      </div>
+      <div class="val">${pendingPRs.length}</div>
+      <div class="lbl">Yêu cầu chờ duyệt</div>
+      <div class="sub">Nhấn để xem và phê duyệt</div>
     </div>
-    <div style="margin-top:12px">${lineChart(months,mLabels,320,880,198,50,28)}</div>
-  </div>`;
-
-  // Donut chart
-  const donutSegs=[
-    {l:'SGK',p:35,c:'#3b82f6'},
-    {l:'VPP',p:22,c:'#f97316'},
-    {l:'Thiết Bị',p:28,c:'#22c55e'},
-    {l:'Ebook',p:10,c:'#a855f7'},
-    {l:'Khác',p:5,c:'#94a3b8'},
-  ];
-  const donutPanel=`<div class="panel">
-    <div class="ph">
-      <div><h3>Chi tiêu theo danh mục</h3><div class="phsub">Tháng 6/2026</div></div>
+    <div class="kpi">
+      <div class="top">
+        <div class="ic" style="background:#fff7ed;color:#ea580c"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+      </div>
+      <div class="val">${fmtV(pendingTotal)}đ</div>
+      <div class="lbl">Tổng giá trị chờ duyệt</div>
+      <div class="sub">${pendingPRs.length} yêu cầu đang chờ</div>
     </div>
-    ${donutChart(donutSegs)}
-  </div>`;
-
-  // Bar chart - by dept
-  const deptLabels=['BGH','Tự Nhiên','Xã Hội','Thể Dục','Ngoại Ngữ','HC'];
-  const deptVals=[110,205,175,90,165,70];
-  const barPanel=`<div class="panel">
-    <div class="ph">
-      <div><h3>Chi tiêu theo phòng ban</h3><div class="phsub">6 tháng gần nhất · Đơn vị: triệu đồng</div></div>
+    <div class="kpi">
+      <div class="top">
+        <div class="ic" style="background:#fef2f2;color:#dc2626"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+        <span class="tr tr-dn">Cảnh báo</span>
+      </div>
+      <div class="val">2</div>
+      <div class="lbl">Yêu cầu sắp quá hạn</div>
+      <div class="sub">Duyệt trước 25/06/2026</div>
     </div>
-    <div style="margin-top:12px">${barChart(deptLabels,deptVals,'#f97316',560,188,48,28)}</div>
-  </div>`;
+  </div>`:'';
 
   // Notifications
+  const DOT_C={orange:'#f97316',green:'#22c55e',red:'#dc2626',blue:'#4f46e5'};
+  const recentNotifs=NOTIFS.slice(0,5);
   const notifPanel=`<div class="panel">
     <div class="ph">
-      <div class="ph-badge"><h3>Thông báo hệ thống</h3><span class="cnt-badge">5</span></div>
+      <div class="ph-badge"><h3>Thông báo hệ thống</h3>${NOTIFS.length?`<span class="cnt-badge">${NOTIFS.length}</span>`:''}</div>
+      <span class="phact" onclick="nav('notifications',null)">Xem tất cả →</span>
     </div>
-    <div style="margin-top:8px">${NOTIFS.map(n=>`<div class="notif-item">
-      <div class="ni-dot" style="background:${n.dot==='orange'?'#f97316':n.dot==='green'?'#22c55e':n.dot==='red'?'#dc2626':'#4f46e5'}"></div>
+    <div style="margin-top:8px">${recentNotifs.length?recentNotifs.map(n=>`<div class="notif-item">
+      <div class="ni-dot" style="background:${DOT_C[n.dot]||'#4f46e5'}"></div>
       <div><div class="ni-txt">${n.txt}</div><div class="ni-time">${n.time}</div></div>
-    </div>`).join('')}</div>
+    </div>`).join(''):`<div style="padding:24px;text-align:center;color:var(--text-soft);font-size:13px">Không có thông báo mới</div>`}</div>
   </div>`;
 
-  return banner+kpis+
-    `<div class="charts-row">${linePanel}${donutPanel}</div>`+
-    `<div class="bottom-row">${barPanel}${notifPanel}</div>`+
-    recentRow();
+  return banner+kpis+bghPanel+notifPanel+recentRow();
 }
 
 /* ── Recent 3-column row ── */
@@ -643,19 +741,6 @@ function recentRow(){
     {id:'YC-0888',title:'Sách tham khảo Toán 11',dept:'Tự Nhiên',date:'12/06',total:8400000,st:'ordered'},
     {id:'YC-0887',title:'Máy chiếu phòng họp BGH',dept:'BGH',date:'11/06',total:56000000,st:'rejected'},
   ];
-  const recOrders=[
-    {id:'DH-1234',sup:'NXB Giáo Dục Việt Nam',date:'16/06',total:45200000,st:'ship'},
-    {id:'DH-1233',sup:'Thiết Bị EduTech VN',date:'15/06',total:128500000,st:'proc'},
-    {id:'DH-1232',sup:'VPP Minh Long',date:'14/06',total:12800000,st:'done'},
-    {id:'DH-1231',sup:'NXB Giáo Dục Việt Nam',date:'10/06',total:32100000,st:'done'},
-  ];
-  const recInvoices=[
-    {id:'HD-0456',sup:'NXB Giáo Dục VN',due:'30/06',total:45200000,st:'unpaid'},
-    {id:'HD-0455',sup:'Thiết Bị EduTech',due:'10/06',total:128500000,st:'overdue'},
-    {id:'HD-0454',sup:'VPP Minh Long',due:'15/06',total:12800000,st:'paid'},
-    {id:'HD-0453',sup:'Ebook Platform',due:'01/06',total:24000000,st:'paid'},
-  ];
-
   // ── Status maps ──
   const PR_S={
     pending:  ['Chờ duyệt','bo'],
@@ -664,17 +749,6 @@ function recentRow(){
     ordered:  ['Đã đặt hàng','bb'],
     rejected: ['Từ chối','br'],
     done:     ['Hoàn thành','bs'],
-  };
-  const ORD_S={
-    ship:  ['Đang giao','bb'],
-    proc:  ['Đang xử lý','bo'],
-    done:  ['Hoàn thành','bg'],
-    cancel:['Đã hủy','br'],
-  };
-  const INV_S={
-    unpaid:  ['Chưa thanh toán','bo'],
-    overdue: ['Quá hạn','br'],
-    paid:    ['Đã thanh toán','bg'],
   };
 
   // ── Row builders ──
@@ -692,8 +766,8 @@ function recentRow(){
     </div>`;
   }).join('');
 
-  const orderRows=recOrders.map(o=>{
-    const[lbl,cls]=ORD_S[o.st]||['—','bs'];
+  const orderRows=ORDERS.slice(0,4).map(o=>{
+    const[lbl,cls]=DLV_ST[o.dlvStatus]||['—','bs'];
     return`<div class="ri">
       <div class="ri-left">
         <div class="ri-title">${o.sup}</div>
@@ -706,19 +780,38 @@ function recentRow(){
     </div>`;
   }).join('');
 
-  const invoiceRows=recInvoices.map(i=>{
-    const[lbl,cls]=INV_S[i.st]||['—','bs'];
+  const pendingPay=ORDERS.filter(o=>o.payStatus!=='paid').slice(0,4);
+  const payRows=pendingPay.map(o=>{
+    const[lbl,cls]=PAY_ST[o.payStatus]||['—','bs'];
     return`<div class="ri">
       <div class="ri-left">
-        <div class="ri-title">${i.sup}</div>
-        <div class="ri-meta">${i.id} · Hạn: ${i.due}</div>
+        <div class="ri-title">${o.sup}</div>
+        <div class="ri-meta">${o.id}${o.inv?` · Hạn: ${o.inv.due}`:''}</div>
       </div>
       <div class="ri-right">
         <span class="badge ${cls}">${lbl}</span>
-        <span class="ri-amount">${i.total.toLocaleString('vi-VN')}đ</span>
+        <span class="ri-amount">${o.total.toLocaleString('vi-VN')}đ</span>
       </div>
     </div>`;
   }).join('');
+
+  const emptyState=(msg)=>`<div style="padding:28px 0;text-align:center;color:var(--text-soft);font-size:13px">${msg}</div>`;
+  const orderDisplay=orderRows||emptyState('Chưa có đơn hàng nào');
+  const payDisplay=payRows||emptyState('Không có khoản cần thanh toán');
+  const realPRs=PRS.slice(0,5).map(p=>{
+    const[lbl,cls]=PR_STATUS[p.status]||['—','bs'];
+    return`<div class="ri">
+      <div class="ri-left">
+        <div class="ri-title">${p.title}</div>
+        <div class="ri-meta">${p.id} · ${p.dept||'—'} · ${p.date}</div>
+      </div>
+      <div class="ri-right">
+        <span class="badge ${cls}">${lbl}</span>
+        <span class="ri-amount">${p.total.toLocaleString('vi-VN')}đ</span>
+      </div>
+    </div>`;
+  }).join('');
+  const prDisplay=realPRs||prRows||emptyState('Chưa có yêu cầu mua hàng');
 
   // ── Card wrapper ──
   const col=(title,rows,view)=>`<div class="panel">
@@ -730,9 +823,9 @@ function recentRow(){
   </div>`;
 
   return`<div class="recent-grid">
-    ${col('Yêu cầu mua gần đây',prRows,'purchase')}
-    ${col('Đơn hàng gần đây',orderRows,'orders')}
-    ${col('Hóa đơn gần đây',invoiceRows,'invoices')}
+    ${col('Yêu cầu mua gần đây',prDisplay,'purchase')}
+    ${col('Đơn hàng gần đây',orderDisplay,'orders')}
+    ${col('Cần thanh toán',payDisplay,'orders')}
   </div>`;
 }
 
@@ -1047,12 +1140,14 @@ function cartSaveDraft(){
 
 function cartDeptChange(val){
   cartDept=val;
-  cartMember='';
-  const sel=document.getElementById('cart-member-sel');if(!sel)return;
   const members=MEMBERS.filter(m=>m.dept===val&&m.status==='active');
+  // Auto-select current user if they belong to this dept
+  const selfInDept=members.find(m=>m.name===currentUser?.name);
+  cartMember=selfInDept?selfInDept.name:'';
+  const sel=document.getElementById('cart-member-sel');if(!sel)return;
   sel.disabled=!val||!members.length;
   sel.innerHTML=`<option value="">— Chọn nhân viên —</option>`
-    +members.map(m=>`<option value="${m.name}">${m.name}</option>`).join('');
+    +members.map(m=>`<option value="${m.name}" ${cartMember===m.name?'selected':''}>${m.name}</option>`).join('');
 }
 
 function cartSubmit(){
@@ -1077,6 +1172,7 @@ function cartSubmit(){
   cartDept='';cartMember='';
   cartSaveKit=false;
   updateCartBadge();
+  addNotif('orange',`Yêu cầu mua hàng ${id} đã được tạo và đang chờ phê duyệt BGH`);
   closeModal();
   toast(`Đã tạo ${id} thành công · ${fmtC(total)}`);
   nav('purchase',null);
@@ -1298,7 +1394,6 @@ function orderKit(id){
 /* ── Purchase Requests ── */
 let prFilter='all',prSearch='',prDateFrom='',prDateTo='';
 let calOpen=false,calYear=2026,calMonth=5;
-let statusOpen=false;
 
 function calNav(d){
   calMonth+=d;
@@ -1359,37 +1454,18 @@ function renderCal(){
   </div>`;
 }
 
-const STATUS_OPTS=[
-  {v:'all',label:'Tất cả trạng thái',dot:''},
-  {v:'pending',label:'Chờ duyệt',dot:'#c2410c'},
-  {v:'approved',label:'Đã duyệt',dot:'#15803d'},
-  {v:'rejected',label:'Từ chối',dot:'#b91c1c'},
-  {v:'done',label:'Hoàn thành',dot:'#475569'},
-];
-function renderStatusDrop(){
-  const cur=STATUS_OPTS.find(o=>o.v===prFilter)||STATUS_OPTS[0];
-  const items=STATUS_OPTS.map(o=>{
-    const active=o.v===prFilter;
-    const dot=o.dot?`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${o.dot};flex-shrink:0"></span>`:'<span style="display:inline-block;width:7px;height:7px;flex-shrink:0"></span>';
-    return`<div onclick="prFilter='${o.v}';statusOpen=false;render()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;border-radius:8px;font-size:13px;font-weight:${active?600:400};color:${active?'var(--ink)':'var(--text)'};background:${active?'rgba(22,53,84,.07)':'none'};white-space:nowrap" onmouseenter="this.style.background='rgba(22,53,84,.05)'" onmouseleave="this.style.background='${active?'rgba(22,53,84,.07)':'none'}'">
-      ${dot}<span>${o.label}</span>${active?`<svg style="margin-left:auto" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`:''}
-    </div>`;
-  }).join('');
-  const dotHtml=cur.dot?`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${cur.dot};flex-shrink:0"></span>`:'';
-  return`<div style="position:relative;flex-shrink:0">
-    <button onclick="statusOpen=!statusOpen;calOpen=false;render()" style="font-family:inherit;font-size:13px;border:1.5px solid ${statusOpen?'var(--ink)':prFilter!=='all'?'var(--ink)':'var(--line)'};border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:${prFilter!=='all'?'var(--ink)':'var(--text)'};cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;font-weight:${prFilter!=='all'?500:400}">
-      ${dotHtml}${cur.label}
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:2px;opacity:.5;transition:transform .15s;${statusOpen?'transform:rotate(180deg)':''}"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-    ${statusOpen?`<div style="position:absolute;top:calc(100% + 6px);left:0;z-index:55;background:#fff;border:1.5px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(22,53,84,.18);padding:6px;min-width:192px">${items}</div>`:''}
-  </div>`;
-}
-
 function purchase(){
-  const hasFilter=prSearch||prFilter!=='all'||prDateFrom||prDateTo;
-  const list=PRS.filter(p=>{
+  const isBGH=currentUser?.subRole==='BGH';
+
+  // Both roles see all PRs of the school; BGH gets extra approval actions
+  const baseList=PRS;
+
+  // Tab → status mapping
+  const tabList=prFilter==='all'?baseList:baseList.filter(p=>p.status===prFilter);
+
+  // Search + date filter
+  const list=tabList.filter(p=>{
     if(prSearch){const q=prSearch.toLowerCase();if(!p.title.toLowerCase().includes(q)&&!(p.by||'').toLowerCase().includes(q))return false;}
-    if(prFilter!=='all'&&p.status!==prFilter)return false;
     if(prDateFrom||prDateTo){
       const pd=parsePrDate(p.date);
       if(pd&&prDateFrom&&pd<parseInputDate(prDateFrom))return false;
@@ -1397,49 +1473,85 @@ function purchase(){
     }
     return true;
   });
+
   const fD=s=>s?s.split('-').reverse().slice(0,2).join('/'):null;
   const dateBtnLabel=prDateFrom&&prDateTo?`${fD(prDateFrom)} – ${fD(prDateTo)}`:prDateFrom?`Từ ${fD(prDateFrom)} …`:'Ngày tạo';
   const dateBtnActive=prDateFrom||prDateTo;
   const IS='font-family:inherit;font-size:13px;border:1.5px solid var(--line);border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:var(--text)';
+
+  // Tabs definition per role
+  const pendingCnt=baseList.filter(p=>p.status==='pending').length;
+  const bghTabs=[
+    {v:'pending',l:`Cần duyệt${pendingCnt?` (${pendingCnt})`:''}`,urgent:pendingCnt>0},
+    {v:'approved',l:'Đã duyệt'},
+    {v:'rejected',l:'Từ chối'},
+    {v:'all',l:'Tất cả'},
+  ];
+  const staffTabs=[
+    {v:'all',l:'Tất cả'},
+    {v:'draft',l:'Nháp'},
+    {v:'pending',l:'Chờ duyệt'},
+    {v:'approved',l:'Đã duyệt'},
+    {v:'rejected',l:'Từ chối'},
+  ];
+  const tabs=(isBGH?bghTabs:staffTabs).map(t=>{
+    const on=prFilter===t.v;
+    const urgentStyle=t.urgent&&!on?'border-color:#f97316;color:#c2410c;':'';
+    return`<button class="fchip${on?' on':''}" style="${urgentStyle}" onclick="prFilter='${t.v}';render()">${t.l}</button>`;
+  }).join('');
+
+  // Table rows
   const rows=list.map(p=>{
-    const unitPrice=p.price||Math.round(p.total/(p.items||1));
+    const linkedOrd=ORDERS.find(o=>o.pr===p.id);
+    let actions=`<button class="act-sm" onclick="viewPR('${p.id}')">Xem chi tiết</button>`;
+    if(linkedOrd)actions+=` <button class="act-sm" onclick="viewOrderDetail('${linkedOrd.id}')">Xem đơn hàng</button>`;
+    if(isBGH&&p.status==='pending'){
+      actions+=` <button class="btn-pr" style="font-size:11.5px;padding:4px 10px" onclick="apprActionWithSup('${p.id}')">Duyệt</button>`;
+      actions+=` <button class="del-sm" onclick="dangerConfirm('Từ chối yêu cầu ${p.id}?','Từ chối',()=>{apprAction('${p.id}','rejected')})">Từ chối</button>`;
+    }
+    if(!isBGH&&(p.status==='draft'||p.status==='pending')){
+      actions+=` <button class="del-sm" onclick="cancelPR('${p.id}')">Hủy</button>`;
+    }
     return`<tr>
       <td style="font-weight:600;white-space:nowrap;font-size:12.5px">${p.id}</td>
       <td><div style="font-weight:500">${p.title}</div><div style="font-size:11.5px;color:var(--text-soft);margin-top:2px">${p.dept}</div></td>
-      <td style="white-space:nowrap">${p.by||'—'}</td>
+      ${isBGH?`<td style="white-space:nowrap;font-size:12.5px">${p.by||'—'}</td>`:''}
       <td style="white-space:nowrap">${p.date}</td>
-      <td>
-        <div style="font-weight:500;white-space:nowrap">${unitPrice.toLocaleString('vi-VN')}đ</div>
-        <div style="font-size:11px;color:var(--text-soft);margin-top:2px;line-height:1.4">${readMoney(unitPrice)}</div>
-      </td>
       <td>
         <div style="font-weight:600;white-space:nowrap">${p.total.toLocaleString('vi-VN')}đ</div>
         <div style="font-size:11px;color:var(--text-soft);margin-top:2px;line-height:1.4">${readMoney(p.total)}</div>
       </td>
-      <td><span class="badge ${PR_STATUS[p.status][1]}">${PR_STATUS[p.status][0]}</span></td>
-      <td><button class="act-sm" onclick="viewPR('${p.id}')">Xem chi tiết</button></td>
+      <td><span class="badge ${PR_STATUS[p.status]?.[1]||'bs'}">${PR_STATUS[p.status]?.[0]||p.status}</span></td>
+      <td style="white-space:nowrap;display:flex;gap:4px;flex-wrap:wrap;padding:8px 10px">${actions}</td>
     </tr>`;
   }).join('');
 
+  const hasSearch=prSearch||dateBtnActive;
+  const colSpan=isBGH?7:6;
   return`
-  ${calOpen||statusOpen?`<div onclick="calOpen=false;statusOpen=false;render()" style="position:fixed;inset:0;z-index:50"></div>`:''}
-  <div class="panel" style="padding:12px 16px;margin-bottom:14px">
-    <div style="display:flex;gap:8px;align-items:center">
-      <input style="${IS};width:180px;flex-shrink:0" placeholder="Tìm nội dung, người tạo..." value="${prSearch}" oninput="prSearch=this.value;render()">
-      ${renderStatusDrop()}
+  ${calOpen?`<div onclick="calOpen=false;render()" style="position:fixed;inset:0;z-index:50"></div>`:''}
+  <div class="toolbar">
+    <div style="display:flex;gap:6px;flex-wrap:wrap">${tabs}</div>
+  </div>
+  <div class="panel" style="padding:10px 14px;margin-bottom:14px">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <input style="${IS};width:210px;flex-shrink:0" placeholder="Tìm nội dung${isBGH?', người tạo':''}..." value="${prSearch}" oninput="prSearch=this.value;render()">
       <div style="position:relative;flex-shrink:0">
-        <button onclick="calOpen=!calOpen;statusOpen=false;render()" style="${IS};cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;${dateBtnActive?'border-color:var(--ink);font-weight:500;color:var(--ink)':'color:var(--text-soft)'}">
+        <button onclick="calOpen=!calOpen;render()" style="${IS};cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;${dateBtnActive?'border-color:var(--ink);font-weight:500;color:var(--ink)':'color:var(--text-soft)'}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           ${dateBtnLabel}
         </button>
         ${calOpen?renderCal():''}
       </div>
-      ${hasFilter?`<button class="act-sm" onclick="prSearch='';prFilter='all';prDateFrom='';prDateTo='';calOpen=false;statusOpen=false;render()" style="flex-shrink:0;white-space:nowrap">✕ Xóa lọc</button>`:''}
-      ${hasFilter?`<span style="font-size:12px;color:var(--text-soft);white-space:nowrap;margin-left:4px"><b style="color:var(--ink)">${list.length}</b> kết quả</span>`:''}
+      ${hasSearch?`<button class="act-sm" onclick="prSearch='';prDateFrom='';prDateTo='';calOpen=false;render()" style="flex-shrink:0">✕ Xóa lọc</button>`:''}
+      ${hasSearch?`<span style="font-size:12px;color:var(--text-soft);margin-left:4px"><b style="color:var(--ink)">${list.length}</b> kết quả</span>`:''}
     </div>
   </div>
-  <div class="tb-panel"><table><thead><tr><th>Mã YC</th><th>Nội dung</th><th>Người tạo</th><th>Ngày tạo</th><th>Đơn giá</th><th>Tổng tiền</th><th>Trạng thái</th><th></th></tr></thead>
-  <tbody>${rows}${!list.length?`<tr><td colspan="8" style="text-align:center;padding:36px;color:var(--text-soft)">${hasFilter?'Không tìm thấy kết quả phù hợp':'Chưa có yêu cầu mua hàng'}</td></tr>`:''}</tbody></table></div>`;
+  <div class="tb-panel"><table><thead><tr>
+    <th>Mã YC</th><th>Nội dung</th>${isBGH?'<th>Người tạo</th>':''}
+    <th>Ngày tạo</th><th>Tổng tiền</th><th>Trạng thái</th><th></th>
+  </tr></thead>
+  <tbody>${rows}${!list.length?`<tr><td colspan="${colSpan}" style="text-align:center;padding:36px;color:var(--text-soft)">${hasSearch?'Không tìm thấy kết quả':'Chưa có yêu cầu mua hàng'}</td></tr>`:''}</tbody></table></div>`;
 }
 function openPR(){
   openModal(`<h2>Tạo yêu cầu mua hàng</h2>
@@ -1455,10 +1567,12 @@ function openPR(){
   <div class="mf"><label>Mô tả / ghi chú</label><textarea id="prNote" placeholder="Mô tả chi tiết yêu cầu mua hàng..."></textarea></div>
   <div class="mact">
     <button class="act-sm" onclick="closeModal()">Hủy</button>
-    <button class="btn-pr" onclick="savePR()">Gửi yêu cầu</button>
+    <button class="btn-out" onclick="savePR('draft')">Lưu nháp</button>
+    <button class="btn-pr" onclick="savePR('pending')">Gửi yêu cầu</button>
   </div>`);
 }
-function savePR(){
+function savePR(status){
+  status=status||'pending';
   const title=(document.getElementById('prTitle').value||'').trim();
   if(!title){toast('Nhập tiêu đề yêu cầu');return;}
   const dept=document.getElementById('prDept').value;
@@ -1466,9 +1580,9 @@ function savePR(){
   const items=+(document.getElementById('prItems').value)||1;
   const n=PRS.length+1;
   const id=`PR-2026-0${49+n}`;
-  PRS.unshift({id,title,dept,by:'Nguyễn Văn An',date:new Date().toLocaleDateString('vi-VN'),total,status:'pending',items,lvl:total>50e6?2:1});
+  PRS.unshift({id,title,dept,by:currentUser?.name||'—',date:new Date().toLocaleDateString('vi-VN'),total,status,items,lvl:total>50e6?2:1});
   LS.set('prs',PRS);
-  closeModal();toast(`Đã gửi ${id}`);render();
+  closeModal();toast(status==='draft'?`Đã lưu nháp ${id}`:`Đã gửi ${id}`);render();
 }
 function viewPR(id){
   const p=PRS.find(x=>x.id===id);if(!p)return;
@@ -1519,130 +1633,1074 @@ function viewPR(id){
       <tbody>${prodRows}</tbody>
     </table>
   </div>
+  ${(()=>{
+    const isBGH=currentUser?.subRole==='BGH';
+    const linkedOrd=ORDERS.find(o=>o.pr===p.id);
+    const poLink=linkedOrd?`<div style="margin-top:10px;padding:10px 12px;background:#eff6ff;border-radius:9px;display:flex;align-items:center;gap:10px;font-size:13px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M5 4h14l-1 16H6L5 4Z"/><path d="M9 8h6"/></svg>
+      <span style="color:var(--text-soft)">Đơn hàng:</span>
+      <b style="color:#1d4ed8">${linkedOrd.id}</b>
+      <button class="act-sm" style="margin-left:auto" onclick="closeModal();viewOrderDetail('${linkedOrd.id}')">Xem đơn →</button>
+    </div>`:'';
+    const apprBtns=isBGH&&p.status==='pending'?`
+    <div style="border-top:1px solid var(--line);margin-top:14px;padding-top:14px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+      <button class="act-sm" onclick="apprRequestInfo('${p.id}')">Yêu cầu bổ sung TT</button>
+      <button class="del-sm" onclick="closeModal();dangerConfirm('Từ chối yêu cầu ${p.id}?','Từ chối',()=>{apprAction('${p.id}','rejected');})">Từ chối</button>
+      <button class="btn-pr" onclick="closeModal();apprActionWithSup('${p.id}')">Duyệt yêu cầu</button>
+    </div>`:'';
+    return poLink+apprBtns;
+  })()}
   <div class="mact"><button class="act-btn" onclick="closeModal()">Đóng</button></div>`);
 }
 
-/* ── Approvals ── */
-let apprTab='pending';
-function approvals(){
-  const pending=PRS.filter(p=>p.status==='pending');
-  const tabs=['pending','approved','rejected'].map(t=>`<button class="fchip ${apprTab===t?'on':''}" onclick="apprTab='${t}';render()">${t==='pending'?`Chờ duyệt (${pending.length})`:t==='approved'?'Đã duyệt':'Từ chối'}</button>`).join('');
-  const list=apprTab==='pending'?pending:PRS.filter(p=>p.status===apprTab);
-  const rows=list.map(p=>`<tr>
-    <td style="font-weight:600">${p.id}</td>
-    <td><div style="font-weight:500">${p.title}</div><div style="font-size:11.5px;color:var(--text-soft)">${p.dept} · ${p.by}</div></td>
-    <td style="font-weight:600">${fmtV(p.total)}đ</td>
-    <td><span class="badge bs">Cấp ${p.lvl}</span></td>
-    <td>${p.date}</td>
-    <td>${apprTab==='pending'?`<div style="display:flex;gap:6px">
-      <button class="btn-pr" style="font-size:12px;padding:5px 10px" onclick="apprAction('${p.id}','approved')">Duyệt</button>
-      <button class="del-sm" onclick="apprAction('${p.id}','rejected')">Từ chối</button>
-    </div>`:`<span class="badge ${PR_STATUS[p.status][1]}">${PR_STATUS[p.status][0]}</span>`}</td>
-  </tr>`).join('');
-  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Trung tâm Phê duyệt</div><div class="sp"></div>${tabs}</div>
-  <div class="tb-panel"><table><thead><tr><th>Mã YC</th><th>Nội dung</th><th>Giá trị</th><th>Cấp</th><th>Ngày tạo</th><th>Hành động</th></tr></thead>
-  <tbody>${rows}${!list.length?'<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text-soft)">Không có yêu cầu</td></tr>':''}</tbody></table></div>`;
+function apprActionWithSup(id){
+  const p=PRS.find(x=>x.id===id);if(!p)return;
+  const prodList=p.products&&p.products.length
+    ?`<div style="margin-top:10px;border-top:1px solid #bbf7d0;padding-top:10px;font-size:12px;color:#166534">
+        ${p.products.slice(0,4).map(i=>`<div style="display:flex;justify-content:space-between;padding:2px 0"><span>${i.name}</span><span style="font-weight:500">${i.qty} ${i.unit||''}</span></div>`).join('')}
+        ${p.products.length>4?`<div style="color:#4ade80;margin-top:2px">...và ${p.products.length-4} mục khác</div>`:''}
+      </div>`:'';
+  openModal(`<h2>Duyệt yêu cầu</h2>
+  <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:9px;padding:12px 14px;margin-bottom:16px">
+    <div style="font-size:13.5px;font-weight:600;color:#15803d;margin-bottom:4px">${p.title}</div>
+    <div style="font-size:12.5px;color:#166534">${p.id} · ${p.dept||'—'} · ${fmtC(p.total)} · ${p.items||0} mục</div>
+    ${prodList}
+  </div>
+  <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:9px;padding:10px 14px;font-size:12.5px;color:#92400e;margin-bottom:16px">
+    Sau khi duyệt, hệ thống tạo đơn mua hàng tự động. Bộ phận phụ trách có thể gán nhà cung cấp theo từng mục hàng trong màn <b>Đơn mua hàng</b>.
+  </div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Hủy</button>
+    <button class="btn-pr" onclick="apprAction('${id}','approved')">Xác nhận duyệt & Tạo đơn</button>
+  </div>`);
 }
 function apprAction(id,status){
   const p=PRS.find(x=>x.id===id);if(!p)return;
-  p.status=status;LS.set('prs',PRS);
-  toast(status==='approved'?`Đã duyệt ${id}`:`Đã từ chối ${id}`);render();
+  if(status==='approved'){
+    p.status='approved';
+    const existing=ORDERS.find(o=>o.pr===id);
+    if(!existing){
+      const n=ORDERS.length+1;
+      const poId=`PO-2026-${String(n).padStart(4,'0')}`;
+      const today=new Date().toLocaleDateString('vi-VN');
+      ORDERS.unshift({id:poId,pr:id,sup:'',date:today,dlv:'',total:p.total,items:p.items||0,
+        dlvStatus:'pending',invStatus:'none',payStatus:'unpaid',dlvActual:'',receiver:'',dlvNote:'',inv:null,products:p.products||[]});
+      LS.set('school_orders2',ORDERS);
+      addNotif('green',`${id} đã được duyệt — Sinh đơn ${poId}`);
+      toast(`Đã duyệt ${id} — Sinh đơn ${poId}`);
+    } else {
+      addNotif('green',`${id} đã được phê duyệt`);
+      toast(`Đã duyệt ${id}`);
+    }
+  } else {
+    p.status='rejected';
+    addNotif('red',`${id} đã bị từ chối`);
+    toast(`Đã từ chối ${id}`);
+  }
+  LS.set('prs',PRS);closeModal();render();
+}
+function apprRequestInfo(id){
+  toast(`Đã gửi yêu cầu bổ sung thông tin cho ${id}`);
+}
+function cancelPR(id){
+  const p=PRS.find(x=>x.id===id);if(!p)return;
+  if(p.status!=='draft'&&p.status!=='pending'){toast('Không thể hủy yêu cầu ở trạng thái này');return;}
+  dangerConfirm(`Hủy yêu cầu ${id}?`,'Xác nhận hủy',()=>{
+    PRS=PRS.filter(x=>x.id!==id);
+    LS.set('prs',PRS);
+    addNotif('orange',`Yêu cầu ${id} đã bị hủy`);
+    toast(`Đã hủy ${id}`);render();
+  });
 }
 
-/* ── Orders ── */
+/* ── Orders (Mua hàng) ── */
+let ordSearch='',ordDlvFilter='all',ordPayFilter='all',ordSupFilter='all';
+let ordDlvFrom='',ordDlvTo='';
+let ordCalOpen=false,ordCalYear=2026,ordCalMonth=5;
+let ordDlvOpen=false,ordPayOpen=false,ordSupOpen=false;
+let ordDetailId=null,ordDetailTab='overview';
+
+function ordCalNav(d){
+  ordCalMonth+=d;
+  if(ordCalMonth>11){ordCalMonth=0;ordCalYear++;}
+  if(ordCalMonth<0){ordCalMonth=11;ordCalYear--;}
+  render();
+}
+function ordCalPick(ds){
+  if(!ordDlvFrom||ds<ordDlvFrom){ordDlvFrom=ds;ordDlvTo='';}
+  else if(!ordDlvTo&&ds>=ordDlvFrom){ordDlvTo=ds;ordCalOpen=false;}
+  else{ordDlvFrom=ds;ordDlvTo='';}
+  render();
+}
+function ordCalClear(){ordDlvFrom='';ordDlvTo='';ordCalOpen=false;render();}
+
+function renderOrdCal(){
+  const MN=['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+  const DN=['CN','T2','T3','T4','T5','T6','T7'];
+  const first=new Date(ordCalYear,ordCalMonth,1).getDay();
+  const total=new Date(ordCalYear,ordCalMonth+1,0).getDate();
+  const pad=s=>String(s).padStart(2,'0');
+  let cells=[];
+  for(let i=0;i<first;i++)cells.push(null);
+  for(let d=1;d<=total;d++)cells.push(d);
+  while(cells.length%7)cells.push(null);
+  const rows=[];
+  for(let r=0;r<cells.length/7;r++){
+    const week=cells.slice(r*7,(r+1)*7).map(d=>{
+      if(!d)return`<td style="padding:5px"></td>`;
+      const ds=`${ordCalYear}-${pad(ordCalMonth+1)}-${pad(d)}`;
+      const isF=ds===ordDlvFrom,isT=ds===ordDlvTo;
+      const inR=ordDlvFrom&&ordDlvTo&&ds>ordDlvFrom&&ds<ordDlvTo;
+      const today=new Date().toISOString().slice(0,10);
+      let bg=isF||isT?'background:var(--ink);color:#fff;font-weight:700;':inR?'background:rgba(22,53,84,.12);':'';
+      let extra=ds===today&&!isF&&!isT?'font-weight:600;color:var(--ink);':'';
+      return`<td onclick="ordCalPick('${ds}')" style="padding:5px;text-align:center;cursor:pointer;border-radius:7px;font-size:13px;${bg}${extra}">${d}</td>`;
+    }).join('');
+    rows.push(`<tr>${week}</tr>`);
+  }
+  const btnSt='background:none;border:none;cursor:pointer;font-size:18px;padding:2px 8px;color:var(--ink);border-radius:7px;';
+  const hint=ordDlvFrom&&!ordDlvTo?`<div style="font-size:11.5px;color:var(--ink);text-align:center;margin-top:8px">Chọn ngày kết thúc</div>`:
+    ordDlvFrom&&ordDlvTo?`<div style="font-size:11.5px;color:var(--text-soft);text-align:center;margin-top:8px">${ordDlvFrom.split('-').reverse().join('/')} → ${ordDlvTo.split('-').reverse().join('/')}</div>`:'';
+  return`<div style="position:absolute;top:calc(100% + 6px);left:0;z-index:55;background:#fff;border:1.5px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(22,53,84,.18);padding:14px 12px;min-width:252px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <button style="${btnSt}" onclick="ordCalNav(-1)">‹</button>
+      <span style="font-size:13.5px;font-weight:600">${MN[ordCalMonth]} ${ordCalYear}</span>
+      <button style="${btnSt}" onclick="ordCalNav(1)">›</button>
+    </div>
+    <table style="border-collapse:collapse;width:100%">
+      <thead><tr>${DN.map(d=>`<th style="font-size:11px;color:var(--text-soft);padding:4px 5px;text-align:center;font-weight:500">${d}</th>`).join('')}</tr></thead>
+      <tbody>${rows.join('')}</tbody>
+    </table>
+    ${hint}
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">
+      <button onclick="ordCalClear()" style="font-size:12px;color:var(--coral);background:none;border:none;cursor:pointer;${!ordDlvFrom?'opacity:.4;pointer-events:none':''}">Xóa lọc ngày</button>
+      <button onclick="ordCalOpen=false;render()" style="font-size:12px;padding:5px 12px;border:1.5px solid var(--line);border-radius:8px;background:none;cursor:pointer;font-family:inherit">Đóng</button>
+    </div>
+  </div>`;
+}
+
+const ORD_DLV_OPTS=[
+  {v:'all',label:'Giao hàng',dot:''},
+  {v:'pending',label:'Chờ giao',dot:'#475569'},
+  {v:'ship',label:'Đang giao',dot:'#2563eb'},
+  {v:'partial',label:'Giao một phần',dot:'#c2410c'},
+  {v:'done',label:'Hoàn thành',dot:'#15803d'},
+];
+function renderOrdDlvDrop(){
+  const cur=ORD_DLV_OPTS.find(o=>o.v===ordDlvFilter)||ORD_DLV_OPTS[0];
+  const items=ORD_DLV_OPTS.map(o=>{
+    const active=o.v===ordDlvFilter;
+    const dot=o.dot?`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${o.dot};flex-shrink:0"></span>`:'<span style="display:inline-block;width:7px;height:7px;flex-shrink:0"></span>';
+    return`<div onclick="ordDlvFilter='${o.v}';ordDlvOpen=false;render()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;border-radius:8px;font-size:13px;font-weight:${active?600:400};color:${active?'var(--ink)':'var(--text)'};background:${active?'rgba(22,53,84,.07)':'none'};white-space:nowrap" onmouseenter="this.style.background='rgba(22,53,84,.05)'" onmouseleave="this.style.background='${active?'rgba(22,53,84,.07)':'none'}'">
+      ${dot}<span>${o.label}</span>${active?`<svg style="margin-left:auto" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`:''}
+    </div>`;
+  }).join('');
+  const dotHtml=cur.dot?`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${cur.dot};flex-shrink:0"></span>`:'';
+  return`<div style="position:relative;flex-shrink:0">
+    <button onclick="ordDlvOpen=!ordDlvOpen;ordCalOpen=false;ordPayOpen=false;ordSupOpen=false;render()" style="font-family:inherit;font-size:13px;border:1.5px solid ${ordDlvOpen?'var(--ink)':ordDlvFilter!=='all'?'var(--ink)':'var(--line)'};border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:${ordDlvFilter!=='all'?'var(--ink)':'var(--text)'};cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;font-weight:${ordDlvFilter!=='all'?500:400}">
+      ${dotHtml}${cur.label}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:2px;opacity:.5;transition:transform .15s;${ordDlvOpen?'transform:rotate(180deg)':''}"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    ${ordDlvOpen?`<div style="position:absolute;top:calc(100% + 6px);left:0;z-index:55;background:#fff;border:1.5px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(22,53,84,.18);padding:6px;min-width:192px">${items}</div>`:''}
+  </div>`;
+}
+
+const ORD_PAY_OPTS=[
+  {v:'all',label:'Thanh toán',dot:''},
+  {v:'unpaid',label:'Chưa thanh toán',dot:'#c2410c'},
+  {v:'paid',label:'Đã thanh toán',dot:'#15803d'},
+  {v:'overdue',label:'Quá hạn',dot:'#b91c1c'},
+];
+function renderOrdPayDrop(){
+  const cur=ORD_PAY_OPTS.find(o=>o.v===ordPayFilter)||ORD_PAY_OPTS[0];
+  const items=ORD_PAY_OPTS.map(o=>{
+    const active=o.v===ordPayFilter;
+    const dot=o.dot?`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${o.dot};flex-shrink:0"></span>`:'<span style="display:inline-block;width:7px;height:7px;flex-shrink:0"></span>';
+    return`<div onclick="ordPayFilter='${o.v}';ordPayOpen=false;render()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;border-radius:8px;font-size:13px;font-weight:${active?600:400};color:${active?'var(--ink)':'var(--text)'};background:${active?'rgba(22,53,84,.07)':'none'};white-space:nowrap" onmouseenter="this.style.background='rgba(22,53,84,.05)'" onmouseleave="this.style.background='${active?'rgba(22,53,84,.07)':'none'}'">
+      ${dot}<span>${o.label}</span>${active?`<svg style="margin-left:auto" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`:''}
+    </div>`;
+  }).join('');
+  const dotHtml=cur.dot?`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${cur.dot};flex-shrink:0"></span>`:'';
+  return`<div style="position:relative;flex-shrink:0">
+    <button onclick="ordPayOpen=!ordPayOpen;ordCalOpen=false;ordDlvOpen=false;ordSupOpen=false;render()" style="font-family:inherit;font-size:13px;border:1.5px solid ${ordPayOpen?'var(--ink)':ordPayFilter!=='all'?'var(--ink)':'var(--line)'};border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:${ordPayFilter!=='all'?'var(--ink)':'var(--text)'};cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;font-weight:${ordPayFilter!=='all'?500:400}">
+      ${dotHtml}${cur.label}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:2px;opacity:.5;transition:transform .15s;${ordPayOpen?'transform:rotate(180deg)':''}"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    ${ordPayOpen?`<div style="position:absolute;top:calc(100% + 6px);left:0;z-index:55;background:#fff;border:1.5px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(22,53,84,.18);padding:6px;min-width:200px">${items}</div>`:''}
+  </div>`;
+}
+
+function renderOrdSupDrop(){
+  const sups=['all',...[...new Set(ORDERS.map(o=>o.sup))]];
+  const curLabel=ordSupFilter==='all'?'Nhà cung cấp':ordSupFilter;
+  const items=sups.map(s=>{
+    const active=s===ordSupFilter;
+    const label=s==='all'?'Tất cả nhà cung cấp':s;
+    const safeS=s.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return`<div onclick="ordSupFilter='${safeS}';ordSupOpen=false;render()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;border-radius:8px;font-size:13px;font-weight:${active?600:400};color:${active?'var(--ink)':'var(--text)'};background:${active?'rgba(22,53,84,.07)':'none'};white-space:nowrap" onmouseenter="this.style.background='rgba(22,53,84,.05)'" onmouseleave="this.style.background='${active?'rgba(22,53,84,.07)':'none'}'">
+      <span>${label}</span>${active?`<svg style="margin-left:auto" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`:''}
+    </div>`;
+  }).join('');
+  return`<div style="position:relative;flex-shrink:0">
+    <button onclick="ordSupOpen=!ordSupOpen;ordCalOpen=false;ordDlvOpen=false;ordPayOpen=false;render()" style="font-family:inherit;font-size:13px;border:1.5px solid ${ordSupOpen?'var(--ink)':ordSupFilter!=='all'?'var(--ink)':'var(--line)'};border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:${ordSupFilter!=='all'?'var(--ink)':'var(--text)'};cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;font-weight:${ordSupFilter!=='all'?500:400};max-width:210px">
+      <span style="overflow:hidden;text-overflow:ellipsis">${curLabel}</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:2px;flex-shrink:0;opacity:.5;transition:transform .15s;${ordSupOpen?'transform:rotate(180deg)':''}"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    ${ordSupOpen?`<div style="position:absolute;top:calc(100% + 6px);left:0;z-index:55;background:#fff;border:1.5px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(22,53,84,.18);padding:6px;min-width:210px">${items}</div>`:''}
+  </div>`;
+}
+
 function orders(){
-  const rows=ORDERS.map(o=>`<tr>
-    <td style="font-weight:600">${o.id}</td>
-    <td style="font-size:12px;color:var(--text-soft)">${o.pr}</td>
-    <td>${o.sup}</td>
-    <td>${o.date}</td>
-    <td>${o.dlv}</td>
-    <td>${o.items}</td>
-    <td style="font-weight:600">${fmtV(o.total)}đ</td>
-    <td><span class="badge ${ORD_ST[o.status][1]}">${ORD_ST[o.status][0]}</span></td>
-    <td><button class="act-sm" onclick="toast('Xem chi tiết đơn ${o.id}')">Chi tiết</button></td>
+  const hasFilter=ordSearch||ordDlvFilter!=='all'||ordPayFilter!=='all'||ordSupFilter!=='all'||ordDlvFrom||ordDlvTo;
+  const list=ORDERS.filter(o=>{
+    if(ordSearch){const q=ordSearch.toLowerCase();if(!o.id.toLowerCase().includes(q)&&!o.pr.toLowerCase().includes(q))return false;}
+    if(ordDlvFilter!=='all'&&o.dlvStatus!==ordDlvFilter)return false;
+    if(ordPayFilter!=='all'&&o.payStatus!==ordPayFilter)return false;
+    if(ordSupFilter!=='all'&&o.sup!==ordSupFilter)return false;
+    if(ordDlvFrom||ordDlvTo){
+      const pd=parsePrDate(o.date);
+      if(pd&&ordDlvFrom&&pd<parseInputDate(ordDlvFrom))return false;
+      if(pd&&ordDlvTo&&pd>parseInputDate(ordDlvTo))return false;
+    }
+    return true;
+  });
+  const fD=s=>s?s.split('-').reverse().slice(0,2).join('/'):null;
+  const dateBtnLabel=ordDlvFrom&&ordDlvTo?`${fD(ordDlvFrom)} – ${fD(ordDlvTo)}`:ordDlvFrom?`Từ ${fD(ordDlvFrom)} …`:'Ngày đặt';
+  const dateBtnActive=ordDlvFrom||ordDlvTo;
+  const IS='font-family:inherit;font-size:13px;border:1.5px solid var(--line);border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:var(--text)';
+  const rows=list.map(o=>{
+    const srcRef=o.rfq?o.rfq:(o.pr&&o.pr!=='—'&&o.pr?o.pr:'—');
+    const srcBadge=o.rfq?`<span class="badge bp" style="font-size:10px;margin-left:4px">RFQ</span>`:'';
+    const supDisplay=o.sup&&o.sup!=='—'&&o.sup?o.sup:`<span style="color:var(--text-soft);font-style:italic">Chưa gán</span>`;
+    return`<tr>
+    <td style="font-weight:600;white-space:nowrap;font-size:12.5px">${o.id}</td>
+    <td style="font-size:12px;color:var(--text-soft)">${srcRef}${srcBadge}</td>
+    <td>${supDisplay}</td>
+    <td style="white-space:nowrap">${o.date}</td>
+    <td style="font-weight:600;white-space:nowrap">${fmtV(o.total)}đ</td>
+    <td><span class="badge ${DLV_ST[o.dlvStatus]?.[1]||'bs'}">${DLV_ST[o.dlvStatus]?.[0]||o.dlvStatus}</span></td>
+    <td><span class="badge ${INV_ISS[o.invStatus]?.[1]||'bs'}">${INV_ISS[o.invStatus]?.[0]||o.invStatus}</span></td>
+    <td><span class="badge ${PAY_ST[o.payStatus]?.[1]||'bs'}">${PAY_ST[o.payStatus]?.[0]||o.payStatus}</span></td>
+    <td><button class="act-sm" onclick="viewOrderDetail('${o.id}')">Chi tiết</button></td>
+  </tr>`;}).join('');
+  return`
+  ${ordCalOpen||ordDlvOpen||ordPayOpen||ordSupOpen?`<div onclick="ordCalOpen=false;ordDlvOpen=false;ordPayOpen=false;ordSupOpen=false;render()" style="position:fixed;inset:0;z-index:50"></div>`:''}
+  <div class="toolbar"><div style="font-size:15px;font-weight:600">Đơn hàng</div></div>
+  <div class="panel" style="padding:12px 16px;margin-bottom:14px">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <input style="${IS};width:210px;flex-shrink:0" placeholder="Tìm mã đơn, mã yêu cầu..." value="${ordSearch}" oninput="ordSearch=this.value;render()">
+      ${renderOrdSupDrop()}
+      ${renderOrdDlvDrop()}
+      ${renderOrdPayDrop()}
+      <div style="position:relative;flex-shrink:0">
+        <button onclick="ordCalOpen=!ordCalOpen;ordDlvOpen=false;ordPayOpen=false;ordSupOpen=false;render()" style="${IS};cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;${dateBtnActive?'border-color:var(--ink);font-weight:500;color:var(--ink)':'color:var(--text-soft)'}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          ${dateBtnLabel}
+        </button>
+        ${ordCalOpen?renderOrdCal():''}
+      </div>
+      ${hasFilter?`<button class="act-sm" onclick="ordSearch='';ordDlvFilter='all';ordPayFilter='all';ordSupFilter='all';ordDlvFrom='';ordDlvTo='';ordCalOpen=false;ordDlvOpen=false;ordPayOpen=false;ordSupOpen=false;render()" style="flex-shrink:0;white-space:nowrap">✕ Xóa lọc</button>`:''}
+      ${hasFilter?`<span style="font-size:12px;color:var(--text-soft);white-space:nowrap;margin-left:4px"><b style="color:var(--ink)">${list.length}</b> kết quả</span>`:''}
+    </div>
+  </div>
+  <div class="tb-panel"><table><thead><tr><th>Mã đơn</th><th>Mã YC</th><th>Nhà cung cấp</th><th>Ngày đặt</th><th>Tổng tiền</th><th>Giao hàng</th><th>Hóa đơn</th><th>Thanh toán</th><th></th></tr></thead>
+  <tbody>${rows}${!list.length?`<tr><td colspan="9" style="text-align:center;padding:36px;color:var(--text-soft)">${hasFilter?'Không tìm thấy kết quả phù hợp':'Chưa có đơn hàng'}</td></tr>`:''}</tbody></table></div>`;
+}
+
+function viewOrderDetail(id){
+  ordDetailId=id;ordDetailTab='overview';
+  nav('order-detail',null);
+  document.querySelectorAll('.nav-item[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==='orders'));
+}
+function switchOrdTab(tab){
+  ordDetailTab=tab;render();
+}
+function buildOrdDetailHTML(o){
+  const TABS=[['overview','Tổng quan'],['products','Sản phẩm'],['delivery','Giao hàng'],['finance','Tài chính']];
+  const tabBar=TABS.map(([t,l])=>`<button onclick="switchOrdTab('${t}')" style="font-family:inherit;font-size:13px;padding:9px 16px;border:none;border-bottom:2.5px solid ${ordDetailTab===t?'var(--ink)':'transparent'};background:none;cursor:pointer;font-weight:${ordDetailTab===t?600:400};color:${ordDetailTab===t?'var(--ink)':'var(--text-soft)'};transition:color .15s">${l}</button>`).join('');
+  let content='';
+  if(ordDetailTab==='overview')content=buildOrdOverviewTab(o);
+  else if(ordDetailTab==='products')content=buildOrdProductsTab(o);
+  else if(ordDetailTab==='delivery')content=buildOrdDeliveryTab(o);
+  else content=buildOrdFinanceTab(o);
+  return`<div style="display:flex;align-items:baseline;gap:12px;margin-bottom:2px">
+    <h2 style="margin:0">${o.id}</h2>
+    <span style="font-size:12.5px;color:var(--text-soft)">${o.sup}</span>
+  </div>
+  <div style="display:flex;border-bottom:1.5px solid var(--line);margin-bottom:16px;margin-top:12px">${tabBar}</div>
+  ${content}
+  <div class="mact"><button class="act-btn" onclick="closeModal()">Đóng</button></div>`;
+}
+
+function buildOrdOverviewTab(o){
+  const pr=PRS.find(x=>x.id===o.pr);
+  const rfq=o.rfq?RFQS.find(x=>x.id===o.rfq):null;
+  const srcLabel=rfq?`Yêu cầu báo giá`:`Yêu cầu mua hàng`;
+  const srcId=rfq?o.rfq:(o.pr&&o.pr!=='—'?o.pr:'—');
+  const srcTitle=rfq?rfq.title:(pr?pr.title:'');
+  const dlvDone=o.dlvStatus==='done';
+  const dlvActive=o.dlvStatus==='ship'||o.dlvStatus==='partial';
+  const invDone=o.invStatus==='issued';
+  const payDone=o.payStatus==='paid';
+  const payActive=o.payStatus==='overdue';
+  const steps=[
+    {label:'YC mua hàng',done:true,active:false},
+    {label:'Phê duyệt',done:true,active:false},
+    {label:'Đặt hàng',done:true,active:false},
+    {label:'Giao hàng',done:dlvDone,active:dlvActive},
+    {label:'Xuất HĐ',done:invDone,active:false},
+    {label:'Thanh toán',done:payDone,active:payActive},
+  ];
+  const noSup=!o.sup||o.sup==='—'||o.sup==='';
+  const supCell=noSup
+    ?`<div style="display:flex;align-items:center;gap:8px">
+        <span style="color:var(--text-soft);font-style:italic">Chưa gán NCC</span>
+        <button class="act-sm" onclick="openAssignSup('${o.id}')">+ Gán NCC</button>
+      </div>`
+    :`<div style="display:flex;align-items:center;gap:8px">
+        <span style="font-weight:600">${o.sup}</span>
+        <button class="act-sm" style="font-size:11px" onclick="openAssignSup('${o.id}')">Đổi</button>
+      </div>`;
+  const dlvCell=`<div style="display:flex;align-items:center;gap:8px">
+    <span style="font-weight:500">${o.dlv||'Chưa xác định'}</span>
+    <button class="act-sm" style="font-size:11px" onclick="openAssignDlv('${o.id}')">Sửa</button>
+  </div>`;
+  return`<div style="background:var(--surface);border-radius:12px;padding:16px 18px;margin-bottom:16px">${buildOrdTimeline(steps)}</div>
+  ${noSup?`<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:9px;padding:10px 14px;font-size:12.5px;color:#92400e;margin-bottom:14px;display:flex;align-items:center;gap:10px">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Đơn hàng chưa có nhà cung cấp. Có thể cần nhiều NCC cho từng nhóm sản phẩm — gán từng NCC và tạo thêm đơn nếu cần.
+  </div>`:''}
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:13.5px">
+    <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:3px">Nhà cung cấp</div>${supCell}</div>
+    <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:3px">${srcLabel}</div><div style="font-weight:600">${srcId}${srcTitle?`<span style="font-weight:400;color:var(--text-soft);font-size:12px;margin-left:6px">${srcTitle}</span>`:''}</div></div>
+    <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:3px">Ngày đặt hàng</div><div style="font-weight:500">${o.date}</div></div>
+    <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:3px">Ngày giao dự kiến</div>${dlvCell}</div>
+    <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:3px">Số mặt hàng</div><div style="font-weight:500">${o.items} mục</div></div>
+    <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:3px">Tổng giá trị</div><div style="font-weight:700;font-size:15px;color:var(--ink)">${o.total.toLocaleString('vi-VN')}đ</div></div>
+  </div>`;
+}
+function openAssignSup(ordId){
+  const o=ORDERS.find(x=>x.id===ordId);if(!o)return;
+  const FI='width:100%;box-sizing:border-box;padding:8px 11px;border:1.5px solid var(--line);border-radius:9px;font-family:inherit;font-size:13.5px;outline:none';
+  const supOpts=SUPPLIERS.map(s=>`<option value="${s.name}" ${o.sup===s.name?'selected':''}>${s.name} — ${s.cat}</option>`).join('');
+  const contractedSups=CONTRACTS.filter(c=>{const st=computeConStatus(c.end);return st==='active'||st==='expiring';});
+  const contractedOpts=contractedSups.length
+    ?`<optgroup label="Có hợp đồng hiệu lực">${contractedSups.map(c=>`<option value="${c.sup}" ${o.sup===c.sup?'selected':''}>${c.sup}</option>`).join('')}</optgroup><optgroup label="Nhà cung cấp khác">${supOpts}</optgroup>`
+    :supOpts;
+  openModal(`<h2>Gán nhà cung cấp — ${ordId}</h2>
+  <div style="font-size:12.5px;color:var(--text-soft);margin-bottom:14px">Một đơn hàng gắn với một nhà cung cấp. Nếu PR cần nhiều NCC, hãy tạo thêm đơn hàng riêng cho từng nhóm sản phẩm.</div>
+  <div class="mf"><label>Nhà cung cấp <span style="color:var(--coral)">*</span></label>
+    <select id="assignSup" style="${FI}">
+      <option value="">— Chọn nhà cung cấp —</option>
+      ${contractedOpts}
+    </select>
+  </div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Hủy</button>
+    <button class="btn-pr" onclick="saveAssignSup('${ordId}')">Lưu</button>
+  </div>`);
+}
+function saveAssignSup(ordId){
+  const o=ORDERS.find(x=>x.id===ordId);if(!o)return;
+  const sup=(document.getElementById('assignSup').value||'').trim();
+  if(!sup){toast('Vui lòng chọn nhà cung cấp');return;}
+  o.sup=sup;
+  LS.set('school_orders2',ORDERS);
+  addNotif('blue',`Đơn ${ordId} đã được gán NCC: ${sup}`);
+  toast(`Đã gán NCC "${sup}" cho ${ordId}`);closeModal();render();
+}
+function openAssignDlv(ordId){
+  const o=ORDERS.find(x=>x.id===ordId);if(!o)return;
+  const FI='width:100%;box-sizing:border-box;padding:8px 11px;border:1.5px solid var(--line);border-radius:9px;font-family:inherit;font-size:13.5px;outline:none';
+  openModal(`<h2>Ngày giao hàng — ${ordId}</h2>
+  <div class="mf"><label>Ngày giao dự kiến</label>
+    <input id="assignDlv" value="${o.dlv||''}" placeholder="DD/MM/YYYY" style="${FI}">
+  </div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Hủy</button>
+    <button class="btn-pr" onclick="saveAssignDlv('${ordId}')">Lưu</button>
+  </div>`);
+}
+function saveAssignDlv(ordId){
+  const o=ORDERS.find(x=>x.id===ordId);if(!o)return;
+  const dlv=(document.getElementById('assignDlv').value||'').trim();
+  if(!dlv){toast('Vui lòng nhập ngày giao');return;}
+  o.dlv=dlv;
+  LS.set('school_orders2',ORDERS);
+  toast(`Đã cập nhật ngày giao cho ${ordId}`);closeModal();render();
+}
+
+function buildOrdTimeline(steps){
+  const parts=[];
+  steps.forEach((s,i)=>{
+    const bg=s.done?'#15803d':s.active?'#2563eb':'#e2e8f0';
+    const co=s.done||s.active?'#fff':'#94a3b8';
+    const tc=s.done?'#15803d':s.active?'#2563eb':'#94a3b8';
+    const ico=s.done?'✓':s.active?'●':'○';
+    parts.push(`<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">`);
+    parts.push(`<div style="display:flex;align-items:center"><div style="width:28px;height:28px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${co}">${ico}</div>${i<steps.length-1?`<div style="width:36px;height:2px;background:${s.done?'#15803d':'#e2e8f0'}"></div>`:''}</div>`);
+    parts.push(`<div style="font-size:10px;color:${tc};text-align:center;margin-top:5px;line-height:1.3;white-space:nowrap">${s.label}</div></div>`);
+  });
+  return`<div style="display:flex;justify-content:space-between;align-items:flex-start">${parts.join('')}</div>`;
+}
+
+function buildOrdProductsTab(o){
+  if(!o.products||!o.products.length)return`<div style="text-align:center;padding:32px;color:var(--text-soft)">Không có dữ liệu sản phẩm</div>`;
+  const rows=o.products.map((p,i)=>`<tr style="${i?'border-top:1px solid var(--line)':''}">
+    <td style="padding:10px 12px;font-size:13px;font-weight:500">${p.name}</td>
+    <td style="padding:10px 12px;font-size:12px;color:var(--text-soft)">${p.sku||'—'}</td>
+    <td style="padding:10px 12px;font-size:13px;text-align:right;white-space:nowrap">${p.price?p.price.toLocaleString('vi-VN')+'đ':'—'}</td>
+    <td style="padding:10px 12px;font-size:13px;text-align:center">${p.qty} ${p.unit}</td>
+    <td style="padding:10px 12px;font-size:13px;font-weight:600;text-align:right;white-space:nowrap">${p.price?(p.price*p.qty).toLocaleString('vi-VN')+'đ':'—'}</td>
   </tr>`).join('');
-  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Quản lý đơn hàng</div></div>
-  <div class="tb-panel"><table><thead><tr><th>Mã đơn</th><th>Mã YC</th><th>Nhà cung cấp</th><th>Ngày đặt</th><th>Ngày giao</th><th>SL mục</th><th>Tổng tiền</th><th>Trạng thái</th><th></th></tr></thead>
-  <tbody>${rows}</tbody></table></div>`;
+  return`<div style="border:1px solid var(--line);border-radius:10px;overflow:hidden">
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr style="background:var(--surface);border-bottom:1.5px solid var(--line)">
+        <th style="text-align:left;padding:8px 12px;font-size:11.5px;color:var(--text-soft);font-weight:600">Tên sản phẩm</th>
+        <th style="text-align:left;padding:8px 12px;font-size:11.5px;color:var(--text-soft);font-weight:600">SKU</th>
+        <th style="text-align:right;padding:8px 12px;font-size:11.5px;color:var(--text-soft);font-weight:600">Đơn giá</th>
+        <th style="text-align:center;padding:8px 12px;font-size:11.5px;color:var(--text-soft);font-weight:600">Số lượng</th>
+        <th style="text-align:right;padding:8px 12px;font-size:11.5px;color:var(--text-soft);font-weight:600">Thành tiền</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+function buildOrdDeliveryTab(o){
+  const dlv=DLV_ST[o.dlvStatus]||['—','bs'];
+  return`<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:6px">Trạng thái giao hàng</div><span class="badge ${dlv[1]}">${dlv[0]}</span></div>
+    <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:4px">Ngày giao dự kiến</div><div style="font-weight:500">${o.dlv}</div></div>
+    <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:4px">Ngày giao thực tế</div><div style="font-weight:500">${o.dlvActual||'—'}</div></div>
+    <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:4px">Người nhận hàng</div><div style="font-weight:500">${o.receiver||'—'}</div></div>
+    <div style="grid-column:1/-1"><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:4px">Ghi chú giao hàng</div><div style="font-size:13.5px;color:${o.dlvNote?'var(--ink)':'var(--text-soft)'}">${o.dlvNote||'Không có ghi chú'}</div></div>
+  </div>`;
+}
+
+function buildOrdFinanceTab(o){
+  const inv=o.inv;
+  const pay=PAY_ST[o.payStatus]||['—','bs'];
+  const invBlock=inv?`<div style="background:var(--surface);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:600">Hóa đơn</div>
+      <button class="act-sm" onclick="openEditInvoice('${o.id}')">Sửa</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13.5px">
+      <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:2px">Số hóa đơn</div><div style="font-weight:600">${inv.id}</div></div>
+      <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:2px">Giá trị</div><div style="font-weight:600">${inv.total.toLocaleString('vi-VN')}đ</div></div>
+      <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:2px">Ngày phát hành</div><div style="font-weight:500">${inv.date}</div></div>
+      <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:2px">Ngày đến hạn</div><div style="font-weight:500;color:${o.payStatus==='overdue'?'#dc2626':'inherit'}">${inv.due}</div></div>
+    </div>
+  </div>`:`<div style="background:var(--surface);border-radius:10px;padding:16px;margin-bottom:14px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px">Hóa đơn</div>
+    <div style="color:var(--text-soft);font-size:13px;margin-bottom:12px">Chưa có hóa đơn cho đơn hàng này.</div>
+    <button class="btn-pr" style="font-size:12px;padding:6px 14px" onclick="openCreateInvoice('${o.id}')">+ Tạo hóa đơn</button>
+  </div>`;
+  const payBlock=`<div style="background:var(--surface);border-radius:10px;padding:14px 16px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px">Thanh toán</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13.5px">
+      <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:6px">Trạng thái</div><span class="badge ${pay[1]}">${pay[0]}</span></div>
+      <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:2px">Ngày thanh toán</div><div style="font-weight:500">${inv?.paidDate||'—'}</div></div>
+      <div><div style="font-size:11.5px;color:var(--text-soft);margin-bottom:2px">Số tiền</div><div style="font-weight:600">${o.payStatus==='paid'&&inv?inv.total.toLocaleString('vi-VN')+'đ':'—'}</div></div>
+    </div>
+    ${o.payStatus!=='paid'&&inv?`<div style="margin-top:12px"><button class="btn-pr" style="font-size:12px;padding:6px 14px" onclick="markOrderPaid('${o.id}')">Xác nhận đã thanh toán</button></div>`:''}
+    ${o.payStatus==='paid'?`<div style="margin-top:8px;font-size:12px;color:#15803d;font-weight:500">✓ Đã thanh toán đầy đủ</div>`:''}
+  </div>`;
+  return invBlock+payBlock;
+}
+function openCreateInvoice(ordId){
+  const o=ORDERS.find(x=>x.id===ordId);if(!o)return;
+  const today=new Date().toLocaleDateString('vi-VN');
+  const due=new Date();due.setDate(due.getDate()+30);
+  const dueStr=due.toLocaleDateString('vi-VN');
+  const invN=ORDERS.filter(x=>x.inv).length+1;
+  const invId=`HĐ-${ordId}`;
+  const FI='width:100%;box-sizing:border-box;padding:8px 11px;border:1.5px solid var(--line);border-radius:9px;font-family:inherit;font-size:13.5px;outline:none';
+  openModal(`<h2>Tạo hóa đơn — ${ordId}</h2>
+  <div class="mf"><label>Số hóa đơn</label><input id="invId" value="${invId}" style="${FI}"></div>
+  <div class="mf"><label>Ngày phát hành</label><input id="invDate" value="${today}" placeholder="DD/MM/YYYY" style="${FI}"></div>
+  <div class="mf"><label>Ngày đến hạn thanh toán</label><input id="invDue" value="${dueStr}" placeholder="DD/MM/YYYY" style="${FI}"></div>
+  <div class="mf"><label>Giá trị hóa đơn (đ)</label><input id="invTotal" type="number" value="${o.total}" min="0" style="${FI}"></div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Hủy</button>
+    <button class="btn-pr" onclick="saveInvoice('${ordId}')">Tạo hóa đơn</button>
+  </div>`);
+}
+function saveInvoice(ordId){
+  const o=ORDERS.find(x=>x.id===ordId);if(!o)return;
+  const id=(document.getElementById('invId').value||'').trim();
+  const date=(document.getElementById('invDate').value||'').trim();
+  const due=(document.getElementById('invDue').value||'').trim();
+  const total=+(document.getElementById('invTotal').value||0);
+  if(!id){toast('Vui lòng nhập số hóa đơn');return;}
+  if(!date){toast('Vui lòng nhập ngày phát hành');return;}
+  if(!due){toast('Vui lòng nhập ngày đến hạn');return;}
+  if(total<=0){toast('Giá trị hóa đơn phải lớn hơn 0');return;}
+  o.inv={id,date,due,total};
+  o.invStatus='issued';
+  LS.set('school_orders2',ORDERS);
+  addNotif('blue',`Hóa đơn ${id} đã được tạo cho đơn ${ordId}`);
+  toast(`Đã tạo hóa đơn ${id}`);closeModal();render();
+}
+function openEditInvoice(ordId){
+  const o=ORDERS.find(x=>x.id===ordId);if(!o||!o.inv)return;
+  const inv=o.inv;
+  const FI='width:100%;box-sizing:border-box;padding:8px 11px;border:1.5px solid var(--line);border-radius:9px;font-family:inherit;font-size:13.5px;outline:none';
+  openModal(`<h2>Sửa hóa đơn — ${ordId}</h2>
+  <div class="mf"><label>Số hóa đơn</label><input id="invId" value="${inv.id}" style="${FI}"></div>
+  <div class="mf"><label>Ngày phát hành</label><input id="invDate" value="${inv.date}" placeholder="DD/MM/YYYY" style="${FI}"></div>
+  <div class="mf"><label>Ngày đến hạn</label><input id="invDue" value="${inv.due}" placeholder="DD/MM/YYYY" style="${FI}"></div>
+  <div class="mf"><label>Giá trị (đ)</label><input id="invTotal" type="number" value="${inv.total}" min="0" style="${FI}"></div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Hủy</button>
+    <button class="btn-pr" onclick="saveInvoice('${ordId}')">Lưu thay đổi</button>
+  </div>`);
+}
+function markOrderPaid(ordId){
+  const o=ORDERS.find(x=>x.id===ordId);if(!o)return;
+  const today=new Date().toLocaleDateString('vi-VN');
+  o.payStatus='paid';
+  if(o.inv)o.inv.paidDate=today;
+  LS.set('school_orders2',ORDERS);
+  addNotif('green',`Đơn ${ordId} đã được xác nhận thanh toán`);
+  toast(`Đã xác nhận thanh toán cho ${ordId}`);render();
+}
+
+function orderDetail(){
+  const o=ORDERS.find(x=>x.id===ordDetailId);
+  const pt=document.getElementById('pageTitle');
+  if(!o){
+    if(pt)pt.textContent='Đơn hàng';
+    return`<div class="toolbar"><button onclick="nav('orders',null)" style="font-family:inherit;font-size:13px;border:1.5px solid var(--line);border-radius:9px;padding:7px 12px;background:var(--paper);cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--text)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>Đơn hàng</button></div>
+    <div style="text-align:center;padding:48px;color:var(--text-soft)">Không tìm thấy đơn hàng</div>`;
+  }
+  if(pt)pt.textContent=o.id;
+  const TABS=[['overview','Tổng quan'],['products','Sản phẩm'],['delivery','Giao hàng'],['finance','Tài chính']];
+  const tabBar=TABS.map(([t,l])=>`<button onclick="switchOrdTab('${t}')" style="font-family:inherit;font-size:13.5px;padding:11px 18px;border:none;border-bottom:2.5px solid ${ordDetailTab===t?'var(--ink)':'transparent'};background:none;cursor:pointer;font-weight:${ordDetailTab===t?600:400};color:${ordDetailTab===t?'var(--ink)':'var(--text-soft)'};transition:color .15s">${l}</button>`).join('');
+  let content='';
+  if(ordDetailTab==='overview')content=buildOrdOverviewTab(o);
+  else if(ordDetailTab==='products')content=buildOrdProductsTab(o);
+  else if(ordDetailTab==='delivery')content=buildOrdDeliveryTab(o);
+  else content=buildOrdFinanceTab(o);
+  const dlvBadge=`<span class="badge ${DLV_ST[o.dlvStatus]?.[1]||'bs'}">${DLV_ST[o.dlvStatus]?.[0]||''}</span>`;
+  const payBadge=`<span class="badge ${PAY_ST[o.payStatus]?.[1]||'bs'}">${PAY_ST[o.payStatus]?.[0]||''}</span>`;
+  return`<div class="toolbar" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <button onclick="nav('orders',null)" style="font-family:inherit;font-size:13px;border:1.5px solid var(--line);border-radius:9px;padding:7px 12px;background:var(--paper);cursor:pointer;display:flex;align-items:center;gap:5px;color:var(--text);flex-shrink:0">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>Đơn hàng
+    </button>
+    <div style="width:1px;height:16px;background:var(--line);flex-shrink:0"></div>
+    <div style="font-size:15px;font-weight:600;flex-shrink:0">${o.id}</div>
+    <div style="font-size:13px;color:var(--text-soft);flex-shrink:0">${o.sup}</div>
+    <div style="display:flex;gap:6px;margin-left:auto;flex-shrink:0">${dlvBadge}${payBadge}</div>
+  </div>
+  <div class="panel" style="padding:0">
+    <div style="display:flex;border-bottom:1.5px solid var(--line);padding:0 8px">${tabBar}</div>
+    <div style="padding:20px 24px">${content}</div>
+  </div>`;
 }
 
 /* ── Budget ── */
+let bgtYear='2026-2027',bgtHK='all';
+
 function budget(){
-  const total=800e6,spent=254e6,allocated=670e6,remaining=total-spent;
-  const overviewPanel=`<div class="panel" style="margin-bottom:14px">
-    <div class="ph"><h3>Tổng quan ngân sách — Năm học 2026-2027</h3></div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px">
-      ${[['Tổng ngân sách năm','800tr','#3b82f6'],['Đã phân bổ','670tr','#f97316'],['Đã chi tiêu','254tr','#a855f7'],['Còn lại','546tr','#22c55e']].map(([l,v,c])=>`<div style="background:var(--paper);border-radius:10px;padding:14px">
-        <div style="font-size:22px;font-weight:700;color:${c}">${v}</div>
-        <div style="font-size:12px;color:var(--text-soft);margin-top:3px">${l}</div>
-      </div>`).join('')}
+  const yearData=SCHOOL_BUDGETS.find(b=>b.year===bgtYear)||SCHOOL_BUDGETS[0];
+  const filtered=DEPT_BUDGETS.filter(b=>b.year===bgtYear&&(bgtHK==='all'||b.sem===bgtHK));
+
+  // Aggregate per dept (cả năm thì cộng dồn 2 kỳ)
+  const deptMap={};
+  filtered.forEach(b=>{
+    if(!deptMap[b.dept])deptMap[b.dept]={dept:b.dept,budget:0,spent:0};
+    deptMap[b.dept].budget+=b.budget;
+    deptMap[b.dept].spent+=b.spent;
+  });
+  const depts=Object.values(deptMap);
+
+  const totalBudget=depts.reduce((s,d)=>s+d.budget,0);
+  const totalSpent=depts.reduce((s,d)=>s+d.spent,0);
+  const totalRem=totalBudget-totalSpent;
+  const usedPct=pct(totalSpent,totalBudget);
+  const barC=usedPct>=90?'#dc2626':usedPct>=75?'#d97706':'#22c55e';
+  const remC=usedPct>=90?'#dc2626':usedPct>=75?'#d97706':'#15803d';
+  const ctxLabel=bgtHK==='all'?`Tổng cả năm`:yearData.semesters.find(s=>s.id===bgtHK)?.label||'';
+
+  const IS='font-family:inherit;font-size:13px;border:1.5px solid var(--line);border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:var(--text)';
+  const yearOpts=SCHOOL_BUDGETS.map(b=>`<option value="${b.year}"${b.year===bgtYear?' selected':''}>${b.year}</option>`).join('');
+  const hkChips=['all','hk1','hk2'].map(h=>`<button class="fchip ${bgtHK===h?'on':''}" onclick="bgtHK='${h}';render()">${h==='all'?'Cả năm':h==='hk1'?'Học kỳ 1':'Học kỳ 2'}</button>`).join('');
+
+  const kpiCards=`<div class="panel" style="margin-bottom:14px">
+    <div style="font-size:12px;color:var(--text-soft);margin-bottom:12px;font-weight:500">Năm học ${bgtYear} · ${ctxLabel}</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+      <div style="background:var(--paper);border-radius:12px;padding:16px 14px">
+        <div style="font-size:11.5px;color:var(--text-soft);margin-bottom:6px;font-weight:500">Ngân sách được cấp</div>
+        <div style="font-size:22px;font-weight:700;color:#3b82f6;line-height:1">${fmtV(totalBudget)}đ</div>
+        <div style="font-size:11px;color:var(--text-soft);margin-top:5px">${depts.length} phòng ban</div>
+      </div>
+      <div style="background:var(--paper);border-radius:12px;padding:16px 14px">
+        <div style="font-size:11.5px;color:var(--text-soft);margin-bottom:6px;font-weight:500">Đã sử dụng</div>
+        <div style="font-size:22px;font-weight:700;color:#a855f7;line-height:1">${fmtV(totalSpent)}đ</div>
+        <div style="font-size:11px;color:var(--text-soft);margin-top:5px">${usedPct}% ngân sách</div>
+      </div>
+      <div style="background:var(--paper);border-radius:12px;padding:16px 14px">
+        <div style="font-size:11.5px;color:var(--text-soft);margin-bottom:6px;font-weight:500">Còn lại</div>
+        <div style="font-size:22px;font-weight:700;color:${remC};line-height:1">${fmtV(totalRem)}đ</div>
+        <div style="font-size:11px;color:var(--text-soft);margin-top:5px">Chưa sử dụng</div>
+      </div>
+      <div style="background:var(--paper);border-radius:12px;padding:16px 14px">
+        <div style="font-size:11.5px;color:var(--text-soft);margin-bottom:6px;font-weight:500">% sử dụng</div>
+        <div style="font-size:22px;font-weight:700;color:${barC};line-height:1">${usedPct}%</div>
+        <div style="background:var(--line);border-radius:999px;height:5px;overflow:hidden;margin-top:8px"><div style="height:100%;width:${usedPct}%;background:${barC};border-radius:999px"></div></div>
+      </div>
     </div>
   </div>`;
-  const deptRows=DEPTS.map(d=>{const p=pct(d.spent,d.budget),barC=p>=90?'#dc2626':p>=75?'#d97706':'#22c55e';return`<tr>
-    <td style="font-weight:500">${d.name}</td>
-    <td>${d.head}</td>
-    <td>${d.members}</td>
-    <td>${fmtV(d.budget)}đ</td>
-    <td>${fmtV(d.spent)}đ</td>
-    <td><div class="bgt-bar-bg"><div class="bgt-bar-fill" style="width:${p}%;background:${barC}"></div></div><div style="font-size:11px;color:var(--text-soft);margin-top:3px">${p}%</div></td>
-  </tr>`;}).join('');
-  return overviewPanel+`<div class="tb-panel"><table><thead><tr><th>Phòng ban</th><th>Trưởng phòng</th><th>TV</th><th>Ngân sách</th><th>Đã chi</th><th style="width:160px">Sử dụng</th></tr></thead><tbody>${deptRows}</tbody></table></div>`;
+
+  const progressBar=`<div class="panel" style="margin-bottom:14px;padding:18px 20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <span style="font-size:13.5px;font-weight:600">Tiến độ sử dụng ngân sách</span>
+      <span style="font-size:20px;font-weight:700;color:${barC}">${usedPct}%</span>
+    </div>
+    <div style="background:var(--line);border-radius:999px;height:12px;overflow:hidden;margin-bottom:8px">
+      <div style="height:100%;width:${usedPct}%;background:${barC};border-radius:999px"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-soft)">
+      <span>0đ</span>
+      <span style="font-weight:500;color:var(--ink)">${fmtV(totalSpent)}đ đã dùng / ${fmtV(totalBudget)}đ được cấp</span>
+      <span>${fmtV(totalBudget)}đ</span>
+    </div>
+  </div>`;
+
+  const buildSemTable=(semId,semLabel,entries)=>{
+    if(!entries.length)return`<div style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:13.5px;font-weight:600">${semLabel}</span>
+        <span style="font-size:12px;color:var(--text-soft)">Năm học ${bgtYear}</span>
+      </div>
+      <div class="tb-panel"><table><thead><tr><th>Phòng ban</th><th>Ngân sách</th><th>Đã chi</th><th>Còn lại</th><th style="width:160px">% sử dụng</th><th>Trạng thái</th></tr></thead>
+      <tbody><tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text-soft)">Chưa có ngân sách — nhấn <b>+ Tạo ngân sách</b></td></tr></tbody></table></div>
+    </div>`;
+    const tBgt=entries.reduce((s,d)=>s+d.budget,0);
+    const tSpt=entries.reduce((s,d)=>s+d.spent,0);
+    const tRem=tBgt-tSpt;
+    const tPct=pct(tSpt,tBgt);
+    const rows=entries.map(d=>{
+      const p=pct(d.spent,d.budget);
+      const rem=d.budget-d.spent;
+      const bc=p>=90?'#dc2626':p>=75?'#d97706':'#22c55e';
+      let stLabel,stClass;
+      if(p>=90){stLabel='Sắp hết ngân sách';stClass='br';}
+      else if(p>=75){stLabel='Cảnh báo';stClass='bo';}
+      else if(p>0){stLabel='Đang triển khai';stClass='bb';}
+      else{stLabel='Chưa sử dụng';stClass='bs';}
+      return`<tr>
+        <td style="font-weight:600">${d.dept}</td>
+        <td style="font-weight:500;white-space:nowrap">${fmtV(d.budget)}đ</td>
+        <td style="font-weight:500;white-space:nowrap">${fmtV(d.spent)}đ</td>
+        <td style="font-weight:600;white-space:nowrap;color:${rem>=0?'#15803d':'#dc2626'}">${fmtV(rem)}đ</td>
+        <td style="width:160px">
+          <div class="bgt-bar-bg"><div class="bgt-bar-fill" style="width:${p}%;background:${bc}"></div></div>
+          <div style="font-size:11px;color:var(--text-soft);margin-top:3px;font-weight:500">${p}%</div>
+        </td>
+        <td><span class="badge ${stClass}">${stLabel}</span></td>
+      </tr>`;
+    }).join('');
+    const totalRow=`<tr style="background:var(--surface);border-top:2px solid var(--line)">
+      <td style="font-weight:700;font-size:13px">Tổng cộng</td>
+      <td style="font-weight:700;white-space:nowrap">${fmtV(tBgt)}đ</td>
+      <td style="font-weight:700;white-space:nowrap">${fmtV(tSpt)}đ</td>
+      <td style="font-weight:700;white-space:nowrap;color:${tRem>=0?'#15803d':'#dc2626'}">${fmtV(tRem)}đ</td>
+      <td style="font-weight:700;font-size:13px">${tPct}%</td>
+      <td></td>
+    </tr>`;
+    return`<div style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:13.5px;font-weight:600">${semLabel}</span>
+        <span style="font-size:12px;color:var(--text-soft)">Năm học ${bgtYear}</span>
+      </div>
+      <div class="tb-panel"><table><thead><tr><th>Phòng ban</th><th>Ngân sách</th><th>Đã chi</th><th>Còn lại</th><th style="width:160px">% sử dụng</th><th>Trạng thái</th></tr></thead>
+      <tbody>${rows}${totalRow}</tbody></table></div>
+    </div>`;
+  };
+
+  const hk1Entries=DEPT_BUDGETS.filter(b=>b.year===bgtYear&&b.sem==='hk1');
+  const hk2Entries=DEPT_BUDGETS.filter(b=>b.year===bgtYear&&b.sem==='hk2');
+  const semTables=bgtHK==='all'
+    ?buildSemTable('hk1','Học kỳ 1',hk1Entries)+buildSemTable('hk2','Học kỳ 2',hk2Entries)
+    :bgtHK==='hk1'?buildSemTable('hk1','Học kỳ 1',hk1Entries)
+    :buildSemTable('hk2','Học kỳ 2',hk2Entries);
+
+  return`
+  <div class="toolbar">
+    <div style="font-size:15px;font-weight:600">Ngân sách tổ chức</div>
+    <div class="sp"></div>
+    <select style="${IS};cursor:pointer" onchange="bgtYear=this.value;render()">${yearOpts}</select>
+    <div style="display:flex;gap:6px">${hkChips}</div>
+    <button class="btn-pr" onclick="openAddDeptBudget()">+ Tạo ngân sách</button>
+  </div>
+  ${kpiCards}
+  ${progressBar}
+  ${semTables}`;
 }
 
-/* ── Invoices ── */
-function invoices(){
-  const rows=INVOICES.map(inv=>`<tr>
-    <td style="font-weight:600">${inv.id}</td>
-    <td style="font-size:12px;color:var(--text-soft)">${inv.order}</td>
-    <td>${inv.sup}</td>
-    <td>${inv.date}</td>
-    <td>${inv.due}</td>
-    <td style="font-weight:600">${fmtV(inv.total)}đ</td>
-    <td><span class="badge ${INV_ST[inv.status][1]}">${INV_ST[inv.status][0]}</span></td>
-    <td>${inv.status==='unpaid'||inv.status==='overdue'?`<button class="btn-pr" style="font-size:12px;padding:5px 10px" onclick="toast('Xử lý thanh toán ${inv.id}')">Thanh toán</button>`:''}</td>
-  </tr>`).join('');
-  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Hóa đơn & Thanh toán</div></div>
-  <div class="tb-panel"><table><thead><tr><th>Số HĐ</th><th>Mã đơn</th><th>Nhà cung cấp</th><th>Ngày phát hành</th><th>Ngày đến hạn</th><th>Giá trị</th><th>Trạng thái</th><th></th></tr></thead>
-  <tbody>${rows}</tbody></table></div>`;
+function openAddDeptBudget(){
+  const yearOpts=SCHOOL_BUDGETS.map(b=>`<option value="${b.year}"${b.year===bgtYear?' selected':''}>${b.year}</option>`).join('');
+  const semOpts=`<option value="hk1"${bgtHK==='hk1'?' selected':''}>Học kỳ 1</option><option value="hk2"${bgtHK==='hk2'?' selected':''}>Học kỳ 2</option>`;
+  const deptOpts=DEPTS.map(d=>`<option value="${d.name}">${d.name}</option>`).join('');
+  openModal(`<h2>Tạo ngân sách phòng ban</h2>
+  <div class="m2">
+    <div class="mf"><label>Năm học</label><select id="dbYear">${yearOpts}</select></div>
+    <div class="mf"><label>Học kỳ</label><select id="dbSem">${semOpts}</select></div>
+  </div>
+  <div class="mf"><label>Phòng ban</label><select id="dbDept">${deptOpts}</select></div>
+  <div class="mf"><label>Ngân sách (đ) <span class="req">*</span></label><input id="dbBudget" type="number" placeholder="0" min="0"></div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Hủy</button>
+    <button class="add" onclick="saveNewDeptBudget()">Tạo ngân sách</button>
+  </div>`);
 }
+
+function saveNewDeptBudget(){
+  const year=document.getElementById('dbYear').value;
+  const sem=document.getElementById('dbSem').value;
+  const dept=document.getElementById('dbDept').value;
+  const budget=+(document.getElementById('dbBudget').value)||0;
+  if(!budget){toast('Nhập số tiền ngân sách');return;}
+  if(DEPT_BUDGETS.find(b=>b.year===year&&b.sem===sem&&b.dept===dept)){toast('Phòng ban này đã có ngân sách cho kỳ học này');return;}
+  const id=Math.max(0,...DEPT_BUDGETS.map(b=>b.id))+1;
+  DEPT_BUDGETS.push({id,year,sem,dept,budget,spent:0});
+  closeModal();toast(`Đã tạo ngân sách cho ${dept}`);render();
+}
+
+/* ── Invoices (redirected to orders) ── */
+function invoices(){nav('orders',null);return'';}
 
 /* ── Ebook ── */
+function ebookStatus(e){
+  const now=new Date();
+  const exp=parsePrDate(e.exp);
+  if(!exp)return['Không xác định','bs'];
+  if(exp<now)return['Hết hạn','br'];
+  const d30=new Date(now);d30.setDate(d30.getDate()+30);
+  if(exp<=d30)return['Sắp hết hạn','bo'];
+  return['Còn hạn','bg'];
+}
+
 function ebook(){
-  const rows=EBOOKS.map(e=>{const p=pct(e.used,e.lic),c=p>=90?'#dc2626':p>=70?'#d97706':'#22c55e';const expiring=e.used===e.lic;return`<tr>
-    <td><div style="font-weight:500">${e.title}</div><div style="font-size:11.5px;color:var(--text-soft)">${e.pub}</div></td>
-    <td><span class="badge bs">${e.cat}</span></td>
-    <td>${e.lic}</td>
-    <td style="font-weight:600;color:${c}">${e.used}</td>
-    <td><div class="bgt-bar-bg"><div class="bgt-bar-fill" style="width:${p}%;background:${c}"></div></div><div style="font-size:11px;color:var(--text-soft);margin-top:2px">${p}%</div></td>
-    <td>${e.exp}</td>
-    <td><span class="badge ${expiring?'br':'bg'}">${expiring?'Đã dùng hết':'Còn hạn'}</span></td>
-    <td><button class="act-sm" onclick="toast('Gia hạn license: ${e.title.replace(/'/g,'')}')">Gia hạn</button></td>
-  </tr>`;}).join('');
-  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Thư viện Ebook & Tài nguyên số</div><div class="sp"></div><button class="btn-pr" onclick="nav('rfq',null)">+ Yêu cầu báo giá license</button></div>
-  <div class="tb-panel"><table><thead><tr><th>Tên ebook</th><th>Danh mục</th><th>Tổng license</th><th>Đang dùng</th><th style="width:130px">Sử dụng</th><th>Hết hạn</th><th>Trạng thái</th><th></th></tr></thead>
-  <tbody>${rows}</tbody></table></div>`;
+  const now=new Date();
+  const totalLic=EBOOKS.reduce((s,e)=>s+e.lic,0);
+  const totalUsed=EBOOKS.reduce((s,e)=>s+e.used,0);
+  const expiringSoon=EBOOKS.filter(e=>{const exp=parsePrDate(e.exp);if(!exp||exp<now)return false;const d30=new Date(now);d30.setDate(d30.getDate()+30);return exp<=d30;}).length;
+  const expired=EBOOKS.filter(e=>{const exp=parsePrDate(e.exp);return exp&&exp<now;}).length;
+  const kpis=[
+    {val:EBOOKS.length,lbl:'Tổng Ebook sở hữu',bg:'#eff6ff',fg:'#2563eb'},
+    {val:totalLic,lbl:'Tổng license',bg:'#f0fdf4',fg:'#15803d'},
+    {val:totalUsed,lbl:'Đang sử dụng',bg:'#faf5ff',fg:'#7c3aed'},
+    {val:totalLic-totalUsed,lbl:'License còn trống',bg:'#f0fdf4',fg:'#059669'},
+    {val:expiringSoon,lbl:'Sắp hết hạn',bg:'#fff7ed',fg:'#c2410c'},
+    {val:expired,lbl:'Đã hết hạn',bg:'#fef2f2',fg:'#dc2626'},
+  ].map(k=>`<div style="background:${k.bg};border-radius:12px;padding:14px 16px">
+    <div style="font-size:26px;font-weight:700;color:${k.fg};line-height:1;margin-bottom:5px">${k.val}</div>
+    <div style="font-size:12px;color:var(--text-soft);font-weight:500">${k.lbl}</div>
+  </div>`).join('');
+  const rows=EBOOKS.map(e=>{
+    const[stLbl,stCls]=ebookStatus(e);
+    const free=e.lic-e.used;
+    const p=pct(e.used,e.lic);
+    const bc=p>=90?'#dc2626':p>=70?'#d97706':'#22c55e';
+    return`<tr>
+      <td><div style="font-weight:500">${e.title}</div><div style="font-size:11.5px;color:var(--text-soft)">${e.pub}</div></td>
+      <td><span class="badge bs">${e.cat}</span></td>
+      <td style="font-size:12.5px">${e.licType||'Số lượng/năm'}</td>
+      <td style="text-align:right">${e.lic}</td>
+      <td style="text-align:right;font-weight:600;color:${bc}">${e.used}</td>
+      <td style="text-align:right;font-weight:600;color:${free>0?'#15803d':'#dc2626'}">${free}</td>
+      <td style="font-size:12.5px">${e.activatedAt||'—'}</td>
+      <td style="font-size:12.5px">${e.exp}</td>
+      <td><span class="badge ${stCls}">${stLbl}</span></td>
+      <td><div style="display:flex;gap:5px">
+        <button class="act-sm" onclick="openEbookDetail(${e.id})">Chi tiết</button>
+        <button class="act-sm" onclick="openUpdateLicense(${e.id})">Cập nhật</button>
+        <button class="act-sm" onclick="renewLicense(${e.id})">Gia hạn</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  const emptyEbook=!rows?`<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-soft)">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:.3;display:block;margin:0 auto 10px"><path d="M4 19V5a1 1 0 0 1 1-1h6v16H5a1 1 0 0 1-1-1Z"/><path d="M13 4h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-6"/></svg>
+    Chưa có ebook nào
+  </td></tr>`:'';
+  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Ebook & Tài nguyên số</div></div>
+  <div class="panel" style="margin-bottom:14px"><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px">${kpis}</div></div>
+  <div class="tb-panel"><table>
+    <thead><tr><th>Tên Ebook</th><th>Danh mục</th><th>Loại license</th><th style="text-align:right">Tổng</th><th style="text-align:right">Đang dùng</th><th style="text-align:right">Còn trống</th><th>Ngày kích hoạt</th><th>Ngày hết hạn</th><th>Trạng thái</th><th></th></tr></thead>
+    <tbody>${rows}${emptyEbook}</tbody>
+  </table></div>`;
+}
+
+function openEbookDetail(id){
+  const e=EBOOKS.find(x=>x.id===id);if(!e)return;
+  const[stLbl,stCls]=ebookStatus(e);
+  const free=e.lic-e.used;
+  const p=pct(e.used,e.lic);
+  const bc=p>=90?'#dc2626':p>=70?'#d97706':'#22c55e';
+  const txSection=e.rfq||e.po?`
+    <div style="font-size:13px;font-weight:600;color:var(--ink);margin:16px 0 8px">Lịch sử giao dịch</div>
+    <div style="background:var(--surface);border-radius:10px;padding:12px 14px;font-size:13px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px">
+        ${e.rfq?`<div><span style="color:var(--text-soft)">Nguồn RFQ </span><b>${e.rfq}</b></div>`:''}
+        ${e.po?`<div><span style="color:var(--text-soft)">Đơn mua hàng </span><b>${e.po}</b></div>`:''}
+        ${e.sup?`<div><span style="color:var(--text-soft)">Nhà cung cấp </span><b>${e.sup}</b></div>`:''}
+        ${e.purchasedAt?`<div><span style="color:var(--text-soft)">Ngày mua </span><b>${e.purchasedAt}</b></div>`:''}
+        ${e.contractVal?`<div><span style="color:var(--text-soft)">Giá trị HĐ </span><b>${fmtV(e.contractVal)}đ</b></div>`:''}
+      </div>
+    </div>`:'';
+  const renewRows=(e.renewHistory||[]).map(r=>`<tr>
+    <td>${r.date}</td><td>${r.lic} license</td><td>${r.period}</td>
+    <td style="font-weight:500">${fmtV(r.cost)}đ</td>
+  </tr>`).join('');
+  const renewSection=renewRows?`
+    <div style="font-size:13px;font-weight:600;color:var(--ink);margin:16px 0 8px">Lịch sử gia hạn</div>
+    <div class="tb-panel"><table>
+      <thead><tr><th>Ngày gia hạn</th><th>Số license</th><th>Thời hạn</th><th>Chi phí</th></tr></thead>
+      <tbody>${renewRows}</tbody>
+    </table></div>`:'';
+  openModal(`<h2 style="margin-bottom:4px">${e.title}</h2>
+  <div style="font-size:13px;color:var(--text-soft);margin-bottom:16px">${e.pub} · <span class="badge bs">${e.cat}</span></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
+    <div style="background:#eff6ff;border-radius:10px;padding:12px">
+      <div style="font-size:11px;color:var(--text-soft);margin-bottom:4px">Tổng license</div>
+      <div style="font-size:22px;font-weight:700;color:#2563eb">${e.lic}</div>
+    </div>
+    <div style="background:var(--surface);border-radius:10px;padding:12px">
+      <div style="font-size:11px;color:var(--text-soft);margin-bottom:4px">Đang sử dụng</div>
+      <div style="font-size:22px;font-weight:700;color:${bc}">${e.used}</div>
+    </div>
+    <div style="background:var(--surface);border-radius:10px;padding:12px">
+      <div style="font-size:11px;color:var(--text-soft);margin-bottom:4px">Còn trống</div>
+      <div style="font-size:22px;font-weight:700;color:${free>0?'#15803d':'#dc2626'}">${free}</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;margin-bottom:4px">
+    <div><span style="color:var(--text-soft)">Loại license: </span><b>${e.licType||'Số lượng/năm'}</b></div>
+    <div><span style="color:var(--text-soft)">Trạng thái: </span><span class="badge ${stCls}">${stLbl}</span></div>
+    <div><span style="color:var(--text-soft)">Ngày kích hoạt: </span><b>${e.activatedAt||'—'}</b></div>
+    <div><span style="color:var(--text-soft)">Ngày hết hạn: </span><b>${e.exp}</b></div>
+  </div>
+  ${txSection}
+  ${renewSection}
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Đóng</button>
+    <button class="btn-pr" onclick="closeModal();renewLicense(${e.id})">Gia hạn license</button>
+  </div>`);
+  document.getElementById('modal').classList.add('modal-xl');
+}
+
+function renewLicense(id){
+  const e=EBOOKS.find(x=>x.id===id);if(!e)return;
+  rfqType='ebook';rfqEbookRef=e;rfqSupSearch='';rfqSupDropOpen=false;rfqExtOpen=false;
+  rfqSupList=[];if(e.sup){const ms=SUPPLIERS.find(x=>x.name===e.sup);if(ms)rfqSupList=[{type:'registered',id:ms.id,name:ms.name,cat:ms.cat}];}
+  openRFQ();
+}
+function openUpdateLicense(id){
+  const e=EBOOKS.find(x=>x.id===id);if(!e)return;
+  const FI='width:100%;box-sizing:border-box;padding:8px 11px;border:1.5px solid var(--line);border-radius:9px;font-family:inherit;font-size:13.5px;outline:none';
+  openModal(`<h2>Cập nhật license — ${e.title}</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+    <div style="background:#eff6ff;border-radius:10px;padding:12px;text-align:center">
+      <div style="font-size:11px;color:var(--text-soft);margin-bottom:4px">Hiện tại</div>
+      <div style="font-size:22px;font-weight:700;color:#2563eb">${e.lic}</div>
+    </div>
+    <div style="background:var(--surface);border-radius:10px;padding:12px;text-align:center">
+      <div style="font-size:11px;color:var(--text-soft);margin-bottom:4px">Đang dùng</div>
+      <div style="font-size:22px;font-weight:700">${e.used}</div>
+    </div>
+    <div style="background:#f0fdf4;border-radius:10px;padding:12px;text-align:center">
+      <div style="font-size:11px;color:var(--text-soft);margin-bottom:4px">Còn lại</div>
+      <div style="font-size:22px;font-weight:700;color:#15803d">${e.lic-e.used}</div>
+    </div>
+  </div>
+  <div class="mf"><label>Tổng license mới <span style="color:var(--coral)">*</span></label>
+    <input id="newLic" type="number" value="${e.lic}" min="${e.used}" style="${FI}">
+    <div style="font-size:11.5px;color:var(--text-soft);margin-top:4px">Tối thiểu: ${e.used} (đang được sử dụng)</div>
+  </div>
+  <div class="mf"><label>Ngày hết hạn mới</label>
+    <input id="newExp" value="${e.exp}" placeholder="DD/MM/YYYY" style="${FI}">
+  </div>
+  <div class="mf"><label>Ghi chú</label>
+    <input id="licNote" placeholder="Ví dụ: Gia hạn theo đơn PO-2026-0015" style="${FI}">
+  </div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Hủy</button>
+    <button class="btn-pr" onclick="saveUpdateLicense(${id})">Cập nhật</button>
+  </div>`);
+}
+function saveUpdateLicense(id){
+  const e=EBOOKS.find(x=>x.id===id);if(!e)return;
+  const newLic=+(document.getElementById('newLic').value||0);
+  const newExp=(document.getElementById('newExp').value||'').trim();
+  const note=(document.getElementById('licNote').value||'').trim();
+  if(newLic<e.used){toast(`Không thể giảm xuống dưới ${e.used} (đang dùng)`);return;}
+  if(newLic<=0){toast('Số license phải lớn hơn 0');return;}
+  const today=new Date().toLocaleDateString('vi-VN');
+  e.lic=newLic;
+  if(newExp)e.exp=newExp;
+  if(!e.renewHistory)e.renewHistory=[];
+  e.renewHistory.unshift({date:today,lic:newLic,period:newExp||e.exp,cost:0,note:note||'Cập nhật thủ công'});
+  addNotif('blue',`License "${e.title}" đã cập nhật: ${newLic} license${newExp?' · Hết hạn '+newExp:''}`);
+  toast(`Đã cập nhật license: ${newLic}`);closeModal();render();
 }
 
 /* ── RFQ ── */
+let rfqType='general',rfqEbookRef=null;
+let rfqSupList=[],rfqSupSearch='',rfqSupDropOpen=false,rfqExtOpen=false;
+let rfqSearch='',rfqStatusFilter='all',rfqStatusOpen=false,rfqSort='newest';
+let rfqDetailId=null,rfqDetailTab='overview',rfqQuoteFormOpen=false;
+
+const RFQ_STATUS_OPTS=[
+  {v:'all',label:'Trạng thái',dot:''},
+  {v:'open',label:'Đang mở',dot:'#15803d'},
+  {v:'closed',label:'Đã đóng',dot:'#6b7280'},
+];
+function renderRfqStatusDrop(){
+  const cur=RFQ_STATUS_OPTS.find(o=>o.v===rfqStatusFilter)||RFQ_STATUS_OPTS[0];
+  const items=RFQ_STATUS_OPTS.map(o=>{
+    const active=o.v===rfqStatusFilter;
+    const dot=o.dot?`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${o.dot};flex-shrink:0"></span>`:'<span style="display:inline-block;width:7px;height:7px;flex-shrink:0"></span>';
+    return`<div onclick="rfqStatusFilter='${o.v}';rfqStatusOpen=false;render()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;border-radius:8px;font-size:13px;font-weight:${active?600:400};color:${active?'var(--ink)':'var(--text)'};background:${active?'rgba(22,53,84,.07)':'none'};white-space:nowrap" onmouseenter="this.style.background='rgba(22,53,84,.05)'" onmouseleave="this.style.background='${active?'rgba(22,53,84,.07)':'none'}'">
+      ${dot}<span>${o.label}</span>${active?`<svg style="margin-left:auto" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`:''}
+    </div>`;
+  }).join('');
+  const dotHtml=cur.dot?`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${cur.dot};flex-shrink:0"></span>`:'';
+  return`<div style="position:relative;flex-shrink:0">
+    <button onclick="rfqStatusOpen=!rfqStatusOpen;render()" style="font-family:inherit;font-size:13px;border:1.5px solid ${rfqStatusOpen?'var(--ink)':rfqStatusFilter!=='all'?'var(--ink)':'var(--line)'};border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:${rfqStatusFilter!=='all'?'var(--ink)':'var(--text)'};cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;font-weight:${rfqStatusFilter!=='all'?500:400}">
+      ${dotHtml}${cur.label}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:2px;opacity:.5;transition:transform .15s;${rfqStatusOpen?'transform:rotate(180deg)':''}"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    ${rfqStatusOpen?`<div style="position:absolute;top:calc(100% + 6px);left:0;z-index:55;background:#fff;border:1.5px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(22,53,84,.18);padding:6px;min-width:170px">${items}</div>`:''}
+  </div>`;
+}
 function rfq(){
-  const rows=RFQS.map(r=>`<tr>
-    <td style="font-weight:600">${r.id}</td>
+  const hasFilter=rfqSearch||rfqStatusFilter!=='all';
+  let list=RFQS.filter(r=>{
+    if(rfqSearch){const q=rfqSearch.toLowerCase();if(!r.id.toLowerCase().includes(q)&&!r.title.toLowerCase().includes(q))return false;}
+    if(rfqStatusFilter!=='all'&&r.status!==rfqStatusFilter)return false;
+    return true;
+  });
+  if(rfqSort==='az')list.sort((a,b)=>a.title.localeCompare(b.title,'vi'));
+  else list.sort((a,b)=>b.id.localeCompare(a.id));
+  const IS='font-family:inherit;font-size:13px;border:1.5px solid var(--line);border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:var(--text)';
+  const rows=list.map(r=>`<tr>
+    <td style="font-weight:600;white-space:nowrap">${r.id}</td>
     <td style="font-weight:500">${r.title}</td>
-    <td>${r.sups}</td>
+    <td>${Array.isArray(r.sups)?r.sups.length:r.sups}</td>
     <td style="font-weight:600;color:var(--ink)">${r.resp}</td>
     <td>${fmtV(r.budget)}đ</td>
-    <td>${r.due}</td>
+    <td style="white-space:nowrap">${r.due}</td>
     <td><span class="badge ${RFQ_ST[r.status][1]}">${RFQ_ST[r.status][0]}</span></td>
-    <td><button class="act-sm" onclick="toast('Xem chi tiết ${r.id}')">Chi tiết</button></td>
+    <td><button class="act-sm" onclick="viewRFQDetail('${r.id}')">Chi tiết</button></td>
   </tr>`).join('');
-  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Báo giá B2B (RFQ)</div><div class="sp"></div><button class="btn-pr" onclick="openRFQ()">+ Tạo yêu cầu báo giá</button></div>
+  return`
+  ${rfqStatusOpen?`<div onclick="rfqStatusOpen=false;render()" style="position:fixed;inset:0;z-index:50"></div>`:''}
+  <div class="toolbar" style="flex-wrap:wrap;gap:8px">
+    <div style="font-size:15px;font-weight:600;flex-shrink:0">Yêu cầu báo giá</div>
+    <input style="${IS};width:190px;flex-shrink:0" placeholder="Tìm mã, nội dung..." value="${rfqSearch}" oninput="rfqSearch=this.value;render()">
+    ${renderRfqStatusDrop()}
+    <div style="display:flex;gap:4px;flex-shrink:0">
+      <button class="fchip${rfqSort==='newest'?' on':''}" onclick="rfqSort='newest';render()">Mới nhất</button>
+      <button class="fchip${rfqSort==='az'?' on':''}" onclick="rfqSort='az';render()">A–Z</button>
+    </div>
+    ${hasFilter?`<button class="act-sm" onclick="rfqSearch='';rfqStatusFilter='all';rfqStatusOpen=false;render()" style="flex-shrink:0;white-space:nowrap">✕ Xóa lọc</button>`:''}
+    ${hasFilter?`<span style="font-size:12px;color:var(--text-soft);white-space:nowrap"><b style="color:var(--ink)">${list.length}</b> kết quả</span>`:''}
+    <div class="sp"></div>
+    <button class="btn-pr" onclick="rfqType='general';rfqEbookRef=null;rfqSupList=[];rfqSupSearch='';rfqExtOpen=false;openRFQ()">+ Tạo yêu cầu báo giá</button>
+  </div>
   <div class="tb-panel"><table><thead><tr><th>Mã RFQ</th><th>Nội dung</th><th>Số NCC</th><th>Phản hồi</th><th>Ngân sách</th><th>Hạn chót</th><th>Trạng thái</th><th></th></tr></thead>
-  <tbody>${rows}</tbody></table></div>`;
+  <tbody>${rows}${!list.length?`<tr><td colspan="8" style="text-align:center;padding:36px;color:var(--text-soft)">${hasFilter?'Không tìm thấy kết quả phù hợp':'Chưa có yêu cầu báo giá'}</td></tr>`:''}</tbody></table></div>`;
+}
+function buildRFQChipsHTML(){
+  if(!rfqSupList.length)return`<div style="font-size:12px;color:var(--text-soft);padding:2px 0">Chưa chọn nhà cung cấp nào</div>`;
+  return`<div style="display:flex;flex-wrap:wrap;gap:6px">${rfqSupList.map((s,i)=>{const ext=s.type==='external';return`<div style="display:inline-flex;align-items:center;gap:5px;background:${ext?'rgba(124,58,237,.07)':'rgba(22,53,84,.07)'};border:1.5px solid ${ext?'rgba(124,58,237,.25)':'var(--line)'};border-radius:20px;padding:4px 8px 4px 10px;font-size:12px"><span style="font-weight:500;color:var(--ink)">${s.name}</span><span style="font-size:10px;color:${ext?'#7c3aed':'var(--acc)'}">●</span><span style="font-size:10px;color:var(--text-soft)">${ext?'Ngoài HT':'Hệ thống'}</span><button onclick="rfqRemoveSup(${i})" style="font-family:inherit;border:none;background:none;color:var(--text-soft);cursor:pointer;font-size:11px;padding:0 0 0 3px;line-height:1">✕</button></div>`;}).join('')}</div>`;
+}
+function rfqRemoveSup(i){rfqSupList.splice(i,1);const el=document.getElementById('rfqSelectedChips');if(el)el.innerHTML=buildRFQChipsHTML();}
+function rfqAddRegistered(id){
+  if(rfqSupList.find(s=>s.type==='registered'&&s.id===id))return;
+  const s=SUPPLIERS.find(x=>x.id===id);if(!s)return;
+  rfqSupList.push({type:'registered',id:s.id,name:s.name,cat:s.cat});
+  rfqSupSearch='';rfqSupDropOpen=false;
+  const inp=document.getElementById('rfqSupSearchInput');if(inp)inp.value='';
+  const el=document.getElementById('rfqSelectedChips');if(el)el.innerHTML=buildRFQChipsHTML();
+  renderRFQSearchDrop();
+}
+function renderRFQSearchDrop(){
+  const el=document.getElementById('rfqSupDropResult');if(!el)return;
+  if(!rfqSupDropOpen){el.innerHTML='';return;}
+  const q=rfqSupSearch.toLowerCase().trim();
+  const selIds=rfqSupList.filter(s=>s.type==='registered').map(s=>s.id);
+  let list,header='';
+  if(!q){
+    const sug=(SUP_SUGGEST[rfqType]||[]).map(id=>SUPPLIERS.find(s=>s.id===id)).filter(Boolean);
+    if(sug.length){list=sug;header=`<div style="padding:6px 12px 2px;font-size:10px;font-weight:600;color:var(--text-soft);letter-spacing:.04em">GỢI Ý PHÙ HỢP</div>`;}
+    else list=SUPPLIERS.slice(0,8);
+  } else {
+    list=SUPPLIERS.filter(s=>s.name.toLowerCase().includes(q)||s.cat.toLowerCase().includes(q));
+  }
+  if(!list.length){el.innerHTML=`<div style="background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--text-soft)">Không tìm thấy nhà cung cấp</div>`;return;}
+  const items=list.slice(0,8).map(s=>{
+    const sel=selIds.includes(s.id);
+    const ca=sel?'':`onclick="rfqAddRegistered('${s.id}')"`;
+    return`<div ${ca} style="display:flex;align-items:center;gap:10px;padding:8px 10px;cursor:${sel?'default':'pointer'};border-radius:8px;opacity:${sel?.5:1}" onmouseenter="if(!${sel})this.style.background='rgba(22,53,84,.05)'" onmouseleave="this.style.background='none'"><div style="width:32px;height:32px;border-radius:50%;background:rgba(22,53,84,.08);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--ink);flex-shrink:0">${s.name[0]}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--ink)">${s.name}</div><div style="font-size:11px;color:var(--text-soft)">${s.cat}</div></div>${sel?`<span style="font-size:11px;color:var(--acc);white-space:nowrap">✓ Đã chọn</span>`:''}</div>`;
+  }).join('');
+  el.innerHTML=`<div style="background:#fff;border:1.5px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(22,53,84,.15);padding:6px;max-height:230px;overflow-y:auto">${header}${items}</div>`;
+}
+function rfqToggleExtForm(){
+  rfqExtOpen=!rfqExtOpen;
+  const el=document.getElementById('rfqExtFormEl');
+  if(el)el.style.display=rfqExtOpen?'block':'none';
+  if(rfqExtOpen)['rfqExtName','rfqExtContact','rfqExtEmail','rfqExtPhone','rfqExtWebsite','rfqExtNote'].forEach(id=>{const f=document.getElementById(id);if(f)f.value='';});
+}
+function rfqSaveExt(){
+  const name=(document.getElementById('rfqExtName')?.value||'').trim();
+  const email=(document.getElementById('rfqExtEmail')?.value||'').trim();
+  if(!name){toast('Nhập tên nhà cung cấp');return;}
+  if(!email){toast('Nhập email nhà cung cấp');return;}
+  rfqSupList.push({type:'external',name,contact:(document.getElementById('rfqExtContact')?.value||'').trim(),email,phone:(document.getElementById('rfqExtPhone')?.value||'').trim(),website:(document.getElementById('rfqExtWebsite')?.value||'').trim(),note:(document.getElementById('rfqExtNote')?.value||'').trim()});
+  rfqExtOpen=false;const el=document.getElementById('rfqExtFormEl');if(el)el.style.display='none';
+  const chips=document.getElementById('rfqSelectedChips');if(chips)chips.innerHTML=buildRFQChipsHTML();
+  toast('Đã thêm NCC ngoài hệ thống');
 }
 function openRFQ(){
-  openModal(`<h2>Tạo yêu cầu báo giá (RFQ)</h2>
-  <div class="mf"><label>Tiêu đề</label><input id="rfqTitle" placeholder="VD: Máy chiếu phòng học đa năng"></div>
+  const TYPE_OPTS=[
+    {v:'general',l:'Văn phòng phẩm'},
+    {v:'ebook',l:'Ebook & License'},
+    {v:'software',l:'Phần mềm'},
+    {v:'device',l:'Thiết bị giáo dục'},
+    {v:'service',l:'Dịch vụ'},
+  ];
+  const typeOpts=TYPE_OPTS.map(o=>`<option value="${o.v}"${o.v===rfqType?' selected':''}>${o.l}</option>`).join('');
+  const isEbook=rfqType==='ebook';
+  const contentFields=isEbook
+    ?`<div class="mf"><label>Tên Ebook / Phần mềm <span class="req">*</span></label>
+        <input id="rfqEbookName" value="${rfqEbookRef?rfqEbookRef.title.replace(/"/g,'&quot;'):''}" placeholder="VD: Toán học nâng cao lớp 12">
+      </div>
+      <div class="m2">
+        <div class="mf"><label>Số lượng license</label><input id="rfqEbookLic" type="number" placeholder="0" min="1" value="${rfqEbookRef?rfqEbookRef.lic:''}"></div>
+        <div class="mf"><label>Thời hạn license</label><select id="rfqEbookPeriod"><option>1 năm</option><option>2 năm</option><option>3 năm</option><option>Vĩnh viễn</option></select></div>
+      </div>`
+    :`<div class="mf"><label>Tiêu đề <span class="req">*</span></label><input id="rfqTitle" placeholder="VD: Máy chiếu phòng học đa năng"></div>`;
+  const supSection=`<div class="mf"><label>Nhà cung cấp nhận báo giá <span class="req">*</span></label>
+    <div id="rfqSelectedChips" style="min-height:26px;margin-bottom:8px">${buildRFQChipsHTML()}</div>
+    <div style="position:relative"><input id="rfqSupSearchInput" placeholder="Tìm kiếm nhà cung cấp trong hệ thống..." value="${rfqSupSearch}" oninput="rfqSupSearch=this.value;rfqSupDropOpen=true;renderRFQSearchDrop()" onfocus="rfqSupDropOpen=true;renderRFQSearchDrop()" onblur="setTimeout(()=>{rfqSupDropOpen=false;renderRFQSearchDrop()},200)" style="font-size:13px;width:100%;box-sizing:border-box"><div id="rfqSupDropResult" style="position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:60"></div></div>
+    <button onclick="rfqToggleExtForm()" style="font-family:inherit;font-size:12px;color:#7c3aed;border:1.5px dashed rgba(124,58,237,.35);border-radius:8px;background:none;cursor:pointer;padding:6px 10px;margin-top:8px;width:100%;text-align:left">+ Thêm NCC ngoài hệ thống</button>
+    <div id="rfqExtFormEl" style="display:${rfqExtOpen?'block':'none'};margin-top:8px;padding:12px;background:rgba(124,58,237,.04);border:1.5px solid rgba(124,58,237,.2);border-radius:10px">
+      <div style="font-size:12px;font-weight:600;color:#7c3aed;margin-bottom:10px">Thông tin NCC ngoài hệ thống</div>
+      <div class="m2"><div class="mf"><label>Tên nhà cung cấp <span class="req">*</span></label><input id="rfqExtName" placeholder="VD: Công ty Bút Mực Xanh" style="font-size:13px"></div><div class="mf"><label>Người liên hệ</label><input id="rfqExtContact" placeholder="VD: Nguyễn Văn A" style="font-size:13px"></div></div>
+      <div class="m2"><div class="mf"><label>Email <span class="req">*</span></label><input id="rfqExtEmail" type="email" placeholder="contact@company.com" style="font-size:13px"></div><div class="mf"><label>Số điện thoại</label><input id="rfqExtPhone" placeholder="0901 234 567" style="font-size:13px"></div></div>
+      <div class="m2"><div class="mf"><label>Website</label><input id="rfqExtWebsite" placeholder="https://..." style="font-size:13px"></div><div class="mf"><label>Ghi chú</label><input id="rfqExtNote" placeholder="Ghi chú thêm..." style="font-size:13px"></div></div>
+      <div style="display:flex;gap:8px;margin-top:8px"><button class="act-sm" onclick="rfqToggleExtForm()">Hủy</button><button class="btn-pr" onclick="rfqSaveExt()">Thêm vào danh sách</button></div>
+    </div>
+  </div>`;
+  const modalTitle=rfqEbookRef
+    ?`Gia hạn license — ${rfqEbookRef.title.length>32?rfqEbookRef.title.slice(0,32)+'…':rfqEbookRef.title}`
+    :'Tạo yêu cầu báo giá (RFQ)';
+  openModal(`<h2>${modalTitle}</h2>
+  <div class="mf"><label>Loại yêu cầu</label><select id="rfqTypeEl" onchange="rfqType=this.value;rfqEbookRef=null;openRFQ()">${typeOpts}</select></div>
+  ${contentFields}
+  ${supSection}
   <div class="m2">
     <div class="mf"><label>Ngân sách ước tính (đ)</label><input id="rfqBudget" type="number" placeholder="0"></div>
     <div class="mf"><label>Hạn chót nhận báo giá</label><input id="rfqDue" type="date"></div>
@@ -1650,23 +2708,276 @@ function openRFQ(){
   <div class="mf"><label>Mô tả yêu cầu</label><textarea id="rfqNote" placeholder="Mô tả chi tiết sản phẩm/dịch vụ cần báo giá..."></textarea></div>
   <div class="mact"><button class="act-sm" onclick="closeModal()">Hủy</button><button class="btn-pr" onclick="saveRFQ()">Gửi yêu cầu</button></div>`);
 }
-function saveRFQ(){const t=(document.getElementById('rfqTitle').value||'').trim();if(!t){toast('Nhập tiêu đề');return;}closeModal();toast('Đã gửi yêu cầu báo giá');}
+function saveRFQ(){
+  const isEbook=rfqType==='ebook';
+  const titleVal=isEbook
+    ?(document.getElementById('rfqEbookName')?.value||'').trim()
+    :(document.getElementById('rfqTitle')?.value||'').trim();
+  if(!titleVal){toast(isEbook?'Nhập tên Ebook':'Nhập tiêu đề');return;}
+  if(!rfqSupList.length){toast('Chọn ít nhất một nhà cung cấp');return;}
+  const nums=RFQS.map(r=>parseInt(r.id.split('-')[2])||0);
+  const newNum=String(Math.max(0,...nums)+1).padStart(3,'0');
+  const dueRaw=document.getElementById('rfqDue')?.value||'';
+  const due=dueRaw?dueRaw.split('-').reverse().join('/'):'—';
+  const rfqDesc=(document.getElementById('rfqNote')?.value||'').trim();
+  RFQS.unshift({id:`RFQ-2026-${newNum}`,title:isEbook?`[Ebook] ${titleVal}`:titleVal,sups:[...rfqSupList],resp:0,budget:+(document.getElementById('rfqBudget')?.value)||0,due,status:'open',type:rfqType,desc:rfqDesc,quotes:[]});
+  const msg=isEbook?'Đã tạo RFQ gia hạn — chờ báo giá từ nhà cung cấp':'Đã gửi yêu cầu báo giá';
+  rfqType='general';rfqEbookRef=null;rfqSupList=[];rfqSupSearch='';rfqSupDropOpen=false;rfqExtOpen=false;
+  closeModal();toast(msg);render();
+}
+
+function viewRFQDetail(id){
+  rfqDetailId=id;rfqDetailTab='overview';rfqQuoteFormOpen=false;
+  nav('rfq-detail',null);
+  document.querySelectorAll('.nav-item[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==='rfq'));
+}
+function switchRfqTab(tab){rfqDetailTab=tab;render();}
+function rfqDetail(){
+  const r=RFQS.find(x=>x.id===rfqDetailId);
+  const pt=document.getElementById('pageTitle');
+  const backBtn=`<button onclick="nav('rfq',null)" style="font-family:inherit;font-size:13px;border:1.5px solid var(--line);border-radius:9px;padding:7px 12px;background:var(--paper);cursor:pointer;display:flex;align-items:center;gap:5px;color:var(--text);flex-shrink:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>Yêu cầu báo giá</button>`;
+  if(!r){if(pt)pt.textContent='Yêu cầu báo giá';return`<div class="toolbar">${backBtn}</div><div style="text-align:center;padding:48px;color:var(--text-soft)">Không tìm thấy yêu cầu báo giá</div>`;}
+  if(pt)pt.textContent=r.id;
+  const TYPE_LBL={general:'Văn phòng phẩm',ebook:'Ebook & License',software:'Phần mềm',device:'Thiết bị giáo dục',service:'Dịch vụ'};
+  const supCount=Array.isArray(r.sups)?r.sups.length:r.sups;
+  const st=RFQ_ST[r.status]||['Không rõ','bs'];
+  const TABS=[['overview','Tổng quan'],['suppliers',`Nhà cung cấp (${supCount})`],['quotes',`So sánh báo giá (${r.resp})`]];
+  const tabBar=TABS.map(([t,l])=>`<button onclick="switchRfqTab('${t}')" style="font-family:inherit;font-size:13.5px;padding:11px 18px;border:none;border-bottom:2.5px solid ${rfqDetailTab===t?'var(--ink)':'transparent'};background:none;cursor:pointer;font-weight:${rfqDetailTab===t?600:400};color:${rfqDetailTab===t?'var(--ink)':'var(--text-soft)'};transition:color .15s">${l}</button>`).join('');
+  let content='';
+  if(rfqDetailTab==='overview'){
+    content=`<div class="m2" style="gap:12px;margin-bottom:16px">
+      <div class="panel" style="padding:14px 16px"><div style="font-size:11px;color:var(--text-soft);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em">Loại yêu cầu</div><div style="font-size:14px;font-weight:600;color:var(--ink)">${TYPE_LBL[r.type]||r.type||'—'}</div></div>
+      <div class="panel" style="padding:14px 16px"><div style="font-size:11px;color:var(--text-soft);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em">Ngân sách ước tính</div><div style="font-size:14px;font-weight:600;color:var(--ink)">${fmtC(r.budget)}</div></div>
+      <div class="panel" style="padding:14px 16px"><div style="font-size:11px;color:var(--text-soft);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em">Hạn chót nhận báo giá</div><div style="font-size:14px;font-weight:600;color:var(--ink)">${r.due}</div></div>
+      <div class="panel" style="padding:14px 16px"><div style="font-size:11px;color:var(--text-soft);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em">Phản hồi nhận được</div><div style="font-size:14px;font-weight:600;color:var(--ink)">${r.resp} / ${supCount} NCC</div></div>
+    </div>
+    <div class="panel" style="padding:16px"><div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px">Mô tả yêu cầu</div><div style="font-size:13px;color:var(--text-soft)">${r.desc||'Không có mô tả'}</div></div>`;
+  } else if(rfqDetailTab==='suppliers'){
+    if(Array.isArray(r.sups)&&r.sups.length){
+      const srows=r.sups.map(s=>{const ext=s.type==='external';return`<tr><td style="font-weight:500">${s.name}</td><td><span class="badge ${ext?'bp':'bb'}">${ext?'Ngoài hệ thống':'Hệ thống'}</span></td><td style="font-size:13px;color:var(--text-soft)">${s.contact||'—'}</td><td style="font-size:12px;color:var(--text-soft)">${s.email||s.cat||'—'}</td><td><span class="badge bs">Chờ phản hồi</span></td></tr>`;}).join('');
+      content=`<div style="overflow:auto"><table><thead><tr><th>Nhà cung cấp</th><th>Loại</th><th>Người liên hệ</th><th>Email / Ngành hàng</th><th>Trạng thái</th></tr></thead><tbody>${srows}</tbody></table></div>`;
+    } else {
+      content=`<div style="padding:36px;text-align:center;color:var(--text-soft);font-size:13px">Đã gửi tới <b style="color:var(--ink)">${supCount}</b> nhà cung cấp</div>`;
+    }
+  } else {
+    const hasQuotes=r.quotes&&r.quotes.length>0;
+    const hasSups=Array.isArray(r.sups)&&r.sups.length>0;
+    if(hasQuotes&&!rfqQuoteFormOpen){
+      const minPrice=Math.min(...r.quotes.map(q=>q.price));
+      const qrows=[...r.quotes].sort((a,b)=>a.price-b.price).map(q=>{
+        const ext=q.type==='external';const cheap=q.price===minPrice;
+        const alreadyPO=ORDERS.some(o=>o.rfq===r.id&&o.sup===q.sup);
+        return`<tr>
+          <td style="font-weight:500">${q.sup}</td>
+          <td><span class="badge ${ext?'bp':'bb'}">${ext?'Ngoài HT':'Hệ thống'}</span></td>
+          <td style="font-weight:600;color:${cheap?'#15803d':'var(--ink)'}">${fmtC(q.price)}</td>
+          <td>${cheap?`<span class="badge bg">Rẻ nhất</span>`:''}</td>
+          <td>${alreadyPO?`<span class="badge bg" style="font-size:11px">Đã tạo đơn</span>`:`<button class="btn-pr" style="font-size:11.5px;padding:5px 10px" onclick="rfqCreatePO('${r.id}','${q.sup}',${q.price})">Chọn & Tạo đơn</button>`}</td>
+        </tr>`;
+      }).join('');
+      content=`<div style="overflow:auto"><table><thead><tr><th>Nhà cung cấp</th><th>Loại</th><th>Đơn giá</th><th></th><th></th></tr></thead><tbody>${qrows}</tbody></table></div>
+      <div style="margin-top:14px"><button class="act-sm" onclick="rfqQuoteFormOpen=true;render()">Sửa báo giá</button></div>`;
+    } else if(hasQuotes&&rfqQuoteFormOpen){
+      const IS='font-family:inherit;font-size:13px;border:1.5px solid var(--line);border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:var(--text);width:100%;box-sizing:border-box';
+      const fcards=r.sups.map((s,i)=>{
+        const ext=s.type==='external';
+        const existingPrice=r.quotes.find(q=>q.sup===s.name)?.price||'';
+        return`<div style="border:1.5px solid var(--line);border-radius:10px;padding:11px 16px;display:flex;align-items:center;gap:10px">
+          <span style="font-size:13px;font-weight:500;color:var(--ink);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.name}</span>
+          <span class="badge ${ext?'bp':'bb'}">${ext?'Ngoài HT':'Hệ thống'}</span>
+          <input id="rfqQ_price_${i}" type="number" value="${existingPrice}" placeholder="Đơn giá (đ)" min="0" style="${IS};width:160px;flex-shrink:0;-moz-appearance:textfield;appearance:textfield">
+        </div>`;
+      }).join('');
+      content=`<div>
+        <div style="font-size:12px;color:var(--text-soft);margin-bottom:12px">Chỉnh sửa đơn giá (đ) cho từng nhà cung cấp. Các ô bỏ trống sẽ bị xóa khỏi danh sách so sánh.</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">${fcards}</div>
+        <div style="display:flex;gap:8px">
+          <button class="act-sm" onclick="rfqQuoteFormOpen=false;render()">Hủy</button>
+          <button class="btn-pr" onclick="rfqSaveQuotes('${r.id}')">Lưu thay đổi</button>
+        </div>
+      </div>`;
+    } else if(hasSups&&!rfqQuoteFormOpen){
+      content=`<div style="padding:36px;text-align:center">
+        <div style="color:var(--text-soft);font-size:13px;margin-bottom:14px">Chưa nhận được báo giá nào.<br>Bạn có thể nhập thủ công báo giá từ các nhà cung cấp đã gửi RFQ.</div>
+        <button class="btn-pr" onclick="rfqQuoteFormOpen=true;render()">Nhập báo giá thủ công</button>
+      </div>`;
+    } else if(hasSups&&rfqQuoteFormOpen){
+      const IS='font-family:inherit;font-size:13px;border:1.5px solid var(--line);border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:var(--text);width:100%;box-sizing:border-box';
+      const fcards=r.sups.map((s,i)=>{
+        const ext=s.type==='external';
+        return`<div style="border:1.5px solid var(--line);border-radius:10px;padding:11px 16px;display:flex;align-items:center;gap:10px">
+          <span style="font-size:13px;font-weight:500;color:var(--ink);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.name}</span>
+          <span class="badge ${ext?'bp':'bb'}">${ext?'Ngoài HT':'Hệ thống'}</span>
+          <input id="rfqQ_price_${i}" type="number" placeholder="Đơn giá (đ)" min="0" style="${IS};width:160px;flex-shrink:0;-moz-appearance:textfield;appearance:textfield">
+        </div>`;
+      }).join('');
+      content=`<div>
+        <div style="font-size:12px;color:var(--text-soft);margin-bottom:12px">Nhập đơn giá (đ) cho từng nhà cung cấp đã phản hồi. Các ô bỏ trống sẽ không được lưu.</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">${fcards}</div>
+        <div style="display:flex;gap:8px">
+          <button class="act-sm" onclick="rfqQuoteFormOpen=false;render()">Hủy</button>
+          <button class="btn-pr" onclick="rfqSaveQuotes('${r.id}')">Lưu báo giá</button>
+        </div>
+      </div>`;
+    } else {
+      content=`<div style="padding:36px;text-align:center;color:var(--text-soft);font-size:13px">Chưa nhận được báo giá nào</div>`;
+    }
+  }
+  return`<div class="toolbar" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    ${backBtn}
+    <div style="width:1px;height:16px;background:var(--line);flex-shrink:0"></div>
+    <div style="font-size:15px;font-weight:600;flex-shrink:0">${r.id}</div>
+    <div style="font-size:13px;color:var(--text-soft);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.title}</div>
+    <span class="badge ${st[1]}" style="flex-shrink:0">${st[0]}</span>
+  </div>
+  <div class="panel" style="padding:0;margin-bottom:14px">
+    <div style="display:flex;border-bottom:1.5px solid var(--line);padding:0 8px">${tabBar}</div>
+    <div style="padding:20px 24px">${content}</div>
+  </div>`;
+}
+function rfqSaveQuotes(rfqId){
+  const r=RFQS.find(x=>x.id===rfqId);if(!r||!Array.isArray(r.sups))return;
+  const quotes=[];
+  r.sups.forEach((s,i)=>{
+    const price=+(document.getElementById('rfqQ_price_'+i)?.value||0);
+    if(price<=0)return;
+    quotes.push({sup:s.name,type:s.type,price});
+  });
+  if(!quotes.length){toast('Nhập đơn giá cho ít nhất một nhà cung cấp');return;}
+  r.quotes=quotes;r.resp=quotes.length;
+  rfqQuoteFormOpen=false;
+  toast(`Đã lưu ${quotes.length} báo giá`);render();
+}
+function rfqCreatePO(rfqId,supName,unitPrice){
+  const r=RFQS.find(x=>x.id===rfqId);if(!r)return;
+  const existing=ORDERS.find(o=>o.rfq===rfqId&&o.sup===supName);
+  if(existing){toast(`Đã tạo đơn ${existing.id} cho nhà cung cấp này`);return;}
+  const n=ORDERS.length+1;
+  const poId=`PO-2026-${String(n).padStart(4,'0')}`;
+  const today=new Date().toLocaleDateString('vi-VN');
+  const dlvDefault=new Date();dlvDefault.setDate(dlvDefault.getDate()+14);
+  ORDERS.unshift({id:poId,rfq:rfqId,pr:'',sup:supName,date:today,dlv:dlvDefault.toLocaleDateString('vi-VN'),
+    total:unitPrice,items:0,dlvStatus:'pending',invStatus:'none',payStatus:'unpaid',
+    dlvActual:'',receiver:'',dlvNote:'',inv:null,products:[]});
+  LS.set('school_orders2',ORDERS);
+  r.status='closed';
+  addNotif('green',`RFQ ${rfqId} — Đã tạo đơn ${poId} cho ${supName}`);
+  toast(`Đã tạo đơn ${poId} từ báo giá của ${supName}`);render();
+}
 
 /* ── Contracts ── */
+let ctrSearch='',ctrStatusFilter='all',ctrSort='newest',ctrStatusOpen=false;
+
+const CTR_STATUS_OPTS=[
+  {v:'all',label:'Trạng thái',dot:''},
+  {v:'active',label:'Đang hiệu lực',dot:'#15803d'},
+  {v:'expiring',label:'Sắp hết hạn',dot:'#c2410c'},
+  {v:'expired',label:'Hết hạn',dot:'#b91c1c'},
+];
+function renderCtrStatusDrop(){
+  const cur=CTR_STATUS_OPTS.find(o=>o.v===ctrStatusFilter)||CTR_STATUS_OPTS[0];
+  const items=CTR_STATUS_OPTS.map(o=>{
+    const active=o.v===ctrStatusFilter;
+    const dot=o.dot?`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${o.dot};flex-shrink:0"></span>`:'<span style="display:inline-block;width:7px;height:7px;flex-shrink:0"></span>';
+    return`<div onclick="ctrStatusFilter='${o.v}';ctrStatusOpen=false;render()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;border-radius:8px;font-size:13px;font-weight:${active?600:400};color:${active?'var(--ink)':'var(--text)'};background:${active?'rgba(22,53,84,.07)':'none'};white-space:nowrap" onmouseenter="this.style.background='rgba(22,53,84,.05)'" onmouseleave="this.style.background='${active?'rgba(22,53,84,.07)':'none'}'">
+      ${dot}<span>${o.label}</span>${active?`<svg style="margin-left:auto" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`:''}
+    </div>`;
+  }).join('');
+  const dotHtml=cur.dot?`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${cur.dot};flex-shrink:0"></span>`:'';
+  return`<div style="position:relative;flex-shrink:0">
+    <button onclick="ctrStatusOpen=!ctrStatusOpen;render()" style="font-family:inherit;font-size:13px;border:1.5px solid ${ctrStatusOpen?'var(--ink)':ctrStatusFilter!=='all'?'var(--ink)':'var(--line)'};border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:${ctrStatusFilter!=='all'?'var(--ink)':'var(--text)'};cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;font-weight:${ctrStatusFilter!=='all'?500:400}">
+      ${dotHtml}${cur.label}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:2px;opacity:.5;transition:transform .15s;${ctrStatusOpen?'transform:rotate(180deg)':''}"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    ${ctrStatusOpen?`<div style="position:absolute;top:calc(100% + 6px);left:0;z-index:55;background:#fff;border:1.5px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(22,53,84,.18);padding:6px;min-width:200px">${items}</div>`:''}
+  </div>`;
+}
+
+function openAddContract(){
+  const ids=CONTRACTS.map(c=>c.id).filter(id=>/HĐ-\d{4}-(\d+)/.test(id)).map(id=>+id.match(/(\d+)$/)[1]);
+  const next=ids.length?Math.max(...ids)+1:1;
+  const newId=`HĐ-2026-${String(next).padStart(3,'0')}`;
+  const FI='width:100%;box-sizing:border-box;padding:8px 11px;border:1.5px solid var(--line);border-radius:9px;font-family:inherit;font-size:13.5px;outline:none';
+  openModal(`<h2>Tạo hợp đồng mới</h2>
+  <div style="display:grid;gap:12px">
+    <div><label style="font-size:12px;color:var(--text-soft);display:block;margin-bottom:4px">Số hợp đồng</label>
+      <input id="ci_id" style="${FI}" value="${newId}"></div>
+    <div><label style="font-size:12px;color:var(--text-soft);display:block;margin-bottom:4px">Nhà cung cấp <span style="color:#dc2626">*</span></label>
+      <input id="ci_sup" style="${FI}" placeholder="Tên nhà cung cấp"></div>
+    <div><label style="font-size:12px;color:var(--text-soft);display:block;margin-bottom:4px">Loại hợp đồng</label>
+      <input id="ci_type" style="${FI}" placeholder="Ví dụ: Cung cấp văn phòng phẩm"></div>
+    <div><label style="font-size:12px;color:var(--text-soft);display:block;margin-bottom:4px">Giá trị hợp đồng (đ)</label>
+      <input id="ci_val" type="number" min="0" style="${FI}" placeholder="0"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div><label style="font-size:12px;color:var(--text-soft);display:block;margin-bottom:4px">Ngày bắt đầu</label>
+        <input id="ci_start" type="date" style="${FI}"></div>
+      <div><label style="font-size:12px;color:var(--text-soft);display:block;margin-bottom:4px">Ngày kết thúc</label>
+        <input id="ci_end" type="date" style="${FI}"></div>
+    </div>
+    <div style="background:var(--surface);border-radius:9px;padding:10px 12px;font-size:12.5px;color:var(--text-soft);display:flex;align-items:center;gap:8px">
+      <span class="badge bg" style="flex-shrink:0">Đang hiệu lực</span>
+      Trạng thái được hệ thống tự cập nhật theo ngày kết thúc hợp đồng
+    </div>
+  </div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Hủy</button>
+    <button class="add" onclick="saveNewContract()">Tạo hợp đồng</button>
+  </div>`);
+}
+function saveNewContract(){
+  const id=document.getElementById('ci_id').value.trim();
+  const sup=document.getElementById('ci_sup').value.trim();
+  const type=document.getElementById('ci_type').value.trim()||'Chưa phân loại';
+  const val=parseFloat(document.getElementById('ci_val').value)||0;
+  const startRaw=document.getElementById('ci_start').value;
+  const endRaw=document.getElementById('ci_end').value;
+  if(!sup){toast('Vui lòng nhập tên nhà cung cấp');return;}
+  const fmtDate=s=>s?s.split('-').reverse().join('/'):'';
+  CONTRACTS.unshift({id:id||`HĐ-2026-${String(CONTRACTS.length+1).padStart(3,'0')}`,sup,type,val,start:fmtDate(startRaw),end:fmtDate(endRaw)});
+  LS.set('school_contracts2',CONTRACTS);
+  closeModal();toast(`Đã tạo hợp đồng ${id}`);render();
+}
+
 function contracts(){
-  const rows=CONTRACTS.map(c=>`<tr>
-    <td style="font-weight:600">${c.id}</td>
+  const hasFilter=ctrSearch||ctrStatusFilter!=='all';
+  let list=CONTRACTS.map(c=>({...c,_st:computeConStatus(c.end)})).filter(c=>{
+    if(ctrSearch){const q=ctrSearch.toLowerCase();if(!c.id.toLowerCase().includes(q)&&!c.sup.toLowerCase().includes(q))return false;}
+    if(ctrStatusFilter!=='all'&&c._st!==ctrStatusFilter)return false;
+    return true;
+  });
+  if(ctrSort==='az')list.sort((a,b)=>a.sup.localeCompare(b.sup,'vi'));
+  else list.sort((a,b)=>b.id.localeCompare(a.id));
+  const IS='font-family:inherit;font-size:13px;border:1.5px solid var(--line);border-radius:9px;padding:7px 11px;outline:none;background:var(--paper);color:var(--text)';
+  const rows=list.map(c=>`<tr>
+    <td style="font-weight:600;white-space:nowrap;font-size:12.5px">${c.id}</td>
     <td style="font-weight:500">${c.sup}</td>
-    <td>${c.type}</td>
-    <td style="font-weight:600">${fmtV(c.val)}đ</td>
-    <td>${c.start}</td>
-    <td>${c.end}</td>
-    <td><span class="badge ${CON_ST[c.status][1]}">${CON_ST[c.status][0]}</span></td>
-    <td><button class="act-sm" onclick="toast('Xem hợp đồng ${c.id}')">Xem HĐ</button></td>
+    <td style="color:var(--text-soft);font-size:13px">${c.type}</td>
+    <td style="font-weight:600;white-space:nowrap">${fmtV(c.val)}đ</td>
+    <td style="white-space:nowrap">${c.start||'—'}</td>
+    <td style="white-space:nowrap;${c._st==='expiring'?'color:#c2410c;font-weight:500':c._st==='expired'?'color:#dc2626;font-weight:500':''}">${c.end||'—'}</td>
+    <td><span class="badge ${CON_ST[c._st][1]}">${CON_ST[c._st][0]}</span></td>
+    <td><button class="act-sm" onclick="toast('Xem hợp đồng ${c.id}')">Xem hợp đồng</button></td>
   </tr>`).join('');
-  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Quản lý Hợp đồng</div></div>
+  return`
+  ${ctrStatusOpen?`<div onclick="ctrStatusOpen=false;render()" style="position:fixed;inset:0;z-index:50"></div>`:''}
+  <div class="toolbar">
+    <div style="font-size:15px;font-weight:600">Hợp đồng</div>
+    <div class="sp"></div>
+    <button class="btn-pr" onclick="openAddContract()">+ Tạo hợp đồng</button>
+  </div>
+  <div class="panel" style="padding:12px 16px;margin-bottom:14px">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <input style="${IS};width:220px;flex-shrink:0" placeholder="Tìm mã HĐ, nhà cung cấp..." value="${ctrSearch}" oninput="ctrSearch=this.value;render()">
+      ${renderCtrStatusDrop()}
+      <div style="display:flex;gap:4px;flex-shrink:0">
+        <button class="fchip${ctrSort==='newest'?' on':''}" onclick="ctrSort='newest';render()">Mới nhất</button>
+        <button class="fchip${ctrSort==='az'?' on':''}" onclick="ctrSort='az';render()">A–Z</button>
+      </div>
+      ${hasFilter?`<button class="act-sm" onclick="ctrSearch='';ctrStatusFilter='all';ctrStatusOpen=false;render()" style="flex-shrink:0;white-space:nowrap">✕ Xóa lọc</button>`:''}
+      ${hasFilter?`<span style="font-size:12px;color:var(--text-soft);white-space:nowrap;margin-left:4px"><b style="color:var(--ink)">${list.length}</b> kết quả</span>`:''}
+    </div>
+  </div>
   <div class="tb-panel"><table><thead><tr><th>Số HĐ</th><th>Nhà cung cấp</th><th>Loại hợp đồng</th><th>Giá trị</th><th>Ngày bắt đầu</th><th>Ngày kết thúc</th><th>Trạng thái</th><th></th></tr></thead>
-  <tbody>${rows}</tbody></table></div>`;
+  <tbody>${rows}${!list.length?`<tr><td colspan="8" style="text-align:center;padding:36px;color:var(--text-soft)">${hasFilter?'Không tìm thấy kết quả phù hợp':'Chưa có hợp đồng'}</td></tr>`:''}</tbody></table></div>`;
 }
 
 /* ── Members ── */
@@ -1677,8 +2988,11 @@ function members(){
   const tabBar=`<div class="tabs">
     <button class="tab-btn${membersTab==='members'?' on':''}" onclick="membersTab='members';render()">Thành viên</button>
     <button class="tab-btn${membersTab==='depts'?' on':''}" onclick="membersTab='depts';render()">Phòng ban</button>
+    <button class="tab-btn${membersTab==='schoolyears'?' on':''}" onclick="membersTab='schoolyears';render()">Năm học</button>
   </div>`;
-  return tabBar+(membersTab==='members'?membersPanel():deptsPanel());
+  if(membersTab==='members')return tabBar+membersPanel();
+  if(membersTab==='depts')return tabBar+deptsPanel();
+  return tabBar+schoolYearsPanel();
 }
 
 function membersPanel(){
@@ -1737,17 +3051,14 @@ function deptsPanel(){
 
   const rows=list.map(d=>{
     const hasMem=MEMBERS.some(m=>m.dept===d.name);
-    const p=pct(d.spent,d.budget);
-    const barC=p>=90?'#dc2626':p>=75?'#d97706':'#22c55e';
+    const memCount=MEMBERS.filter(m=>m.dept===d.name).length;
     const delBtn=hasMem
       ?`<div class="tip-wrap"><button class="del-sm" style="opacity:.45;cursor:not-allowed" disabled>Xóa</button><div class="tip">Phòng ban có nhân viên, không thể xóa</div></div>`
       :`<button class="del-sm" onclick="deleteDept(${d.id})">Xóa</button>`;
     return`<tr>
       <td style="font-weight:600">${d.name}</td>
       <td>${d.head}</td>
-      <td style="text-align:center"><span class="badge bb">${d.members}</span></td>
-      <td>${fmtV(d.budget)}đ</td>
-      <td><div class="bgt-bar-bg" style="width:110px"><div class="bgt-bar-fill" style="width:${p}%;background:${barC}"></div></div><div style="font-size:11px;color:var(--text-soft);margin-top:2px">${p}%</div></td>
+      <td style="text-align:center"><span class="badge bb">${memCount}</span></td>
       <td><div style="display:flex;gap:6px;align-items:center">
         <button class="act-sm" onclick="openEditDept(${d.id})">Sửa</button>
         ${delBtn}
@@ -1761,8 +3072,8 @@ function deptsPanel(){
     <button class="btn-pr" onclick="openAddDept()">+ Thêm phòng ban</button>
   </div>
   <div class="tb-panel"><table>
-    <thead><tr><th>Tên phòng ban</th><th>Trưởng phòng</th><th style="text-align:center">Thành viên</th><th>Ngân sách</th><th style="width:140px">Sử dụng NS</th><th></th></tr></thead>
-    <tbody>${rows||`<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text-soft)">Không tìm thấy phòng ban</td></tr>`}</tbody>
+    <thead><tr><th>Tên phòng ban</th><th>Trưởng phòng</th><th style="text-align:center">Thành viên</th><th></th></tr></thead>
+    <tbody>${rows||`<tr><td colspan="4" style="text-align:center;padding:28px;color:var(--text-soft)">Không tìm thấy phòng ban</td></tr>`}</tbody>
   </table></div>`;
 }
 
@@ -1835,15 +3146,16 @@ function updateMember(id){
 
 function deleteMember(id){
   const m=MEMBERS.find(x=>x.id===id);if(!m)return;
-  MEMBERS.splice(MEMBERS.indexOf(m),1);
-  toast(`Đã xóa thành viên "${m.name}"`);render();
+  dangerConfirm(`Xóa thành viên "${m.name}"?`,'Xóa thành viên',()=>{
+    MEMBERS.splice(MEMBERS.indexOf(m),1);
+    toast(`Đã xóa thành viên "${m.name}"`);render();
+  });
 }
 
 function openAddDept(){
   openModal(`<h2>Thêm phòng ban</h2>
   <div class="mf"><label>Tên phòng ban</label><input id="dName" placeholder="VD: Phòng Công nghệ thông tin"></div>
   <div class="mf"><label>Trưởng phòng</label><input id="dHead" placeholder="Họ và tên trưởng phòng"></div>
-  <div class="mf"><label>Ngân sách năm (đ)</label><input id="dBudget" type="number" placeholder="0"></div>
   <div class="mact">
     <button class="act-btn" onclick="closeModal()">Hủy</button>
     <button class="add" onclick="saveDept()">Thêm phòng ban</button>
@@ -1854,7 +3166,7 @@ function saveDept(){
   const name=(document.getElementById('dName').value||'').trim();
   if(!name){toast('Vui lòng nhập tên phòng ban');return;}
   const id=Math.max(0,...DEPTS.map(d=>d.id))+1;
-  DEPTS.push({id,name,head:document.getElementById('dHead').value||'—',budget:+(document.getElementById('dBudget').value)||0,spent:0,members:0});
+  DEPTS.push({id,name,head:document.getElementById('dHead').value||'—',budget:0,spent:0,members:0});
   closeModal();toast(`Đã thêm phòng ban "${name}"`);render();
 }
 
@@ -1863,7 +3175,6 @@ function openEditDept(id){
   openModal(`<h2>Sửa phòng ban</h2>
   <div class="mf"><label>Tên phòng ban</label><input id="dName" value="${d.name.replace(/"/g,'&quot;')}"></div>
   <div class="mf"><label>Trưởng phòng</label><input id="dHead" value="${d.head.replace(/"/g,'&quot;')}"></div>
-  <div class="mf"><label>Ngân sách năm (đ)</label><input id="dBudget" type="number" value="${d.budget}"></div>
   <div class="mact">
     <button class="act-btn" onclick="closeModal()">Hủy</button>
     <button class="add" onclick="updateDept(${id})">Lưu thay đổi</button>
@@ -1876,15 +3187,105 @@ function updateDept(id){
   if(!name){toast('Vui lòng nhập tên phòng ban');return;}
   d.name=name;
   d.head=document.getElementById('dHead').value||'—';
-  d.budget=+(document.getElementById('dBudget').value)||d.budget;
   closeModal();toast(`Đã cập nhật phòng ban "${name}"`);render();
 }
 
 function deleteDept(id){
   const d=DEPTS.find(x=>x.id===id);if(!d)return;
   if(MEMBERS.some(m=>m.dept===d.name)){toast('Phòng ban có nhân viên, không thể xóa');return;}
-  DEPTS.splice(DEPTS.indexOf(d),1);
-  toast(`Đã xóa phòng ban "${d.name}"`);render();
+  dangerConfirm(`Xóa phòng ban "${d.name}"?`,'Xóa phòng ban',()=>{
+    DEPTS.splice(DEPTS.indexOf(d),1);
+    toast(`Đã xóa phòng ban "${d.name}"`);render();
+  });
+}
+
+function schoolYearsPanel(){
+  const now=new Date();
+  const rows=SCHOOL_BUDGETS.map(y=>{
+    const hk1=y.semesters.find(s=>s.id==='hk1');
+    const hk2=y.semesters.find(s=>s.id==='hk2');
+    const endDates=y.semesters.map(s=>parsePrDate(s.to)).filter(Boolean);
+    const isPast=endDates.length>0&&Math.max(...endDates)<now;
+    const editBtn=isPast
+      ?`<div class="tip-wrap"><button class="act-sm" style="opacity:.45;cursor:not-allowed" disabled>Sửa</button><div class="tip">Không thể sửa kỳ học cũ</div></div>`
+      :`<button class="act-sm" onclick="openEditSchoolYear('${y.year}')">Sửa</button>`;
+    return`<tr>
+      <td style="font-weight:600;font-size:14px">${y.year}</td>
+      <td>
+        <div style="font-size:13px"><span style="color:var(--text-soft);font-weight:500;margin-right:8px">HK1</span>${hk1&&hk1.from?`${hk1.from} – ${hk1.to}`:'<span style="color:var(--text-soft)">Chưa cấu hình</span>'}</div>
+        <div style="font-size:13px;margin-top:5px"><span style="color:var(--text-soft);font-weight:500;margin-right:8px">HK2</span>${hk2&&hk2.from?`${hk2.from} – ${hk2.to}`:'<span style="color:var(--text-soft)">Chưa cấu hình</span>'}</div>
+      </td>
+      <td>${editBtn}</td>
+    </tr>`;
+  }).join('');
+  return`<div class="toolbar"><div class="sp"></div><button class="btn-pr" onclick="openAddSchoolYear()">+ Thêm năm học</button></div>
+  <div class="tb-panel"><table>
+    <thead><tr><th>Năm học</th><th>Thời gian kỳ học</th><th></th></tr></thead>
+    <tbody>${rows||`<tr><td colspan="3" style="text-align:center;padding:28px;color:var(--text-soft)">Chưa cấu hình năm học</td></tr>`}</tbody>
+  </table></div>`;
+}
+
+function openAddSchoolYear(){
+  openModal(`<h2>Thêm năm học</h2>
+  <div class="mf"><label>Năm học <span class="req">*</span></label><input id="syYear" placeholder="VD: 2027-2028"></div>
+  <div style="font-size:13px;font-weight:600;margin:14px 0 8px;color:var(--ink)">Học kỳ 1</div>
+  <div class="m2">
+    <div class="mf"><label>Ngày bắt đầu</label><input id="syHk1From" type="date"></div>
+    <div class="mf"><label>Ngày kết thúc</label><input id="syHk1To" type="date"></div>
+  </div>
+  <div style="font-size:13px;font-weight:600;margin:14px 0 8px;color:var(--ink)">Học kỳ 2</div>
+  <div class="m2">
+    <div class="mf"><label>Ngày bắt đầu</label><input id="syHk2From" type="date"></div>
+    <div class="mf"><label>Ngày kết thúc</label><input id="syHk2To" type="date"></div>
+  </div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Hủy</button>
+    <button class="add" onclick="saveSchoolYear()">Lưu năm học</button>
+  </div>`);
+}
+
+function saveSchoolYear(){
+  const year=(document.getElementById('syYear').value||'').trim();
+  if(!year){toast('Nhập tên năm học');return;}
+  if(SCHOOL_BUDGETS.find(b=>b.year===year)){toast('Năm học đã tồn tại');return;}
+  const fmt=s=>{if(!s)return'';const[yr,m,d]=s.split('-');return`${d}/${m}/${yr}`;};
+  SCHOOL_BUDGETS.push({year,semesters:[
+    {id:'hk1',label:'Học kỳ 1',from:fmt(document.getElementById('syHk1From').value),to:fmt(document.getElementById('syHk1To').value)},
+    {id:'hk2',label:'Học kỳ 2',from:fmt(document.getElementById('syHk2From').value),to:fmt(document.getElementById('syHk2To').value)},
+  ]});
+  closeModal();toast(`Đã thêm năm học ${year}`);render();
+}
+
+function openEditSchoolYear(year){
+  const y=SCHOOL_BUDGETS.find(b=>b.year===year);if(!y)return;
+  const hk1=y.semesters.find(s=>s.id==='hk1');
+  const hk2=y.semesters.find(s=>s.id==='hk2');
+  const toInput=s=>{if(!s||!s.includes('/'))return'';const[d,m,yr]=s.split('/');return`${yr}-${m}-${d}`;};
+  openModal(`<h2>Sửa năm học ${year}</h2>
+  <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--ink)">Học kỳ 1</div>
+  <div class="m2">
+    <div class="mf"><label>Ngày bắt đầu</label><input id="syHk1From" type="date" value="${hk1?toInput(hk1.from):''}"></div>
+    <div class="mf"><label>Ngày kết thúc</label><input id="syHk1To" type="date" value="${hk1?toInput(hk1.to):''}"></div>
+  </div>
+  <div style="font-size:13px;font-weight:600;margin:14px 0 8px;color:var(--ink)">Học kỳ 2</div>
+  <div class="m2">
+    <div class="mf"><label>Ngày bắt đầu</label><input id="syHk2From" type="date" value="${hk2?toInput(hk2.from):''}"></div>
+    <div class="mf"><label>Ngày kết thúc</label><input id="syHk2To" type="date" value="${hk2?toInput(hk2.to):''}"></div>
+  </div>
+  <div class="mact">
+    <button class="act-btn" onclick="closeModal()">Hủy</button>
+    <button class="add" onclick="updateSchoolYear('${year}')">Lưu thay đổi</button>
+  </div>`);
+}
+
+function updateSchoolYear(year){
+  const y=SCHOOL_BUDGETS.find(b=>b.year===year);if(!y)return;
+  const fmt=s=>{if(!s)return'';const[yr,m,d]=s.split('-');return`${d}/${m}/${yr}`;};
+  const hk1=y.semesters.find(s=>s.id==='hk1');
+  const hk2=y.semesters.find(s=>s.id==='hk2');
+  if(hk1){hk1.from=fmt(document.getElementById('syHk1From').value);hk1.to=fmt(document.getElementById('syHk1To').value);}
+  if(hk2){hk2.from=fmt(document.getElementById('syHk2From').value);hk2.to=fmt(document.getElementById('syHk2To').value);}
+  closeModal();toast(`Đã cập nhật năm học ${year}`);render();
 }
 
 /* ── Organization dialogs ── */
@@ -2029,42 +3430,172 @@ function organization(){
 }
 
 /* ── Reports ── */
-function reports(){
-  const months=[175,135,115,180,305,285,120,145,220,290,305,315];
-  const mLabels=['T8/24','T9','T10','T11','T12','T1/25','T2','T3','T4','T5','T6','T7'];
+let rptYear='2025-2026',rptSem='all',rptDept='all',rptCat='all',rptTab='spending',rptPeriod='month';
+
+function buildRptSpending(){
+  const IS_chip='font-family:inherit;font-size:12px;border:1.5px solid var(--line);border-radius:7px;padding:4px 10px;background:var(--paper);cursor:pointer;transition:all .15s';
+  const periodToggle=`<div style="display:flex;gap:4px">
+    <button class="fchip${rptPeriod==='month'?' on':''}" onclick="rptPeriod='month';render()">Theo tháng</button>
+    <button class="fchip${rptPeriod==='semester'?' on':''}" onclick="rptPeriod='semester';render()">Theo học kỳ</button>
+    <button class="fchip${rptPeriod==='year'?' on':''}" onclick="rptPeriod='year';render()">Theo năm</button>
+  </div>`;
+  let chartVals,chartLabels,maxV;
+  if(rptPeriod==='semester'){chartVals=[560,870,510,430];chartLabels=['HK1/23-24','HK2/23-24','HK1/24-25','HK2/24-25'];maxV=900;}
+  else if(rptPeriod==='year'){chartVals=[980,1230,1540];chartLabels=['2023-24','2024-25','2025-26'];maxV=1600;}
+  else{chartVals=[175,135,115,180,305,285,120,145,220,290,305,315];chartLabels=['T8','T9','T10','T11','T12','T1','T2','T3','T4','T5','T6','T7'];maxV=320;}
+  const totalSpend=ORDERS.reduce((s,o)=>s+o.total,0);
+  const doneOrders=ORDERS.filter(o=>o.dlvStatus==='done').length;
+  const approvedPRs=PRS.filter(p=>p.status==='approved'||p.status==='done').length;
+  const uniqSups=new Set(ORDERS.map(o=>o.sup).filter(s=>s&&s!=='—')).size;
+  const kpis=[
+    {v:fmtC(totalSpend),l:'Tổng giá trị đơn hàng',c:'#3b82f6'},
+    {v:String(doneOrders),l:'Đơn giao thành công',c:'#22c55e'},
+    {v:String(approvedPRs),l:'Yêu cầu đã duyệt',c:'#f97316'},
+    {v:String(uniqSups||SUPPLIERS.length),l:'NCC hợp tác',c:'#a855f7'},
+  ];
+  const kpiRow=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:16px">${kpis.map(k=>`<div class="panel" style="text-align:center;padding:16px 10px"><div style="font-size:22px;font-weight:700;color:${k.c};line-height:1.1;margin-bottom:5px">${k.v}</div><div style="font-size:12px;color:var(--text-soft)">${k.l}</div></div>`).join('')}</div>`;
   const donutSegs=[{l:'SGK',p:35,c:'#3b82f6'},{l:'VPP',p:22,c:'#f97316'},{l:'Thiết Bị',p:28,c:'#22c55e'},{l:'Ebook',p:10,c:'#a855f7'},{l:'Khác',p:5,c:'#94a3b8'}];
-  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Báo cáo & Thống kê</div><div class="sp"></div><button class="btn-pr" onclick="toast('Xuất báo cáo PDF')">${ic(I.dl)} Xuất PDF</button></div>
-  <div style="display:grid;grid-template-columns:1fr 280px;gap:14px;margin-bottom:14px">
-    <div class="panel">
-      <div class="ph"><h3>Chi tiêu theo tháng</h3><span class="phsub">Năm học 2024-2025</span></div>
-      <div style="margin-top:12px">${lineChart(months,mLabels,320,880,198,50,28)}</div>
+  const deptLabels=['BGH','Tự Nhiên','Xã Hội','Thể Dục','Ngoại Ngữ','HC'];
+  const deptVals=[110,205,175,90,165,70];
+  return kpiRow+
+    `<div style="display:grid;grid-template-columns:1fr 280px;gap:14px;margin-bottom:14px">
+      <div class="panel"><div class="ph"><div><h3>Chi tiêu theo thời gian</h3><div class="phsub">Năm học ${rptYear} · Đơn vị: triệu đồng</div></div>${periodToggle}</div><div style="margin-top:12px">${lineChart(chartVals,chartLabels,280,880,maxV,50,28)}</div></div>
+      <div class="panel"><div class="ph"><h3>Cơ cấu chi tiêu</h3><div class="phsub">${rptYear}</div></div>${donutChart(donutSegs)}</div>
     </div>
-    <div class="panel">
-      <div class="ph"><h3>Cơ cấu chi tiêu</h3><span class="phsub">Tháng 6/2026</span></div>
-      ${donutChart(donutSegs)}
+    <div class="panel"><div class="ph"><div><h3>Chi tiêu theo phòng ban</h3><div class="phsub">Đơn vị: triệu đồng</div></div></div><div style="margin-top:12px">${barChart(deptLabels,deptVals,'#f97316',560,188,48,28)}</div></div>`;
+}
+function buildRptBudget(){
+  const years=[{y:'2023-2024',total:3.8e9,used:3.5e9},{y:'2024-2025',total:4.2e9,used:2.4e9},{y:'2025-2026',total:4.5e9,used:0.8e9}];
+  const sems=[{l:'Học kỳ 1 — '+rptYear,budget:2.4e9,used:1.8e9},{l:'Học kỳ 2 — '+rptYear,budget:2.1e9,used:0.6e9}];
+  const yearCards=years.map(b=>{
+    const pct=Math.round(b.used/b.total*100);const rem=b.total-b.used;
+    return`<div class="panel" style="padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:600;color:var(--ink)">Năm học ${b.y}</div>
+        <span style="font-size:12px;font-weight:500;color:${pct>=90?'#dc2626':pct>=75?'#f97316':'var(--acc)'}">${pct}% đã dùng</span>
+      </div>
+      <div style="background:var(--line);border-radius:99px;height:8px;margin-bottom:10px"><div style="background:var(--acc);border-radius:99px;height:8px;width:${pct}%"></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div><div style="font-size:11px;color:var(--text-soft)">Tổng ngân sách</div><div style="font-weight:600;font-size:13px;color:var(--ink)">${fmtC(b.total)}</div></div>
+        <div><div style="font-size:11px;color:var(--text-soft)">Đã sử dụng</div><div style="font-weight:600;font-size:13px;color:var(--acc)">${fmtC(b.used)}</div></div>
+        <div><div style="font-size:11px;color:var(--text-soft)">Còn lại</div><div style="font-weight:600;font-size:13px;color:#15803d">${fmtC(rem)}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+  const semCards=sems.map(s=>{
+    const pct=Math.round(s.used/s.budget*100);
+    return`<div class="panel" style="padding:16px">
+      <div style="font-weight:600;margin-bottom:8px;font-size:13px">${s.l}</div>
+      <div style="background:var(--line);border-radius:99px;height:8px;margin-bottom:8px"><div style="background:var(--acc);border-radius:99px;height:8px;width:${pct}%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px">
+        <span style="color:var(--text-soft)">${fmtC(s.used)} / ${fmtC(s.budget)}</span>
+        <span style="font-weight:600;color:${pct>=90?'#dc2626':pct>=75?'#f97316':'var(--acc)'}">${pct}%</span>
+      </div>
+    </div>`;
+  }).join('');
+  return`<div style="margin-bottom:20px">
+    <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:12px">Ngân sách theo năm học</div>
+    <div style="display:flex;flex-direction:column;gap:10px">${yearCards}</div>
+  </div>
+  <div>
+    <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:12px">Ngân sách theo học kỳ (${rptYear})</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">${semCards}</div>
+  </div>`;
+}
+function buildRptSuppliers(){
+  const supMap={};
+  ORDERS.forEach(o=>{
+    if(!o.sup||o.sup==='—')return;
+    if(!supMap[o.sup])supMap[o.sup]={name:o.sup,orders:0,total:0};
+    supMap[o.sup].orders++;
+    supMap[o.sup].total+=o.total;
+  });
+  let data=Object.values(supMap).sort((a,b)=>b.total-a.total);
+  if(!data.length)data=[
+    {name:'NXB Giáo Dục',orders:6,total:680e6},{name:'Thiết bị GD Việt Nam',orders:8,total:450e6},
+    {name:'Nhà sách Tri Thức',orders:12,total:280e6},{name:'VPP Bút Chì Xanh',orders:15,total:120e6},
+    {name:'VPP Minh Long',orders:9,total:95e6},
+  ].sort((a,b)=>b.total-a.total);
+  const grandTotal=data.reduce((s,d)=>s+d.total,0);
+  const maxT=data[0].total;
+  const rows=data.map((s,i)=>`<tr>
+    <td style="font-weight:500"><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--text-soft);font-size:12px;width:18px">#${i+1}</span>${s.name}</div></td>
+    <td style="text-align:center;font-weight:600">${s.orders}</td>
+    <td style="font-weight:600;white-space:nowrap">${fmtV(s.total)}đ</td>
+    <td style="min-width:180px"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;background:var(--line);border-radius:99px;height:6px"><div style="background:var(--acc);border-radius:99px;height:6px;width:${Math.round(s.total/maxT*100)}%"></div></div><span style="font-size:12px;color:var(--text-soft);white-space:nowrap;min-width:36px;text-align:right">${(s.total/grandTotal*100).toFixed(1)}%</span></div></td>
+  </tr>`).join('');
+  return`<div style="overflow:auto"><table><thead><tr><th>Nhà cung cấp</th><th style="text-align:center">Số đơn</th><th>Tổng giá trị</th><th>Tỷ lệ chi tiêu</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function reports(){
+  const SS='font-family:inherit;font-size:12.5px;border:1.5px solid var(--line);border-radius:9px;padding:6px 10px;background:var(--paper);color:var(--text);outline:none;cursor:pointer;flex-shrink:0';
+  const hasFilter=rptYear!=='2025-2026'||rptSem!=='all'||rptDept!=='all'||rptCat!=='all';
+  const RTABS=[['spending','Chi tiêu'],['budget','Ngân sách'],['suppliers','Nhà cung cấp']];
+  const tabBar=RTABS.map(([k,l])=>`<button onclick="rptTab='${k}';render()" style="font-family:inherit;border:none;background:none;padding:12px 18px;font-size:13px;cursor:pointer;color:${rptTab===k?'var(--ink)':'var(--text-soft)'};font-weight:${rptTab===k?600:400};border-bottom:2.5px solid ${rptTab===k?'var(--ink)':'transparent'};margin-bottom:-2px">${l}</button>`).join('');
+  let content='';
+  if(rptTab==='spending')content=buildRptSpending();
+  else if(rptTab==='budget')content=buildRptBudget();
+  else content=buildRptSuppliers();
+  return`
+  <div class="toolbar">
+    <div style="font-size:15px;font-weight:600;flex-shrink:0">Báo cáo & Thống kê</div>
+    <div class="sp"></div>
+    <button class="act-sm" onclick="toast('Đang xuất Excel...')" style="flex-shrink:0">↓ Xuất Excel</button>
+    <button class="btn-pr" onclick="toast('Đang xuất PDF...')" style="flex-shrink:0">↓ Xuất PDF</button>
+  </div>
+  <div class="panel" style="padding:12px 16px;margin-bottom:14px">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <select style="${SS}" onchange="rptYear=this.value;render()">
+        <option value="2024-2025"${rptYear==='2024-2025'?' selected':''}>Năm học 2024-2025</option>
+        <option value="2025-2026"${rptYear==='2025-2026'?' selected':''}>Năm học 2025-2026</option>
+        <option value="2026-2027"${rptYear==='2026-2027'?' selected':''}>Năm học 2026-2027</option>
+      </select>
+      <select style="${SS}" onchange="rptSem=this.value;render()">
+        <option value="all"${rptSem==='all'?' selected':''}>Tất cả học kỳ</option>
+        <option value="hk1"${rptSem==='hk1'?' selected':''}>Học kỳ 1</option>
+        <option value="hk2"${rptSem==='hk2'?' selected':''}>Học kỳ 2</option>
+      </select>
+      <select style="${SS}" onchange="rptDept=this.value;render()">
+        <option value="all"${rptDept==='all'?' selected':''}>Tất cả phòng ban</option>
+        <option value="bgh"${rptDept==='bgh'?' selected':''}>Ban giám hiệu</option>
+        <option value="hc"${rptDept==='hc'?' selected':''}>Hành chính</option>
+        <option value="kt"${rptDept==='kt'?' selected':''}>Kế toán</option>
+        <option value="tv"${rptDept==='tv'?' selected':''}>Thư viện</option>
+        <option value="bm"${rptDept==='bm'?' selected':''}>Tổ bộ môn</option>
+      </select>
+      <select style="${SS}" onchange="rptCat=this.value;render()">
+        <option value="all"${rptCat==='all'?' selected':''}>Tất cả danh mục</option>
+        <option value="sgk"${rptCat==='sgk'?' selected':''}>SGK</option>
+        <option value="vpp"${rptCat==='vpp'?' selected':''}>Văn phòng phẩm</option>
+        <option value="tb"${rptCat==='tb'?' selected':''}>Thiết bị</option>
+        <option value="ebook"${rptCat==='ebook'?' selected':''}>Ebook</option>
+        <option value="other"${rptCat==='other'?' selected':''}>Khác</option>
+      </select>
+      ${hasFilter?`<button class="act-sm" onclick="rptYear='2025-2026';rptSem='all';rptDept='all';rptCat='all';render()" style="flex-shrink:0;white-space:nowrap">✕ Xóa lọc</button>`:''}
     </div>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:11px">
-    ${[['Tổng chi tiêu cả năm','2,4 tỷ đ','#3b82f6'],['Đơn hàng thành công','38','#22c55e'],['Tiết kiệm so với lẻ','185tr','#f97316'],['Nhà cung cấp hợp tác','12','#a855f7']].map(([l,v,c])=>`<div class="panel" style="text-align:center">
-      <div style="font-size:24px;font-weight:700;color:${c};margin-bottom:4px">${v}</div>
-      <div style="font-size:12px;color:var(--text-soft)">${l}</div>
-    </div>`).join('')}
+  <div class="panel" style="padding:0">
+    <div style="display:flex;padding:0 16px;border-bottom:2px solid var(--line)">${tabBar}</div>
+    <div style="padding:20px">${content}</div>
   </div>`;
 }
 
 /* ── Notifications view ── */
 function notifications(){
-  const all=[...NOTIFS,
-    {dot:'blue',txt:'Hợp đồng HĐ-2026-008 đến hạn gia hạn sau 15 ngày',time:'2 ngày trước'},
-    {dot:'green',txt:'Yêu cầu báo giá RFQ-2026-011 nhận được 3 phản hồi',time:'2 ngày trước'},
-    {dot:'orange',txt:'PR-2026-044 đã được phê duyệt cấp 1',time:'3 ngày trước'},
-  ];
-  return`<div class="toolbar"><div style="font-size:15px;font-weight:600">Tất cả thông báo</div></div>
+  const DOT={orange:'#f97316',green:'#22c55e',red:'#dc2626',blue:'#4f46e5'};
+  const empty=`<div style="text-align:center;padding:48px 24px;color:var(--text-soft)">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:.3;margin-bottom:12px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+    <div style="font-size:13.5px">Không có thông báo nào</div>
+  </div>`;
+  return`<div class="toolbar">
+    <div style="font-size:15px;font-weight:600">Tất cả thông báo</div>
+    <div class="sp"></div>
+    ${NOTIFS.length?`<button class="act-sm" onclick="clearNotifs()">Xóa tất cả</button>`:''}
+  </div>
   <div class="panel">
-    ${all.map(n=>`<div class="notif-item">
-      <div class="ni-dot" style="background:${n.dot==='orange'?'#f97316':n.dot==='green'?'#22c55e':n.dot==='red'?'#dc2626':'#4f46e5'}"></div>
+    ${NOTIFS.length?NOTIFS.map(n=>`<div class="notif-item">
+      <div class="ni-dot" style="background:${DOT[n.dot]||'#4f46e5'}"></div>
       <div style="flex:1"><div class="ni-txt">${n.txt}</div><div class="ni-time">${n.time}</div></div>
-    </div>`).join('')}
+    </div>`).join(''):empty}
   </div>`;
 }
 
@@ -2110,12 +3641,12 @@ function render(){
   else if(curV==='marketplace')c.innerHTML=marketplace();
   else if(curV==='schoolkit')c.innerHTML=schoolkit();
   else if(curV==='purchase')c.innerHTML=purchase();
-  else if(curV==='approvals'){if(currentUser?.subRole==='BGH')c.innerHTML=approvals();else nav('dashboard',null);}
   else if(curV==='orders')c.innerHTML=orders();
+  else if(curV==='order-detail')c.innerHTML=orderDetail();
   else if(curV==='budget')c.innerHTML=budget();
-  else if(curV==='invoices')c.innerHTML=invoices();
   else if(curV==='ebook')c.innerHTML=ebook();
   else if(curV==='rfq')c.innerHTML=rfq();
+  else if(curV==='rfq-detail')c.innerHTML=rfqDetail();
   else if(curV==='contracts')c.innerHTML=contracts();
   else if(curV==='members')c.innerHTML=members();
   else if(curV==='organization')c.innerHTML=organization();
@@ -2129,8 +3660,7 @@ function render(){
 /* ── Shell builder ── */
 function userInitials(name){return(name||'').split(' ').filter(Boolean).map(w=>w[0]).slice(-2).join('').toUpperCase()||'?';}
 function renderShell(){
-  const isBGH=currentUser?.subRole==='BGH';
-  const sidebar=NAV.filter(n=>n.v!=='approvals'||isBGH).map(n=>{
+  const sidebar=NAV.map(n=>{
     if(n.g)return`<div class="navg">${n.g}</div>`;
     const badge=n.badge?`<span class="nb">${n.badge}</span>`:'';
     return`<button class="nav-item${n.v===curV?' on':''}" data-v="${n.v}" onclick="nav('${n.v}',this)">${ic(I[n.i]||I.dash,18)} ${n.l}${badge}</button>`;
@@ -2162,7 +3692,10 @@ function renderShell(){
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
           <span id="cartBadge" style="display:none;position:absolute;top:-5px;right:-5px;background:var(--coral);color:#fff;font-size:9.5px;font-weight:700;min-width:17px;height:17px;border-radius:9px;padding:0 3px;align-items:center;justify-content:center;pointer-events:none">0</span>
         </button>
-        <button class="tb-btn" onclick="toast('Không có thông báo mới')" title="Thông báo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
+        <button class="tb-btn" onclick="nav('notifications',null)" title="Thông báo" style="position:relative">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <span id="notifBadge" style="display:${NOTIFS.length?'flex':'none'};position:absolute;top:-5px;right:-5px;background:var(--coral);color:#fff;font-size:9px;font-weight:700;min-width:17px;height:17px;border-radius:9px;padding:0 3px;align-items:center;justify-content:center;pointer-events:none">${NOTIFS.length}</span>
+        </button>
       </div>
       <div class="content" id="content"></div>
     </div>
@@ -2179,11 +3712,9 @@ function init(){
   const mu=getMainUser();
   if(mu&&mu.role==='school'){
     currentUser=mu;
-    // Use org name from user profile (orgName field if set, else user name)
     ORG.name=mu.orgName||mu.name||ORG.name;
     renderShell();render();
   } else {
-    // Not logged in or wrong role → back to main app login
     window.location.href='./';
   }
 }

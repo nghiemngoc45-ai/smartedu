@@ -889,7 +889,7 @@ const ROLE_GROUPS=[
   }
 ];
 const ROLES=ROLE_GROUPS.flatMap(g=>g.roles.map(r=>({...r,kind:g.kind,to:g.to})));
-let lgRole='hocsinh', authView='login', authResetToken=null;
+let lgRole='hocsinh', lgDemoEmail='', authView='login', authResetToken=null;
 let user=LS.get('user',null), orders=LS.get('orders',[]), acctTab='dashboard';
 let adminDays=30;
 let admUsersView='list', admUserSearch='', admUserRoleFilter='all', admUserStatusFilter='all', admSelectedUserId=null, admUserPage=0;
@@ -966,25 +966,33 @@ const DEMO_ACCOUNTS=[
   {role:'hocsinh', label:'Học sinh',               email:'hocsinh@demo.vn',  pw:'demo123'},
   {role:'sinhvien',label:'Sinh viên',              email:'sinhvien@demo.vn', pw:'demo123'},
   {role:'parent',  label:'Phụ huynh',              email:'phuhuynh@demo.vn', pw:'demo123'},
-  {role:'school',  label:'Trường học / Tổ chức',   email:'truonghoc@demo.vn',pw:'demo123'},
+  {role:'school',  label:'Nhân viên trường',         email:'truonghoc@demo.vn',pw:'demo123'},
   {role:'school',  label:'Ban Giám hiệu (BGH)',     email:'bgh@demo.vn',      pw:'demo123'},
 ];
 function demoFill(role,email,pw){
   lgRole=role;
-  const eEl=document.getElementById('lgEmail');
-  const pEl=document.getElementById('lgPw');
-  if(eEl)eEl.value=email;
-  if(pEl)pEl.value=pw;
-  document.querySelectorAll('.demo-pill').forEach(x=>x.classList.remove('on'));
-  const active=document.querySelector('.demo-pill[data-role="'+role+'"]');
-  if(active)active.classList.add('on');
-  renderAuthBody();
+  lgDemoEmail=email;
+  // Direct login — no need to click "Đăng nhập"
+  const found=authUsers.find(u=>u.email===email&&u.pwHash===hashPw(pw));
+  if(found){
+    if(found.status==='locked'){toast('Tài khoản bị khóa');return;}
+    user={...found};saveUser();
+    const sel=ROLES.find(r=>r.k===role)||ROLES[0];
+    if(sel.kind==='redirect'||sel.kind==='portal'){window.location.href=sel.to;return;}
+    toast('Đăng nhập thành công · '+ROLELBL[user.role]);acctTab='dashboard';go('account');
+  } else {
+    const eEl=document.getElementById('lgEmail');
+    const pEl=document.getElementById('lgPw');
+    if(eEl)eEl.value=email;
+    if(pEl)pEl.value=pw;
+    renderAuthBody();
+  }
 }
 function _demoPanel(){
   const pills=DEMO_ACCOUNTS.map(a=>
-    '<button class="demo-pill'+(lgRole===a.role?' on':'')+'" data-role="'+a.role+'" onclick="demoFill(\''+a.role+'\',\''+a.email+'\',\''+a.pw+'\')">'+a.label+'</button>'
+    '<button class="demo-pill'+(lgDemoEmail===a.email?' on':'')+'" data-email="'+a.email+'" onclick="demoFill(\''+a.role+'\',\''+a.email+'\',\''+a.pw+'\')" title="Nhấn để vào ngay">'+a.label+'</button>'
   ).join('');
-  return '<div class="demo-panel"><span class="demo-panel-label">Demo nhanh</span>'+pills+'</div>';
+  return '<div class="demo-panel"><span class="demo-panel-label">Demo nhanh — nhấn để vào ngay</span>'+pills+'</div>';
 }
 function _loginForm(sel){
   const rem=LS.get('rememberMe',false);
